@@ -28,7 +28,7 @@ namespace DanielLochner.Assets.CreatureCreator
         #region Methods
         private void Start()
         {
-            if ((Application.internetReachability != NetworkReachability.NotReachable) && !SettingsManager.Instance.ShowTutorial && !EducationManager.Instance.IsEducational)
+            if ((Application.internetReachability != NetworkReachability.NotReachable) && !SettingsManager.Instance.ShowTutorial)
             {
                 FactoryItemQuery query = new()
                 {

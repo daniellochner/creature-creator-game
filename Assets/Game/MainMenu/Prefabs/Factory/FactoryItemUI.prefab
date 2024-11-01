@@ -444,7 +444,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5186242708358204227}
-  - component: {fileID: 5510987208356743270}
   m_Layer: 0
   m_Name: Download
   m_TagString: Untagged
@@ -474,19 +473,6 @@ RectTransform:
   m_AnchoredPosition: {x: -20, y: 20}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &5510987208356743270
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1088949455346802177}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8286a90b00f0214e885d0775e9e9cda, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetPlatform: 1
 --- !u!1 &2473614929257448521
 GameObject:
   m_ObjectHideFlags: 0
@@ -593,7 +579,6 @@ GameObject:
   - component: {fileID: 4486010988536309023}
   - component: {fileID: 115040128282474014}
   - component: {fileID: 1057756748176619980}
-  - component: {fileID: 6619659085855942482}
   m_Layer: 0
   m_Name: Subscribe
   m_TagString: Untagged
@@ -730,19 +715,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pressScale: 0.95
   pressTime: 0.25
---- !u!114 &6619659085855942482
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3144835888103375560}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8286a90b00f0214e885d0775e9e9cda, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetPlatform: 3
 --- !u!1 &4860997762709313599
 GameObject:
   m_ObjectHideFlags: 0
@@ -896,6 +868,8 @@ MonoBehaviour:
   info: {fileID: 6878491988138836720}
   refreshIcon: {fileID: 698193812003197278}
   errorIcon: {fileID: 4860997762709313599}
+  subscribePanel: {fileID: 3144835888103375560}
+  downloadPanel: {fileID: 1088949455346802177}
 --- !u!114 &6894915323088838674
 MonoBehaviour:
   m_ObjectHideFlags: 0

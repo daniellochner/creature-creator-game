@@ -36,31 +36,44 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public void ViewWorkshop()
         {
+            if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
+            {
 #if UNITY_STANDALONE
-            SteamFriends.ActivateGameOverlayToWebPage($"steam://url/SteamWorkshopPage/{STEAM_ID}");
-#else
-            string url = $"https://steamcommunity.com/app/{STEAM_ID}/workshop/";
-            Application.OpenURL(url);
+                SteamFriends.ActivateGameOverlayToWebPage($"steam://url/SteamWorkshopPage/{STEAM_ID}");
 #endif
+            }
+            else if (SystemUtility.IsDevice(DeviceType.Handheld) || EducationManager.Instance.IsEducational)
+            {
+                string url = $"https://steamcommunity.com/app/{STEAM_ID}/workshop/";
+                Application.OpenURL(url);
+            }
         }
 
         public void ViewWorkshopItem(ulong id)
         {
+            if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
+            {
 #if UNITY_STANDALONE
-            SteamFriends.ActivateGameOverlayToWebPage($"steam://url/CommunityFilePage/{id}");
-#else
-            string url = $"https://steamcommunity.com/sharedfiles/filedetails/?id={id}";
-            Application.OpenURL(url);
+                SteamFriends.ActivateGameOverlayToWebPage($"steam://url/CommunityFilePage/{id}");
 #endif
+            }
+            else if (SystemUtility.IsDevice(DeviceType.Handheld) || EducationManager.Instance.IsEducational)
+            {
+                string url = $"https://steamcommunity.com/sharedfiles/filedetails/?id={id}";
+                Application.OpenURL(url);
+            }
         }
 
 
         public void LikeItem(ulong id)
         {
+            if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
+            {
 #if UNITY_STANDALONE
-            PublishedFileId_t fileId = new(id);
-            SteamUGC.SetUserItemVote(fileId, true);
+                PublishedFileId_t fileId = new (id);
+                SteamUGC.SetUserItemVote(fileId, true);
 #endif
+            }
 
             if (!Data.LikedItems.Contains(id))
             {
@@ -70,10 +83,13 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public void DislikeItem(ulong id)
         {
+            if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
+            {
 #if UNITY_STANDALONE
-            PublishedFileId_t fileId = new(id);
-            SteamUGC.SetUserItemVote(fileId, false);
+                PublishedFileId_t fileId = new (id);
+                SteamUGC.SetUserItemVote(fileId, false);
 #endif
+            }
 
             if (!Data.DislikedItems.Contains(id))
             {
@@ -83,10 +99,13 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public void SubscribeItem(ulong id)
         {
+            if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
+            {
 #if UNITY_STANDALONE
-            PublishedFileId_t fileId = new(id);
-            SteamUGC.SubscribeItem(fileId);
+                PublishedFileId_t fileId = new (id);
+                SteamUGC.SubscribeItem(fileId);
 #endif
+            }
 
             if (!Data.SubscribedItems.Contains(id))
             {
@@ -96,10 +115,13 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public void UnsubscribeItem(ulong id)
         {
+            if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
+            {
 #if UNITY_STANDALONE
-            PublishedFileId_t fileId = new(id);
-            SteamUGC.UnsubscribeItem(fileId);
+                PublishedFileId_t fileId = new (id);
+                SteamUGC.UnsubscribeItem(fileId);
 #endif
+            }
 
             if (Data.SubscribedItems.Contains(id))
             {
@@ -160,107 +182,110 @@ namespace DanielLochner.Assets.CreatureCreator
                     break;
             }
 
+            if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
+            {
 #if UNITY_STANDALONE
-
-            EUGCQuery sortBy = default;
-            switch (itemQuery.SortByType)
-            {
-                case FactorySortByType.MostPopular:
-                    sortBy = EUGCQuery.k_EUGCQuery_RankedByTrend;
-                    break;
-
-                case FactorySortByType.MostSubscribed:
-                    sortBy = EUGCQuery.k_EUGCQuery_RankedByTotalUniqueSubscriptions;
-                    break;
-
-                case FactorySortByType.MostRecent:
-                    sortBy = EUGCQuery.k_EUGCQuery_RankedByPublicationDate;
-                    break;
-
-                case FactorySortByType.LastUpdated:
-                    sortBy = EUGCQuery.k_EUGCQuery_RankedByLastUpdatedDate;
-                    break;
-
-                case FactorySortByType.SearchText:
-                    sortBy = EUGCQuery.k_EUGCQuery_RankedByTextSearch;
-                    break;
-            }
-
-            CallResult<SteamUGCQueryCompleted_t> query = CallResult<SteamUGCQueryCompleted_t>.Create(delegate (SteamUGCQueryCompleted_t param, bool hasFailed)
-            {
-                if (hasFailed)
+                EUGCQuery sortBy = default;
+                switch (itemQuery.SortByType)
                 {
-                    onFailed?.Invoke(null);
-                    return;
+                    case FactorySortByType.MostPopular:
+                        sortBy = EUGCQuery.k_EUGCQuery_RankedByTrend;
+                        break;
+
+                    case FactorySortByType.MostSubscribed:
+                        sortBy = EUGCQuery.k_EUGCQuery_RankedByTotalUniqueSubscriptions;
+                        break;
+
+                    case FactorySortByType.MostRecent:
+                        sortBy = EUGCQuery.k_EUGCQuery_RankedByPublicationDate;
+                        break;
+
+                    case FactorySortByType.LastUpdated:
+                        sortBy = EUGCQuery.k_EUGCQuery_RankedByLastUpdatedDate;
+                        break;
+
+                    case FactorySortByType.SearchText:
+                        sortBy = EUGCQuery.k_EUGCQuery_RankedByTextSearch;
+                        break;
                 }
 
-                List<FactoryItem> items = new();
-                for (uint i = 0; i < param.m_unNumResultsReturned; i++)
+                CallResult<SteamUGCQueryCompleted_t> query = CallResult<SteamUGCQueryCompleted_t>.Create(delegate (SteamUGCQueryCompleted_t param, bool hasFailed)
                 {
-                    FactoryItem item = new()
+                    if (hasFailed)
                     {
-                        tag = itemQuery.TagType
-                    };
-                    if (SteamUGC.GetQueryUGCResult(param.m_handle, i, out SteamUGCDetails_t details))
-                    {
-                        item.id = details.m_nPublishedFileId.m_PublishedFileId;
-                        item.name = details.m_rgchTitle;
-                        item.description = details.m_rgchDescription;
-                        item.upVotes = details.m_unVotesUp;
-                        item.timeCreated = details.m_rtimeCreated;
-                        item.creatorId = details.m_ulSteamIDOwner;
+                        onFailed?.Invoke(null);
+                        return;
                     }
-                    if (SteamUGC.GetQueryUGCPreviewURL(param.m_handle, i, out string url, 256))
+
+                    List<FactoryItem> items = new ();
+                    for (uint i = 0; i < param.m_unNumResultsReturned; i++)
                     {
-                        item.previewURL = url;
+                        FactoryItem item = new ()
+                        {
+                            tag = itemQuery.TagType
+                        };
+                        if (SteamUGC.GetQueryUGCResult(param.m_handle, i, out SteamUGCDetails_t details))
+                        {
+                            item.id = details.m_nPublishedFileId.m_PublishedFileId;
+                            item.name = details.m_rgchTitle;
+                            item.description = details.m_rgchDescription;
+                            item.upVotes = details.m_unVotesUp;
+                            item.timeCreated = details.m_rtimeCreated;
+                            item.creatorId = details.m_ulSteamIDOwner;
+                        }
+                        if (SteamUGC.GetQueryUGCPreviewURL(param.m_handle, i, out string url, 256))
+                        {
+                            item.previewURL = url;
+                        }
+                        items.Add(item);
                     }
-                    items.Add(item);
-                }
 
-                uint total = param.m_unTotalMatchingResults;
+                    uint total = param.m_unTotalMatchingResults;
 
-                onLoaded?.Invoke(items, total);
+                    onLoaded?.Invoke(items, total);
 
-                CacheItems(itemQuery, items, total);
-            });
+                    CacheItems(itemQuery, items, total);
+                });
 
-            UGCQueryHandle_t handle = SteamUGC.CreateQueryAllUGCRequest(sortBy, EUGCMatchingUGCType.k_EUGCMatchingUGCType_Items_ReadyToUse, SteamUtils.GetAppID(), SteamUtils.GetAppID(), (uint)(itemQuery.Page + 1));
-            SteamUGC.SetRankedByTrendDays(handle, days);
-            SteamUGC.SetReturnLongDescription(handle, true);
-            SteamUGC.SetSearchText(handle, itemQuery.SearchText);
-            SteamUGC.SetMatchAnyTag(handle, true); // TODO: Tags
+                UGCQueryHandle_t handle = SteamUGC.CreateQueryAllUGCRequest(sortBy, EUGCMatchingUGCType.k_EUGCMatchingUGCType_Items_ReadyToUse, SteamUtils.GetAppID(), SteamUtils.GetAppID(), (uint)(itemQuery.Page + 1));
+                SteamUGC.SetRankedByTrendDays(handle, days);
+                SteamUGC.SetReturnLongDescription(handle, true);
+                SteamUGC.SetSearchText(handle, itemQuery.SearchText);
+                SteamUGC.SetMatchAnyTag(handle, true); // TODO: Tags
 
-            SteamAPICall_t call = SteamUGC.SendQueryUGCRequest(handle);
-            query.Set(call);
-#else
-
-            string sortBy = default;
-            switch (itemQuery.SortByType)
-            {
-                case FactorySortByType.MostPopular:
-                    sortBy = "3";
-                    break;
-
-                case FactorySortByType.MostSubscribed:
-                    sortBy = "9";
-                    break;
-
-                case FactorySortByType.MostRecent:
-                    sortBy = "1";
-                    break;
-
-                case FactorySortByType.LastUpdated:
-                    sortBy = "21";
-                    break;
-
-                case FactorySortByType.SearchText:
-                    sortBy = "12";
-                    break;
-            }
-
-            string url = $"https://api.steampowered.com/IPublishedFileService/QueryFiles/v1/?key={steamKey.Value}&appid={STEAM_ID}&query_type={sortBy}&search_text={itemQuery.SearchText}&days={days}&numperpage={itemQuery.NumPerPage}&page={itemQuery.Page+1}&return_vote_data=true&return_previews=true";
-            StartCoroutine(GetItemsRoutine(url, itemQuery, onLoaded, onFailed));
+                SteamAPICall_t call = SteamUGC.SendQueryUGCRequest(handle);
+                query.Set(call);
 #endif
+            }
+            else if (SystemUtility.IsDevice(DeviceType.Handheld) || EducationManager.Instance.IsEducational)
+            {
+                string sortBy = default;
+                switch (itemQuery.SortByType)
+                {
+                    case FactorySortByType.MostPopular:
+                        sortBy = "3";
+                        break;
+
+                    case FactorySortByType.MostSubscribed:
+                        sortBy = "9";
+                        break;
+
+                    case FactorySortByType.MostRecent:
+                        sortBy = "1";
+                        break;
+
+                    case FactorySortByType.LastUpdated:
+                        sortBy = "21";
+                        break;
+
+                    case FactorySortByType.SearchText:
+                        sortBy = "12";
+                        break;
+                }
+
+                string url = $"https://api.steampowered.com/IPublishedFileService/QueryFiles/v1/?key={steamKey.Value}&appid={STEAM_ID}&query_type={sortBy}&search_text={itemQuery.SearchText}&days={days}&numperpage={itemQuery.NumPerPage}&page={itemQuery.Page + 1}&return_vote_data=true&return_previews=true";
+                StartCoroutine(GetItemsRoutine(url, itemQuery, onLoaded, onFailed));
+            }
         }
 
         private IEnumerator GetItemsRoutine(string url, FactoryItemQuery query, Action<List<FactoryItem>, uint> onLoaded, Action<string> onFailed)
@@ -420,38 +445,41 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public void LoadWorkshopCreatures()
         {
-#if UNITY_STANDALONE
-            LoadedWorkshopCreatures.Clear();
-
-            uint n = SteamUGC.GetNumSubscribedItems();
-            if (n > 0)
+            if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
             {
-                string creaturesDir = Path.Combine(Application.persistentDataPath, "creature");
-                if (!Directory.Exists(creaturesDir))
-                {
-                    Directory.CreateDirectory(creaturesDir);
-                }
+#if UNITY_STANDALONE
+                LoadedWorkshopCreatures.Clear();
 
-                PublishedFileId_t[] items = new PublishedFileId_t[n];
-                SteamUGC.GetSubscribedItems(items, n);
-
-                foreach (PublishedFileId_t fileId in items)
+                uint n = SteamUGC.GetNumSubscribedItems();
+                if (n > 0)
                 {
-                    if (SteamUGC.GetItemInstallInfo(fileId, out ulong sizeOnDisk, out string folder, 1024, out uint timeStamp) && Directory.Exists(folder))
+                    string creaturesDir = Path.Combine(Application.persistentDataPath, "creature");
+                    if (!Directory.Exists(creaturesDir))
                     {
-                        string src = Directory.GetFiles(folder)[0];
-                        string dst = Path.Combine(creaturesDir, Path.GetFileName(src));
-                        if (!File.Exists(dst))
-                        {
-                            File.Copy(src, dst);
-                        }
+                        Directory.CreateDirectory(creaturesDir);
+                    }
 
-                        string name = Path.GetFileNameWithoutExtension(src);
-                        LoadedWorkshopCreatures.Add(name);
+                    PublishedFileId_t[] items = new PublishedFileId_t[n];
+                    SteamUGC.GetSubscribedItems(items, n);
+
+                    foreach (PublishedFileId_t fileId in items)
+                    {
+                        if (SteamUGC.GetItemInstallInfo(fileId, out ulong sizeOnDisk, out string folder, 1024, out uint timeStamp) && Directory.Exists(folder))
+                        {
+                            string src = Directory.GetFiles(folder)[0];
+                            string dst = Path.Combine(creaturesDir, Path.GetFileName(src));
+                            if (!File.Exists(dst))
+                            {
+                                File.Copy(src, dst);
+                            }
+
+                            string name = Path.GetFileNameWithoutExtension(src);
+                            LoadedWorkshopCreatures.Add(name);
+                        }
                     }
                 }
-            }
 #endif
+            }
         }
     }
 }

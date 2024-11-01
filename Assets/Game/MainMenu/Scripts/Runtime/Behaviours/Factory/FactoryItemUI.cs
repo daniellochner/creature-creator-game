@@ -26,6 +26,9 @@ namespace DanielLochner.Assets.CreatureCreator
         public GameObject info;
         public GameObject refreshIcon;
         public GameObject errorIcon;
+        [Space]
+        public GameObject subscribePanel;
+        public GameObject downloadPanel;
 
         private Coroutine previewCoroutine;
         private bool isLiked, isDisliked, isSubscribed;
@@ -33,6 +36,13 @@ namespace DanielLochner.Assets.CreatureCreator
         #endregion
 
         #region Methods
+        private void Awake()
+        {
+            bool shouldSubscribe = SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational;
+            subscribePanel.SetActive(shouldSubscribe);
+            downloadPanel.SetActive(!shouldSubscribe);
+        }
+
         public void Setup(FactoryItem item)
         {
             this.item = item;

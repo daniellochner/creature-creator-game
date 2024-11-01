@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using System.Text;
 using TMPro;
 using Unity.Netcode;
@@ -129,14 +130,22 @@ namespace DanielLochner.Assets.CreatureCreator
         {
             string[] commandLineArgs = Environment.GetCommandLineArgs();
 
+            bool load = false;
+            bool upload = false;
             if (commandLineArgs.Length > 0)
             {
-                if (commandLineArgs[0] == "-loadmap")
+                load = commandLineArgs.Contains("-loadmap");
+                upload = commandLineArgs.Contains("-uploadmap");
+            }
+
+            if (load || upload)
+            {
+                if (load)
                 {
                     LoadCustomMap("");
                 }
                 else
-                if (commandLineArgs[0] == "-uploadmap")
+                if (upload)
                 {
                     UploadCustomMap("");
                 }

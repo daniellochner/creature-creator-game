@@ -16,6 +16,11 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public async void Setup()
         {
+            if (EducationManager.Instance.IsEducational)
+            {
+                return;
+            }
+
             foreach (var leaderboard in LeaderboardsMenu.Instance.leaderboards)
             {
                 try
