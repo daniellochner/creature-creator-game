@@ -9,6 +9,7 @@ using Cysharp.Threading.Tasks;
 
 public class FestivalManager : MonoBehaviour
 {
+    public TextAsset creaturePreset;
     public bool isFestival;
     [DrawIf("isFestival", true)] public float inactiveTime;
 
@@ -70,8 +71,17 @@ public class FestivalManager : MonoBehaviour
 
     public void LoadWorld(Mode mode)
     {
-        ProgressManager.Instance.Revert();
-        SettingsManager.Instance.SetTutorial(true);
+        // Setup Data
+        SettingsManager.Data.CreaturePresets.Clear();
+        if (mode == Mode.Creative)
+        {
+            SettingsManager.Data.CreaturePresets.Add(SaveUtility.Load<CreatureData>(creaturePreset.text));
+        }
+        else
+        {
+            SettingsManager.Instance.SetTutorial(true);
+            ProgressManager.Instance.Revert();
+        }
 
         // Setup World
         string mapName = "Island";
