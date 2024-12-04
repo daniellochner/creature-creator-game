@@ -72,15 +72,16 @@ public class FestivalManager : MonoBehaviour
     public void LoadWorld(Mode mode)
     {
         // Setup Data
+        ProgressManager.Instance.Revert();
         SettingsManager.Data.CreaturePresets.Clear();
         if (mode == Mode.Creative)
         {
-            SettingsManager.Data.CreaturePresets.Add(SaveUtility.Load<CreatureData>(creaturePreset.text));
+            var creature = JsonUtility.FromJson<CreatureData>(creaturePreset.text);
+            SettingsManager.Data.CreaturePresets.Add(creature);
         }
         else
         {
             SettingsManager.Instance.SetTutorial(true);
-            ProgressManager.Instance.Revert();
         }
 
         // Setup World
