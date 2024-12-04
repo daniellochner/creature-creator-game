@@ -30,6 +30,12 @@ namespace DanielLochner.Assets.CreatureCreator
 #endif
             }
         }
+
+        public string PrevCreatureData
+        {
+            get => PlayerPrefs.GetString("PREV_CREATURE_DATA");
+            set => PlayerPrefs.SetString("PREV_CREATURE_DATA", value);
+        }
         #endregion
 
         #region Methods
@@ -37,6 +43,12 @@ namespace DanielLochner.Assets.CreatureCreator
         {
             base.Start();
             MigrateLegacy();
+        }
+
+        public override void Revert()
+        {
+            base.Revert();
+            PrevCreatureData = null;
         }
 
         // Body Parts

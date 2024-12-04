@@ -10,7 +10,7 @@ using Cysharp.Threading.Tasks;
 public class FestivalManager : MonoBehaviour
 {
     public bool isFestival;
-    public float inactiveTime;
+    [DrawIf("isFestival", true)] public float inactiveTime;
 
     private float timeLeft;
     private Vector3 prevMousePosition;
@@ -23,7 +23,12 @@ public class FestivalManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F1))
         {
-            ResetWorld();
+            ResetWorld(Mode.Creative);
+        }
+        else
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            ResetWorld(Mode.Adventure);
         }
 
         if (Input.anyKey || Input.mousePosition != prevMousePosition || Input.mouseScrollDelta != Vector2.zero)
@@ -35,7 +40,7 @@ public class FestivalManager : MonoBehaviour
         {
             if (timeLeft < 0)
             {
-                ResetWorld();
+                ResetWorld(Mode.Creative);
                 timeLeft = Mathf.Infinity;
             }
             else
@@ -45,7 +50,7 @@ public class FestivalManager : MonoBehaviour
         }
     }
 
-    private void ResetWorld()
+    private void ResetWorld(Mode mode)
     {
         if (isResetting) return;
         isResetting = true;
@@ -56,18 +61,20 @@ public class FestivalManager : MonoBehaviour
             SceneManager.LoadScene("Temp");
             this.Invoke(delegate
             {
-                LoadWorld();
+                LoadWorld(mode);
                 isResetting = false;
             },
             1f);
         });
     }
 
-    public void LoadWorld()
+    public void LoadWorld(Mode mode)
     {
+        ProgressManager.Instance.Revert();
+        SettingsManager.Instance.SetTutorial(true);
+
         // Setup World
         string mapName = "Island";
-        Mode mode = Mode.Creative;
         bool spawnNPC = true;
         bool enablePVE = true;
         bool unlimited = false;

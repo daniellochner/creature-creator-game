@@ -212,12 +212,6 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public List<ChangeData> History { get; set; } = new List<ChangeData>();
         public int Counter { get; set; } = -1;
-
-        public string PrevCreatureData
-        {
-            get => PlayerPrefs.GetString("PREV_CREATURE_DATA");
-            set => PlayerPrefs.SetString("PREV_CREATURE_DATA", value);
-        }
         #endregion
 
         #region Methods
@@ -369,11 +363,11 @@ namespace DanielLochner.Assets.CreatureCreator
             };
 
             // Request to load unsaved creature
-            if (!WorldManager.Instance.IsUsingTeleport && !string.IsNullOrEmpty(PrevCreatureData))
+            if (!WorldManager.Instance.IsUsingTeleport && !string.IsNullOrEmpty(ProgressManager.Instance.PrevCreatureData))
             {
                 ConfirmationDialog.Confirm(LocalizationUtility.Localize("cc_unsaved-creature_title"), LocalizationUtility.Localize("cc_unsaved-creature_message"), onYes: delegate
                 {
-                    CreatureData creatureData = JsonUtility.FromJson<CreatureData>(PrevCreatureData);
+                    CreatureData creatureData = JsonUtility.FromJson<CreatureData>(ProgressManager.Instance.PrevCreatureData);
                     if (CanLoadCreature(creatureData, out string errorTitle, out string errorMessage))
                     {
                         if (IsValidName(creatureData.Name, true))
@@ -387,7 +381,7 @@ namespace DanielLochner.Assets.CreatureCreator
                         editorAudioSource.PlayOneShot(errorAudioClip);
                     }
 
-                    PrevCreatureData = null;
+                    ProgressManager.Instance.PrevCreatureData = null;
                 });
             }
         }
@@ -601,7 +595,7 @@ namespace DanielLochner.Assets.CreatureCreator
             Creature.Editor.LoadedCreature = creatureData.Name;
             Creature.Editor.IsDirty = false;
 
-            PrevCreatureData = null;
+            ProgressManager.Instance.PrevCreatureData = null;
         }
         public void TryLoad()
         {
@@ -666,7 +660,7 @@ namespace DanielLochner.Assets.CreatureCreator
                 TakeSnapshot(Change.Load, false);
             }
 
-            PrevCreatureData = null;
+            ProgressManager.Instance.PrevCreatureData = null;
 
             UpdateStatistics();
         }
@@ -1942,7 +1936,7 @@ namespace DanielLochner.Assets.CreatureCreator
                     Creature.Editor.IsDirty = true;
                     if (!WorldManager.Instance.IsUsingTeleport)
                     {
-                        PrevCreatureData = data;
+                        ProgressManager.Instance.PrevCreatureData = data;
                     }
                 }
 
