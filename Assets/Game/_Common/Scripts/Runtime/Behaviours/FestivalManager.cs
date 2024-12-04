@@ -5,23 +5,22 @@ using Unity.Netcode.Transports.UTP;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Cysharp.Threading.Tasks;
+using System.Collections;
 
 public class FestivalManager : MonoBehaviour
 {
+    public CanvasGroup hintCanvasGroup;
     public TextAsset creaturePreset;
-    public bool isFestival;
-    [DrawIf("isFestival", true)] public float inactiveTime;
+    public float inactiveTime;
 
     private float timeLeft;
     private Vector3 prevMousePosition;
-    private bool isResetting;
+    private bool isResetting, isShowingHint;
+    private Coroutine setHintCoroutine;
 
 
     private void Update()
     {
-        if (!isFestival) return;
-
         if (Input.GetKeyDown(KeyCode.F1))
         {
             ResetWorld(Mode.Creative);
@@ -36,6 +35,11 @@ public class FestivalManager : MonoBehaviour
         {
             timeLeft = inactiveTime;
             prevMousePosition = Input.mousePosition;
+
+            if (isShowingHint)
+            {
+                SetHint(false);
+            }
         }
         else
         {
@@ -97,5 +101,20 @@ public class FestivalManager : MonoBehaviour
 
         // Start Host
         NetworkManager.Singleton.StartHost();
+        if (!isShowingHint)
+        {
+            SetHint(true);
+        }
+    }
+
+    private void SetHint(bool hint)
+    {
+        this.StopStartCoroutine(SetHintRoutine(hint), ref setHintCoroutine);
+    }
+    private IEnumerator SetHintRoutine(bool hint)
+    {
+        isShowingHint = hint;
+        yield return new WaitForSeconds(1f);
+        yield return hintCanvasGroup.FadeRoutine(hint, 1f, false);
     }
 }

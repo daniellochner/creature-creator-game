@@ -35,6 +35,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Game/Worlds/Custom/Scene/Custom.unity
     guid: c3bc3c3caa4fe904c9ebd2684e6d07e1
+  - enabled: 1
+    path: Assets/Game/Other/Temp.unity
+    guid: d681e7a347849d342bd36ebd4612a5dd
   m_configObjects:
     com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: 91e5edcd85026b14eb1ced287c97c6d3, type: 2}
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 33f6fc732009f9d498261ee006a9962f, type: 2}

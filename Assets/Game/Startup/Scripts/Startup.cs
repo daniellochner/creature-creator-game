@@ -152,7 +152,7 @@ namespace DanielLochner.Assets.CreatureCreator
             }
             else
             {
-                if (ShowIntro && !EducationManager.Instance.IsEducational)
+                if (ShowIntro)
                 {
                     Fader.FadeInOut(1f, delegate
                     {
