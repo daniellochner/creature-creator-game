@@ -11,7 +11,7 @@ namespace DanielLochner.Assets
     public class Fader : MonoBehaviourSingleton<Fader>
     {
         #region Fields
-        private static int maximumSortingOrder = 100;
+        private static int maximumSortingOrder = 9999;
 
         private CanvasGroup fadeCanvasGroup;
         #endregion

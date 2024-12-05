@@ -3656,7 +3656,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 99
+  m_SortingOrder: 9001
   m_TargetDisplay: 0
 --- !u!225 &1258148770
 CanvasGroup:
