@@ -183,11 +183,9 @@ public class CustomMapSceneLoader : MonoBehaviour
 
     void OnCustomMapLoadFailed(string reason)
 	{
-		Debug.Log("Custom map load failed " + reason);
-
 		loading.SetActive(false);
 		error.SetActive(true);
 
-		errorText.text = $"Custom map load failed: {reason}";
+		errorText.text = $"Error: {reason}";
 	}
 }

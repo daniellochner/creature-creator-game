@@ -150,6 +150,7 @@ namespace DanielLochner.Assets.CreatureCreator
                 if (load || upload)
                 {
                     customMapPath = commandLineArgs[i + 1];
+                    CustomMapLoader.IsUsingSDK = true;
                     break;
                 }
             }

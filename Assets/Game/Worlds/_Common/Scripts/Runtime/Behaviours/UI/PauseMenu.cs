@@ -30,10 +30,12 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public void Leave()
         {
-            var commandLineArgs = Environment.GetCommandLineArgs();
-            if (commandLineArgs.Length > 0 && commandLineArgs.Contains("-loadmap"))
+            if (CustomMapLoader.IsUsingSDK)
             {
-                Application.Quit();
+                ConfirmationDialog.Confirm(LocalizationUtility.Localize("mainmenu_quit_title"), LocalizationUtility.Localize("mainmenu_quit_message"), onYes: delegate
+                {
+                    Application.Quit();
+                });
             }
             else
             {

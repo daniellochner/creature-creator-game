@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 public static class CustomMapLoader
 {
 	public static bool IsCustomMapLoaded { get; private set; }
+    public static bool IsUsingSDK { get; set; }
+
 	//public static WorkshopMap LoadedCustomMap { get; private set; }
 
 	// we can't load the same asset bundle twice, or it gives an error.
