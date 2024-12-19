@@ -132,22 +132,38 @@ namespace DanielLochner.Assets.CreatureCreator
 
             bool load = false;
             bool upload = false;
-            if (commandLineArgs.Length > 0)
+            string customMapPath = null;
+            for (int i = 0; i < commandLineArgs.Length; i++)
             {
-                load = commandLineArgs.Contains("-loadmap");
-                upload = commandLineArgs.Contains("-uploadmap");
+                string arg = commandLineArgs[i];
+                switch (arg)
+                {
+                    case "-loadmap":
+                        load = true;
+                        break;
+
+                    case "-uploadmap":
+                        upload = true;
+                        break;
+                }
+                
+                if (load || upload)
+                {
+                    customMapPath = commandLineArgs[i + 1];
+                    break;
+                }
             }
 
             if (load || upload)
             {
                 if (load)
                 {
-                    LoadCustomMap("");
+                    LoadCustomMap(customMapPath);
                 }
                 else
                 if (upload)
                 {
-                    UploadCustomMap("");
+                    UploadCustomMap(customMapPath);
                 }
             }
             else
@@ -193,7 +209,7 @@ namespace DanielLochner.Assets.CreatureCreator
             bool spawnNPC = true;
             bool enablePVE = true;
             bool unlimited = false;
-            WorldManager.Instance.World = new WorldSP(mapName, mode, spawnNPC, enablePVE, unlimited);
+            WorldManager.Instance.World = new WorldSP(mapName, mode, spawnNPC, enablePVE, unlimited, path);
 
             // Set Connection Data
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = NetworkTransportPicker.Instance.GetTransport<UnityTransport>("localhost");

@@ -14,11 +14,6 @@ public static class CustomMapValidator
 			return false;
 		}
 
-		if(!CustomMapNetworkValidator.IsSceneValid(scene, out error))
-		{
-			return false;
-		}
-
 		if(!CustomMapErrorValidator.IsSceneValid(scene, out error))
 		{
 			return false;

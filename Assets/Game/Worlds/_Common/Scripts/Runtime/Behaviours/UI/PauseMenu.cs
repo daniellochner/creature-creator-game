@@ -1,6 +1,8 @@
 // Creature Creator - https://github.com/daniellochner/Creature-Creator
 // Copyright (c) Daniel Lochner
 
+using System;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -28,19 +30,27 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public void Leave()
         {
-            ConfirmationDialog.Confirm(LocalizationUtility.Localize("leave_title"), LocalizationUtility.Localize("leave_message"), onYes: delegate
+            var commandLineArgs = Environment.GetCommandLineArgs();
+            if (commandLineArgs.Length > 0 && commandLineArgs.Contains("-loadmap"))
             {
-                if (WorldManager.Instance.IsMultiplayer)
+                Application.Quit();
+            }
+            else
+            {
+                ConfirmationDialog.Confirm(LocalizationUtility.Localize("leave_title"), LocalizationUtility.Localize("leave_message"), onYes: delegate
                 {
-                    NetworkConnectionManager.Instance.Leave();
-                }
-                else
-                {
-                    NetworkShutdownManager.Instance.Shutdown();
-                    SceneManager.LoadScene("MainMenu");
-                }
-                MusicManager.Instance.FadeTo(null, 0f, 1f);
-            });
+                    if (WorldManager.Instance.IsMultiplayer)
+                    {
+                        NetworkConnectionManager.Instance.Leave();
+                    }
+                    else
+                    {
+                        NetworkShutdownManager.Instance.Shutdown();
+                        SceneManager.LoadScene("MainMenu");
+                    }
+                    MusicManager.Instance.FadeTo(null, 0f, 1f);
+                });
+            }
         }
 
         public override void Open(bool instant = false)

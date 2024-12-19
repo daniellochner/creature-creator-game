@@ -40,7 +40,6 @@ public static class CustomMapSecurityValidator
 		typeof(HorizontalLayoutGroup),
 		typeof(CanvasGroup),
 		typeof(TMP_Text),
-		typeof(CameraFacingBillboard),
 		typeof(Terrain),
 		typeof(PlatformProxy),
 	};

@@ -367,6 +367,7 @@ namespace DanielLochner.Assets.CreatureCreator
                 string hostPlayerId = AuthenticationService.Instance.PlayerId;
                 string kickedPlayers = "";
                 string institutionId = EducationManager.Instance.InstitutionId;
+                string customMapId = "";
 
                 // Check Premium
                 if (!PremiumManager.Data.IsPremium)
@@ -458,7 +459,8 @@ namespace DanielLochner.Assets.CreatureCreator
                         { "spawnPoint", new DataObject(DataObject.VisibilityOptions.Public, spawnPoint.ToString()) },
                         { "hostPlayerId", new DataObject(DataObject.VisibilityOptions.Public, hostPlayerId) },
                         { "kickedPlayers", new DataObject(DataObject.VisibilityOptions.Public, kickedPlayers) },
-                        { "institutionId", new DataObject(DataObject.VisibilityOptions.Public, institutionId) }
+                        { "institutionId", new DataObject(DataObject.VisibilityOptions.Public, institutionId) },
+                        { "customMapId", new DataObject(DataObject.VisibilityOptions.Public, customMapId) }
                     },
                     Player = new LobbyPlayer(AuthenticationService.Instance.PlayerId, joinCode, null, allocationId)
                 };
