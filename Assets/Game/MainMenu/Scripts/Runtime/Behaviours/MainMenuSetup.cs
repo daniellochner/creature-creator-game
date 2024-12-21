@@ -32,11 +32,8 @@ namespace DanielLochner.Assets.CreatureCreator
                 // Countdown
                 yield return CountdownManager.Instance.Setup(false);
 
-                // Shop
-                if (!PremiumManager.Data.IsPremium)
-                {
-                    yield return ShopManager.Instance.Setup();
-                }
+                // Promo
+                yield return PromoManager.Instance.Setup(false);
             }
         }
         #endregion

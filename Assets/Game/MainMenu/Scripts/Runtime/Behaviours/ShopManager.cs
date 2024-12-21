@@ -8,6 +8,10 @@ namespace DanielLochner.Assets.CreatureCreator
 {
     public class ShopManager : MonoBehaviourSingleton<ShopManager>
     {
+        #region Fields
+        [SerializeField] private GameObject shopButton;
+        #endregion
+
         #region Properties
         public int ShownAttempts
         {
@@ -17,6 +21,11 @@ namespace DanielLochner.Assets.CreatureCreator
         #endregion
 
         #region Methods
+        private void Start()
+        {
+            shopButton.SetActive(!SettingsManager.Instance.ShowTutorial && ShownAttempts > 5);
+        }
+
         public IEnumerator Setup()
         {
             if (ShownAttempts % 10 == 1)
