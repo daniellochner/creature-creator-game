@@ -7,9 +7,9 @@ namespace DanielLochner.Assets.CreatureCreator
     {
         public bool Unlimited { get; private set; }
 
-        public WorldSP(string mapName, Mode mode, bool spawnNPC, bool enablePVE, bool unlimited, string customMapPath = "")
+        public WorldSP(Map map, Mode mode, bool spawnNPC, bool enablePVE, bool unlimited, string customMapPath = "")
         {
-            MapName = mapName;
+            MapName = map.ToString();
             Mode = mode;
             SpawnNPC = spawnNPC;
             EnablePVE = enablePVE;

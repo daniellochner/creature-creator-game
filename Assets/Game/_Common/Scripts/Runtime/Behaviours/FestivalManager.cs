@@ -89,11 +89,11 @@ public class FestivalManager : MonoBehaviour
         }
 
         // Setup World
-        string mapName = "Island";
+        Map map = Map.Island;
         bool spawnNPC = true;
         bool enablePVE = true;
         bool unlimited = false;
-        WorldManager.Instance.World = new WorldSP(mapName, mode, spawnNPC, enablePVE, unlimited);
+        WorldManager.Instance.World = new WorldSP(map, mode, spawnNPC, enablePVE, unlimited);
 
         // Set Connection Data
         NetworkManager.Singleton.NetworkConfig.NetworkTransport = NetworkTransportPicker.Instance.GetTransport<UnityTransport>("localhost");

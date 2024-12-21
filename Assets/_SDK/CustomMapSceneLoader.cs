@@ -40,7 +40,8 @@ public class CustomMapSceneLoader : MonoBehaviour
 
 	void Start()
 	{
-		CustomMapLoader.Load($"{WorldManager.Instance.World.CustomMapPath}\\Map");
+        string path = Path.Combine(WorldManager.Instance.World.CustomMapPath, "Map");
+		CustomMapLoader.Load(path);
 
 		/*if(MapManager.Instance.TryGetMapByID(MyceliumNetwork.GetLobbyData<string>(LobbyData.Map), out IMap map))
 		{

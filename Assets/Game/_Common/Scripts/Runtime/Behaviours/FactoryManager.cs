@@ -23,6 +23,9 @@ namespace DanielLochner.Assets.CreatureCreator
 
 
         public List<string> LoadedWorkshopCreatures { get; } = new();
+        public List<string> LoadedWorkshopMaps { get; } = new();
+        public List<string> LoadedWorkshopBodyParts { get; } = new();
+        public List<string> LoadedWorkshopPatterns { get; } = new();
 
         public bool IsDownloadingItem { get; private set; }
         public bool IsDownloadingUsername { get; private set; }
@@ -31,7 +34,7 @@ namespace DanielLochner.Assets.CreatureCreator
         protected override void Start()
         {
             base.Start();
-            LoadWorkshopCreatures();
+            LoadWorkshopItems();
         }
 
         public void ViewWorkshop()
@@ -364,13 +367,8 @@ namespace DanielLochner.Assets.CreatureCreator
                 string name = obj["name"].Value<string>();
                 string data = obj["data"].Value<string>();
 
-                string creaturesDir = Path.Combine(Application.persistentDataPath, "creature");
-                if (!Directory.Exists(creaturesDir))
-                {
-                    Directory.CreateDirectory(creaturesDir);
-                }
-
-                string creaturePath = Path.Combine(creaturesDir, $"{name}.dat");
+                SystemUtility.TryCreateDirectory(CCConstants.CreaturesDir);
+                string creaturePath = Path.Combine(CCConstants.CreaturesDir, $"{name}.dat");
                 File.WriteAllText(creaturePath, data);
 
                 onDownloaded?.Invoke(name);
@@ -443,43 +441,91 @@ namespace DanielLochner.Assets.CreatureCreator
         }
 
 
-        public void LoadWorkshopCreatures()
+        public void LoadWorkshopItems()
         {
             if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
             {
 #if UNITY_STANDALONE
                 LoadedWorkshopCreatures.Clear();
+                LoadedWorkshopMaps.Clear();
+                LoadedWorkshopBodyParts.Clear();
+                LoadedWorkshopPatterns.Clear();
 
                 uint n = SteamUGC.GetNumSubscribedItems();
                 if (n > 0)
                 {
-                    string creaturesDir = Path.Combine(Application.persistentDataPath, "creature");
-                    if (!Directory.Exists(creaturesDir))
-                    {
-                        Directory.CreateDirectory(creaturesDir);
-                    }
+                    SystemUtility.TryCreateDirectory(CCConstants.CreaturesDir);
+                    SystemUtility.TryCreateDirectory(CCConstants.MapsDir);
+                    SystemUtility.TryCreateDirectory(CCConstants.BodyPartsDir);
+                    SystemUtility.TryCreateDirectory(CCConstants.PatternsDir);
 
                     PublishedFileId_t[] items = new PublishedFileId_t[n];
                     SteamUGC.GetSubscribedItems(items, n);
 
                     foreach (PublishedFileId_t fileId in items)
                     {
-                        if (SteamUGC.GetItemInstallInfo(fileId, out ulong sizeOnDisk, out string folder, 1024, out uint timeStamp) && Directory.Exists(folder))
+                        if (SteamUGC.GetItemInstallInfo(fileId, out ulong sizeOnDisk, out string itemPath, 1024, out uint timeStamp) && Directory.Exists(itemPath))
                         {
-                            string src = Directory.GetFiles(folder)[0];
-                            string dst = Path.Combine(creaturesDir, Path.GetFileName(src));
-                            if (!File.Exists(dst))
+                            string itemId = Path.GetFileNameWithoutExtension(itemPath);
+                            if (TryGetItemType(itemPath, out ItemType type))
                             {
-                                File.Copy(src, dst);
-                            }
+                                switch (type)
+                                {
+                                    case ItemType.Creature:
+                                        string creaturePathSrc = Directory.GetFiles(itemPath)[0];
+                                        string creaturePathDst = Path.Combine(CCConstants.CreaturesDir, Path.GetFileName(creaturePathSrc));
+                                        SystemUtility.CopyFile(creaturePathSrc, creaturePathDst);
+                                        string creatureName = Path.GetFileNameWithoutExtension(creaturePathSrc);
+                                        LoadedWorkshopCreatures.Add(creatureName);
+                                        break;
 
-                            string name = Path.GetFileNameWithoutExtension(src);
-                            LoadedWorkshopCreatures.Add(name);
+                                    case ItemType.Map:
+                                        string mapPathDst = Path.Combine(CCConstants.MapsDir, itemId);
+                                        SystemUtility.CopyDirectory(itemPath, mapPathDst, true);
+                                        LoadedWorkshopMaps.Add(itemId);
+                                        break;
+
+                                    case ItemType.BodyPart:
+                                        string bodyPartPathDst = Path.Combine(CCConstants.BodyPartsDir, itemId);
+                                        SystemUtility.CopyDirectory(itemPath, bodyPartPathDst, true);
+                                        LoadedWorkshopBodyParts.Add(itemId);
+                                        break;
+
+                                    case ItemType.Pattern:
+                                        string patternPathDst = Path.Combine(CCConstants.PatternsDir, itemId);
+                                        SystemUtility.CopyDirectory(itemPath, patternPathDst, true);
+                                        LoadedWorkshopPatterns.Add(itemId);
+                                        break;
+                                }
+                            }
                         }
                     }
                 }
 #endif
             }
+        }
+
+        public bool TryGetItemType(string path, out ItemType type)
+        {
+            var files = Directory.GetFiles(path);
+            if (files.Length == 1) // one data file for creature
+            {
+                type = ItemType.Creature;
+            }
+            else
+            {
+                type = ItemType.Map;
+            }
+            return true;
+        }
+
+
+        public enum ItemType
+        {
+            Creature,
+            Map,
+            BodyPart,
+            Pattern
         }
     }
 }

@@ -108,7 +108,7 @@ namespace DanielLochner.Assets.CreatureCreator
         }
         public bool IsMapUnlocked(Map map)
         {
-            return Data.UnlockedMaps.Contains(map) || (map == Map.Island);
+            return Data.UnlockedMaps.Contains(map) || (map == Map.Island || map == Map.Custom);
         }
 
         // Reached Peaks

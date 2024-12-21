@@ -116,14 +116,14 @@ namespace DanielLochner.Assets
 
         #region Structs
         [Serializable]
-        public struct Option
+        public class Option
         {
             public string Id;
             public string Fallback;
             public UnityEvent OnSelected;
             public UnityEvent OnDeselected;
 
-            public string Name
+            public virtual string Name
             {
                 get
                 {

@@ -62,10 +62,9 @@ namespace DanielLochner.Assets.CreatureCreator
             switch (source)
             {
                 case SpawnerSource.Local:
-                    string creaturesDir = Path.Combine(Application.persistentDataPath, "creature");
-                    if (Directory.Exists(creaturesDir))
+                    if (Directory.Exists(CCConstants.CreaturesDir))
                     {
-                        string[] creaturePaths = Directory.GetFiles(creaturesDir);
+                        string[] creaturePaths = Directory.GetFiles(CCConstants.CreaturesDir);
                         creaturePaths.Shuffle();
                         for (int i = 0; i < creaturePaths.Length && i < 10; i++)
                         {

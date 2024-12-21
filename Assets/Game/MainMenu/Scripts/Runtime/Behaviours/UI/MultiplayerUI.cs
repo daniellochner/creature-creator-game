@@ -50,6 +50,7 @@ namespace DanielLochner.Assets.CreatureCreator
         [SerializeField] private TMP_InputField passwordInputField;
         [SerializeField] private OptionSelector mapOS;
         [SerializeField] private OptionSelector modeOS;
+        [SerializeField] private OptionSelector customIdOS;
         [SerializeField] private OptionSelector spawnPointOS;
         [SerializeField] private CanvasGroup spawnPointCG;
         [SerializeField] private OptionSelector visibilityOS;
@@ -180,7 +181,7 @@ namespace DanielLochner.Assets.CreatureCreator
 
         private void Setup()
         {
-            mapOS.SetupUsingEnum<Map>(Map.ComingSoon);
+            mapOS.SetupUsingEnum<Map>(Map.ComingSoon, Map.Custom);
             mapOS.OnSelected.AddListener(delegate (int option)
             {
                 int spawnPoints = DatabaseManager.GetDatabaseEntry<MapData>("Maps", ((Map)option).ToString())?.SpawnPoints ?? 1;
@@ -613,7 +614,7 @@ namespace DanielLochner.Assets.CreatureCreator
         
         private void UpdateMap()
         {
-            mapUI.Setup(mapOS, modeOS);
+            mapUI.Setup(mapOS, modeOS, customIdOS);
         }
         private void UpdateStatus(string status, Color color, float duration = 5)
         {

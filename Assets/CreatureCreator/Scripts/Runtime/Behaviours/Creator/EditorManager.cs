@@ -115,7 +115,6 @@ namespace DanielLochner.Assets.CreatureCreator
 
         private List<CreatureUI> creaturesUI = new List<CreatureUI>();
         private List<PatternUI> patternsUI = new List<PatternUI>();
-        private string creaturesDirectory = null; // null because Application.persistentDataPath cannot be called during serialization.
         private bool isVisible = true, isEditing = true;
         private Coroutine fadeEditorCoroutine, fadePaginationCoroutine, fadeOptionsCoroutine;
         private CreatureUI currentCreatureUI;
@@ -308,12 +307,8 @@ namespace DanielLochner.Assets.CreatureCreator
             });
 
             // Options
-            creaturesDirectory = Path.Combine(Application.persistentDataPath, "creature");
-            if (!Directory.Exists(creaturesDirectory))
-            {
-                Directory.CreateDirectory(creaturesDirectory);
-            }
-            foreach (string creaturePath in Directory.GetFiles(creaturesDirectory))
+            SystemUtility.TryCreateDirectory(CCConstants.CreaturesDir);
+            foreach (string creaturePath in Directory.GetFiles(CCConstants.CreaturesDir))
             {
                 if (creaturePath.EndsWith(".dat"))
                 {
@@ -590,7 +585,7 @@ namespace DanielLochner.Assets.CreatureCreator
             }
             creatureUI.SelectToggle.SetIsOnWithoutNotify(true);
 
-            SaveUtility.Save(Path.Combine(creaturesDirectory, $"{creatureData.Name}.dat"), creatureData, creatureEncryptionKey.Value);
+            SaveUtility.Save(Path.Combine(CCConstants.CreaturesDir, $"{creatureData.Name}.dat"), creatureData, creatureEncryptionKey.Value);
 
             Creature.Editor.LoadedCreature = creatureData.Name;
             Creature.Editor.IsDirty = false;
@@ -610,7 +605,7 @@ namespace DanielLochner.Assets.CreatureCreator
             }
             else return;
 
-            CreatureData creatureData = SaveUtility.Load<CreatureData>(Path.Combine(creaturesDirectory, $"{creatureName}.dat"), creatureEncryptionKey.Value);
+            CreatureData creatureData = SaveUtility.Load<CreatureData>(Path.Combine(CCConstants.CreaturesDir, $"{creatureName}.dat"), creatureEncryptionKey.Value);
             if (CanLoadCreature(creatureData, out string errorTitle, out string errorMessage))
             {
                 if (IsValidName(creatureData.Name))
@@ -760,7 +755,7 @@ namespace DanielLochner.Assets.CreatureCreator
                 else
                 if (SystemUtility.IsDevice(DeviceType.Handheld))
                 {
-                    NativeFilePicker.ExportFile(Path.Combine(creaturesDirectory, $"{creatureName}.dat"));
+                    NativeFilePicker.ExportFile(Path.Combine(CCConstants.CreaturesDir, $"{creatureName}.dat"));
                 }
             }
             else
@@ -816,7 +811,7 @@ namespace DanielLochner.Assets.CreatureCreator
                 return;
             }
 
-            string data = Path.Combine(creaturesDirectory, $"{name}.dat");
+            string data = Path.Combine(CCConstants.CreaturesDir, $"{name}.dat");
             CreatureData creatureData = SaveUtility.Load<CreatureData>(data, creatureEncryptionKey.Value);
             if (creatureData != null)
             {
@@ -849,7 +844,7 @@ namespace DanielLochner.Assets.CreatureCreator
                     $"Metallic: {creatureData.Metallic}\n" +
                     $"Shine: {creatureData.Shine}";
 
-                string preview = Path.Combine(creaturesDirectory, $"{name}.png");
+                string preview = Path.Combine(CCConstants.CreaturesDir, $"{name}.png");
                 Creature.Photographer.TakePhoto(1024, delegate (Texture2D photo)
                 {
                     File.WriteAllBytes(preview, photo.EncodeToPNG());
@@ -1295,7 +1290,7 @@ namespace DanielLochner.Assets.CreatureCreator
                 {
                     creaturesUI.Remove(creatureUI);
                     Destroy(creatureUI.gameObject);
-                    File.Delete(Path.Combine(creaturesDirectory, $"{creatureName}.dat"));
+                    File.Delete(Path.Combine(CCConstants.CreaturesDir, $"{creatureName}.dat"));
 
                     if (creatureName.Equals(Creature.Editor.LoadedCreature))
                     {
@@ -1738,7 +1733,7 @@ namespace DanielLochner.Assets.CreatureCreator
         }
         private void UpdateLoadableCreatureUI(CreatureUI creatureUI)
         {
-            CreatureData creatureData = SaveUtility.Load<CreatureData>(Path.Combine(creaturesDirectory, $"{creatureUI.name}.dat"), creatureEncryptionKey.Value);
+            CreatureData creatureData = SaveUtility.Load<CreatureData>(Path.Combine(CCConstants.CreaturesDir, $"{creatureUI.name}.dat"), creatureEncryptionKey.Value);
 
             bool canLoadCreature = CanLoadCreature(creatureData, out string errorTitle, out string errorMessage);
 

@@ -1,3 +1,4 @@
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,14 +17,15 @@ namespace DanielLochner.Assets.CreatureCreator
         [SerializeField] private TextMeshProUGUI timeText;
         [SerializeField] private SimpleScrollSnap.SimpleScrollSnap leaderboardsScrollSnap;
 
-        private OptionSelector mapOS, modeOS;
+        private OptionSelector mapOS, modeOS, customIdOS;
         #endregion
 
         #region Methods
-        public void Setup(OptionSelector mapOS, OptionSelector modeOS)
+        public void Setup(OptionSelector mapOS, OptionSelector modeOS, OptionSelector customIdOS)
         {
             this.mapOS = mapOS;
             this.modeOS = modeOS;
+            this.customIdOS = customIdOS;
 
             OnMapChanged(mapOS.Selected);
             OnModeChanged(modeOS.Selected);
@@ -47,7 +49,24 @@ namespace DanielLochner.Assets.CreatureCreator
         public void OnMapChanged(int option)
         {
             Map map = (Map)option;
-            screenshotImg.sprite = screenshots[option];
+            if (map == Map.Custom)
+            {
+                CustomIdOption customIdOption = (CustomIdOption)customIdOS.Options[customIdOS.Selected];
+                byte[] thumbnailBytes = File.ReadAllBytes(Path.Combine(CCConstants.MapsDir, customIdOption.MapId, "thumb.png"));
+                Texture2D thumbnailTex = new Texture2D(1920, 1080);
+                if (ImageConversion.LoadImage(thumbnailTex, thumbnailBytes))
+                {
+                    screenshotImg.sprite = Sprite.Create(thumbnailTex, new Rect(0, 0, thumbnailTex.width, thumbnailTex.height), new Vector2(0.5f, 0.5f));
+                }
+                else
+                {
+                    screenshotImg.sprite = null;
+                }
+            }
+            else
+            {
+                screenshotImg.sprite = screenshots[option];
+            }
 
             UpdatePadlock();
             UpdateTime();
@@ -68,6 +87,11 @@ namespace DanielLochner.Assets.CreatureCreator
             if (map == Map.ComingSoon)
             {
                 unlocked = false;
+            }
+            else
+            if (map == Map.Custom)
+            {
+                unlocked = true;
             }
             else
             {

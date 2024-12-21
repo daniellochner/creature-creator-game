@@ -2,6 +2,8 @@
 // Copyright (c) Daniel Lochner
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using TMPro;
 using Unity.Netcode;
@@ -17,11 +19,14 @@ namespace DanielLochner.Assets.CreatureCreator
         [SerializeField] private Menu singleplayerMenu;
         [SerializeField] private OptionSelector mapOS;
         [SerializeField] private OptionSelector modeOS;
+        [SerializeField] private OptionSelector customIdOS;
         [SerializeField] private Toggle npcToggle;
         [SerializeField] private Toggle pveToggle;
         [SerializeField] private CanvasGroup pveCG;
         [SerializeField] private Toggle unlimitedToggle;
         [SerializeField] private CanvasGroup unlimitedCG;
+        [SerializeField] private CanvasGroup customIdsCG;
+        [SerializeField] private GameObject customIdsGO;
         [SerializeField] private TextMeshProUGUI statusText;
         [SerializeField] private BlinkingText statusBT;
         [SerializeField] private MapUI mapUI;
@@ -51,16 +56,50 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public void Setup()
         {
-            mapOS.SetupUsingEnum<Map>(Map.ComingSoon);
+            var customMapPaths = Directory.GetDirectories(CCConstants.MapsDir);
+            var ignoredMaps = new List<Map>()
+            {
+                Map.ComingSoon
+            };
+            var hasCustom = customMapPaths.Length > 0;
+            if (!hasCustom)
+            {
+                ignoredMaps.Add(Map.Custom);
+            }
+            mapOS.SetupUsingEnum<Map>(ignoredMaps.ToArray());
             mapOS.Select(Map.Island, false);
+            mapOS.OnSelected.AddListener(delegate (int option)
+            {
+                bool showCustomIds = (Map)option == Map.Custom;
+                customIdsCG.interactable = showCustomIds;
+                customIdsCG.alpha = showCustomIds ? 1f : 0.25f;
+            });
             singleplayerMenu.OnOpen += UpdateMap;
+
+            customIdsGO.SetActive(hasCustom);
+            if (hasCustom)
+            {
+                foreach (var customMapPath in customMapPaths)
+                {
+                    UnsanitizedMapConfigData config = SaveUtility.Load<UnsanitizedMapConfigData>(Path.Combine(customMapPath, "config.json"));
+
+                    string customMapId = Path.GetFileNameWithoutExtension(customMapPath);
+                    string customMapName = config.Name;
+
+                    customIdOS.Options.Add(new CustomIdOption()
+                    {
+                        Id = $"{customMapId}#{customMapName}",
+                    });
+                }
+                customIdOS.Select(0, false);
+            }
 
             modeOS.SetupUsingEnum<Mode>();
             modeOS.OnSelected.AddListener(delegate (int option)
             {
-                bool show = option == 1;
-                unlimitedCG.interactable = show;
-                unlimitedCG.alpha = show ? 1f : 0.25f;
+                bool showUnlimited = option == 1;
+                unlimitedCG.interactable = showUnlimited;
+                unlimitedCG.alpha = showUnlimited ? 1f : 0.25f;
             });
             modeOS.Select(Mode.Adventure, false);
 
@@ -76,12 +115,20 @@ namespace DanielLochner.Assets.CreatureCreator
             try
             {
                 // Setup World
-                string mapName = ((Map)mapOS.Selected).ToString();
+                Map map = (Map)mapOS.Selected;
                 Mode mode = (Mode)modeOS.Selected;
                 bool spawnNPC = npcToggle.isOn;
                 bool enablePVE = pveToggle.isOn;
                 bool unlimited = unlimitedToggle.isOn && (mode == Mode.Creative);
-                WorldManager.Instance.World = new WorldSP(mapName, mode, spawnNPC, enablePVE, unlimited);
+
+                string customMapPath = "";
+                if (map == Map.Custom)
+                {
+                    CustomIdOption customIdOption = (CustomIdOption)customIdOS.Options[customIdOS.Selected];
+                    customMapPath = Path.Combine(CCConstants.MapsDir, customIdOption.MapId);
+                }
+
+                WorldManager.Instance.World = new WorldSP(map, mode, spawnNPC, enablePVE, unlimited, customMapPath);
 
                 // Check Premium
                 if (unlimited && !PremiumManager.Data.IsPremium)
@@ -90,14 +137,13 @@ namespace DanielLochner.Assets.CreatureCreator
                 }
 
                 // Check Map
-                Map map = Enum.Parse<Map>(mapName);
                 if (map == Map.ComingSoon)
                 {
                     throw new Exception(LocalizationUtility.Localize("mainmenu_map-coming-soon"));
                 }
                 if ((mode == Mode.Adventure) && !ProgressManager.Instance.IsMapUnlocked(map))
                 {
-                    throw new Exception(LocalizationUtility.Localize("mainmenu_map-locked", LocalizationUtility.Localize($"option_map_{mapName}".ToLower())));
+                    throw new Exception(LocalizationUtility.Localize("mainmenu_map-locked", LocalizationUtility.Localize($"option_map_{map}".ToLower())));
                 }
 
                 // Set Connection Data
@@ -120,7 +166,7 @@ namespace DanielLochner.Assets.CreatureCreator
 
         private void UpdateMap()
         {
-            mapUI.Setup(mapOS, modeOS);
+            mapUI.Setup(mapOS, modeOS, customIdOS);
         }
         private void UpdateStatus(string status, Color color, float duration = 5)
         {

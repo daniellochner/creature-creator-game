@@ -50,7 +50,7 @@ namespace DanielLochner.Assets.CreatureCreator
             yield return LocalizeRoutine();
             yield return LinkRoutine();
             yield return AuthenticateRoutine();
-            yield return WaitRoutine();
+            yield return EnterRoutine();
         }
         private void Update()
         {
@@ -112,7 +112,7 @@ namespace DanielLochner.Assets.CreatureCreator
                 }
             }
         }
-        private IEnumerator WaitRoutine()
+        private IEnumerator EnterRoutine()
         {
 #if UNITY_IOS
             if (ATTrackingStatusBinding.GetAuthorizationTrackingStatus() == ATTrackingStatusBinding.AuthorizationTrackingStatus.NOT_DETERMINED)
@@ -120,14 +120,7 @@ namespace DanielLochner.Assets.CreatureCreator
                 ATTrackingStatusBinding.RequestAuthorizationTracking();
             }
 #endif
-            SetPromptId(SystemUtility.IsDevice(DeviceType.Handheld) ? "startup_tap-to-start" : "startup_press-any-button");
-            yield return new WaitUntil(() => Input.anyKeyDown && !CanvasUtility.IsPointerOverUI);
 
-            OnStartup();
-        }
-
-        private void OnStartup()
-        {
             string[] commandLineArgs = Environment.GetCommandLineArgs();
 
             bool load = false;
@@ -146,7 +139,7 @@ namespace DanielLochner.Assets.CreatureCreator
                         upload = true;
                         break;
                 }
-                
+
                 if (load || upload)
                 {
                     customMapPath = commandLineArgs[i + 1];
@@ -155,20 +148,43 @@ namespace DanielLochner.Assets.CreatureCreator
                 }
             }
 
-            if (load || upload)
+            if (load)
             {
-                if (load)
-                {
-                    LoadCustomMap(customMapPath);
-                }
-                else
-                if (upload)
-                {
-                    UploadCustomMap(customMapPath);
-                }
+                // Wait
+                SetPromptId("startup_loading");
+                yield return new WaitForSeconds(1f);
+
+                // Setup World
+                Map map = Map.Custom;
+                Mode mode = Mode.Creative;
+                bool spawnNPC = true;
+                bool enablePVE = true;
+                bool unlimited = false;
+                WorldManager.Instance.World = new WorldSP(map, mode, spawnNPC, enablePVE, unlimited, customMapPath);
+
+                // Set Connection Data
+                NetworkManager.Singleton.NetworkConfig.NetworkTransport = NetworkTransportPicker.Instance.GetTransport<UnityTransport>("localhost");
+                NetworkManager.Singleton.NetworkConfig.ConnectionData = Encoding.UTF8.GetBytes(JsonUtility.ToJson(new ConnectionData("", "", "", ProgressManager.Data.Level)));
+
+                // Start
+                NetworkManager.Singleton.StartHost();
+                OnEntered();
+            }
+            else
+            if (upload)
+            {
+                // Upload
+                SetPromptId("startup_uploading");
+
+
+                SetPromptId("startup_uploaded");
+                yield return new WaitForSeconds(1f);
             }
             else
             {
+                SetPromptId(SystemUtility.IsDevice(DeviceType.Handheld) ? "startup_tap-to-start" : "startup_press-any-button");
+                yield return new WaitUntil(() => Input.anyKeyDown && !CanvasUtility.IsPointerOverUI);
+
                 if (ShowIntro)
                 {
                     Fader.FadeInOut(1f, delegate
@@ -181,11 +197,8 @@ namespace DanielLochner.Assets.CreatureCreator
                 {
                     LoadingManager.Instance.Load("MainMenu");
                 }
+                OnEntered();
             }
-
-            MusicManager.Instance.FadeTo(null);
-            logoAnimator.SetTrigger("Hide");
-            enterAudioSource.Play();
         }
 
         private void SetInstitutionIdInputField(bool isActive)
@@ -202,28 +215,12 @@ namespace DanielLochner.Assets.CreatureCreator
             currentPromptId = null;
         }
 
-        private void LoadCustomMap(string path)
+        private void OnEntered()
         {
-            // Setup World
-            string mapName = "Custom";
-            Mode mode = Mode.Creative;
-            bool spawnNPC = true;
-            bool enablePVE = true;
-            bool unlimited = false;
-            WorldManager.Instance.World = new WorldSP(mapName, mode, spawnNPC, enablePVE, unlimited, path);
-
-            // Set Connection Data
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport = NetworkTransportPicker.Instance.GetTransport<UnityTransport>("localhost");
-            NetworkManager.Singleton.NetworkConfig.ConnectionData = Encoding.UTF8.GetBytes(JsonUtility.ToJson(new ConnectionData("", "", "", ProgressManager.Data.Level)));
-
-            // Start Host
-            NetworkManager.Singleton.StartHost();
+            MusicManager.Instance.FadeTo(null);
+            logoAnimator.SetTrigger("Hide");
+            enterAudioSource.Play();
         }
-		private void UploadCustomMap(string path)
-		{
-
-		}
-
         private void OnLocaleChanged(Locale locale)
         {
             if (currentPromptId != null)

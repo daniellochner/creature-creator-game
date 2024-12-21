@@ -52,7 +52,7 @@ namespace DanielLochner.Assets.CreatureCreator
             Mode = (Mode)lobby.TryGetValue<int>("mode");
             MapId = lobby.TryGetValue<string>("mapId");
             SpawnPoint = lobby.TryGetValue<int>("spawnPoint");
-            CustomMapPath = Path.Combine(Application.persistentDataPath, $@"maps\{lobby.TryGetValue<string>("customMapId")}");
+            CustomMapPath = Path.Combine(CCConstants.MapsDir, $"{lobby.TryGetValue<string>("customMapId")}");
 
             HostPlayerId = lobby.TryGetValue<string>("hostPlayerId");
             KickedPlayers = new List<string>(lobby.TryGetValue("kickedPlayers", "").Split(","));
