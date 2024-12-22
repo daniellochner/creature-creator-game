@@ -145,7 +145,7 @@ namespace DanielLochner.Assets.CreatureCreator
                     }
                 }
 
-                questText.text = $"<size=7>{LocalizationUtility.Localize(description)}: ${experience}</size><br><size=14>{TextUtility.FormatError(current, current < required)}/{required}</size>";
+                questText.text = $"<size=7>{LocalizationUtility.Localize(description)}: {experience}XP</size><br><size=14>{TextUtility.FormatError(current, current < required)}/{required}</size>";
             }
             else
             {
