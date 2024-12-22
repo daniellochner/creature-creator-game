@@ -107,7 +107,7 @@ namespace DanielLochner.Assets
         [ClientRpc]
         private void DieClientRpc(DamageReason reason, string inflicter)
         {
-            OnDie?.Invoke(reason, inflicter);
+            this.InvokeAtEndOfFrame(() => OnDie?.Invoke(reason, inflicter));
         }
 
         [ContextMenu("Take Random Damage")]
