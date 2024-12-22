@@ -1,6 +1,6 @@
 using DanielLochner.Assets;
 
-public class CustomIdOption : OptionSelector.Option
+public class CustomMapOption : OptionSelector.Option
 {
     public override string Name => MapName;
 

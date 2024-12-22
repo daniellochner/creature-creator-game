@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.IO;
 using System.Linq;
 using System.Text;
 using TMPro;
@@ -125,7 +126,6 @@ namespace DanielLochner.Assets.CreatureCreator
 
             bool load = false;
             bool upload = false;
-            string customMapPath = null;
             for (int i = 0; i < commandLineArgs.Length; i++)
             {
                 string arg = commandLineArgs[i];
@@ -142,8 +142,7 @@ namespace DanielLochner.Assets.CreatureCreator
 
                 if (load || upload)
                 {
-                    customMapPath = commandLineArgs[i + 1];
-                    CustomMapLoader.IsUsingSDK = true;
+                    CustomMapLoader.CustomMapPath = commandLineArgs[i + 1];
                     break;
                 }
             }
@@ -160,7 +159,7 @@ namespace DanielLochner.Assets.CreatureCreator
                 bool spawnNPC = true;
                 bool enablePVE = true;
                 bool unlimited = false;
-                WorldManager.Instance.World = new WorldSP(map, mode, spawnNPC, enablePVE, unlimited, customMapPath);
+                WorldManager.Instance.World = new WorldSP(map, mode, spawnNPC, enablePVE, unlimited);
 
                 // Set Connection Data
                 NetworkManager.Singleton.NetworkConfig.NetworkTransport = NetworkTransportPicker.Instance.GetTransport<UnityTransport>("localhost");

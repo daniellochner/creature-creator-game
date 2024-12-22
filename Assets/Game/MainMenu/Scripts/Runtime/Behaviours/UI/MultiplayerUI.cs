@@ -20,10 +20,7 @@ using System.Security.Cryptography;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.RemoteConfig;
 using LobbyPlayer = Unity.Services.Lobbies.Models.Player;
-
-#if UNITY_STANDALONE
-using Steamworks;
-#endif
+using System.IO;
 
 namespace DanielLochner.Assets.CreatureCreator
 {
@@ -50,7 +47,7 @@ namespace DanielLochner.Assets.CreatureCreator
         [SerializeField] private TMP_InputField passwordInputField;
         [SerializeField] private OptionSelector mapOS;
         [SerializeField] private OptionSelector modeOS;
-        [SerializeField] private OptionSelector customIdOS;
+        [SerializeField] private OptionSelector customMapOS;
         [SerializeField] private OptionSelector spawnPointOS;
         [SerializeField] private CanvasGroup spawnPointCG;
         [SerializeField] private OptionSelector visibilityOS;
@@ -286,6 +283,61 @@ namespace DanielLochner.Assets.CreatureCreator
                     throw new Exception(LocalizationUtility.Localize("network_status_kicked"));
                 }
 
+                // Check Mods
+                if (world.IsCustom)
+                {
+                    string reqMapId = "";
+                    if (!FactoryManager.Instance.LoadedWorkshopMaps.Contains(world.CustomMapId))
+                    {
+                        reqMapId = world.CustomMapId;
+                    }
+                    bool needMap = reqMapId != "";
+
+                    var reqBodyPartIds = new List<string>();
+                    foreach (var bodyPartId in world.CustomBodyPartIds)
+                    {
+                        if (!FactoryManager.Instance.LoadedWorkshopBodyParts.Contains(bodyPartId))
+                        {
+                            reqBodyPartIds.Add(bodyPartId);
+                        }
+                    }
+                    bool needBodyPart = reqBodyPartIds.Count > 0;
+
+                    var reqPatternIds = new List<string>();
+                    foreach (var patternId in world.CustomPatternIds)
+                    {
+                        if (!FactoryManager.Instance.LoadedWorkshopPatterns.Contains(patternId))
+                        {
+                            reqPatternIds.Add(patternId);
+                        }
+                    }
+                    bool needPattern = reqPatternIds.Count > 0;
+
+                    if (needMap || needBodyPart || needPattern)
+                    {
+                        string message = LocalizationUtility.Localize("mainmenu_multiplayer_custom_message");
+                        //if (needMap)
+                        //{
+                        //    message += $"{LocalizationUtility.Localize("", reqMapId)}<br>";
+                        //}
+                        //if (needBodyPart)
+                        //{
+                        //    message += $"{LocalizationUtility.Localize("", reqBodyPartIds.JoinAnd())}<br>";
+                        //}
+                        //if (needPattern)
+                        //{
+                        //    message += $"{LocalizationUtility.Localize("", reqPatternIds.JoinAnd())}<br>";
+                        //}
+
+                        ConfirmationDialog.Confirm(LocalizationUtility.Localize("mainmenu_multiplayer_custom_title"), message, onYes: delegate
+                        {
+                            // ModInstallerManager.Instance.Install(reqMapId, reqBodyPartIds, reqPatternIds);
+                        });
+
+                        throw new Exception(LocalizationUtility.Localize("network_status_mods-needed"));
+                    }
+                }
+
                 // Set Connection Data
                 string username = SettingsManager.Data.OnlineUsername;
                 int level = ProgressManager.Data.Level;
@@ -352,23 +404,37 @@ namespace DanielLochner.Assets.CreatureCreator
             try
             {
                 // Setup World
-                bool isPrivate = (Visibility)visibilityOS.Selected == Visibility.Private;
+                bool isPrivate = (Visibility)visibilityOS.SelectedIndex == Visibility.Private;
                 bool usePassword = passwordToggle.isOn && !isPrivate && !string.IsNullOrEmpty(passwordInputField.text);
                 string worldName = worldNameInputField.text;
-                string mapId = mapOS.Options[mapOS.Selected].Id;
-                string mapName = ((Map)mapOS.Selected).ToString();
+                string mapId = mapOS.Selected.Id;
+                string mapName = ((Map)mapOS.SelectedIndex).ToString();
                 string version = Application.version;
                 int maxPlayers = (int)maxPlayersSlider.value;
                 bool enablePVP = pvpToggle.isOn;
                 bool spawnNPC = npcToggle.isOn;
                 bool enablePVE = pveToggle.isOn;
                 bool allowProfanity = profanityToggle.isOn;
-                Mode mode = (Mode)modeOS.Selected;
-                int spawnPoint = spawnPointOS.Selected;
+                Mode mode = (Mode)modeOS.SelectedIndex;
+                Map map = (Map)mapOS.SelectedIndex;
+                int spawnPoint = spawnPointOS.SelectedIndex;
                 string hostPlayerId = AuthenticationService.Instance.PlayerId;
                 string kickedPlayers = "";
                 string institutionId = EducationManager.Instance.InstitutionId;
+
+                // Custom Map, Body Parts and Patterns
                 string customMapId = "";
+                string customBodyPartIds = "";
+                string customPatternIds = "";
+                if (map == Map.Custom)
+                {
+                    customMapId = ((CustomMapOption)customMapOS.Selected).MapId;
+
+                    MapConfigData config = SaveUtility.Load<MapConfigData>(Path.Combine(CCConstants.MapsDir, customMapId, "config.json"));
+
+                    customBodyPartIds = string.Join(",", config.BodyPartIds);
+                    customPatternIds = string.Join(",", config.PatternIds);
+                }
 
                 // Check Premium
                 if (!PremiumManager.Data.IsPremium)
@@ -387,7 +453,6 @@ namespace DanielLochner.Assets.CreatureCreator
                 }
 
                 // Check Map
-                Map map = (Map)mapOS.Selected;
                 if (map == Map.ComingSoon)
                 {
                     throw new Exception(LocalizationUtility.Localize("mainmenu_map-coming-soon"));
@@ -396,7 +461,7 @@ namespace DanielLochner.Assets.CreatureCreator
                 {
                     throw new Exception(LocalizationUtility.Localize("mainmenu_map-locked", LocalizationUtility.Localize(mapId)));
                 }
-
+                
                 // Set Connection Data
                 string username = SettingsManager.Data.OnlineUsername;
                 string password = NetworkHostManager.Instance.Password = (usePassword ? passwordInputField.text : "");
@@ -461,7 +526,9 @@ namespace DanielLochner.Assets.CreatureCreator
                         { "hostPlayerId", new DataObject(DataObject.VisibilityOptions.Public, hostPlayerId) },
                         { "kickedPlayers", new DataObject(DataObject.VisibilityOptions.Public, kickedPlayers) },
                         { "institutionId", new DataObject(DataObject.VisibilityOptions.Public, institutionId) },
-                        { "customMapId", new DataObject(DataObject.VisibilityOptions.Public, customMapId) }
+                        { "customMapId", new DataObject(DataObject.VisibilityOptions.Public, customMapId) },
+                        { "customBodyPartIds", new DataObject(DataObject.VisibilityOptions.Public, customBodyPartIds) },
+                        { "customPatternIds", new DataObject(DataObject.VisibilityOptions.Public, customPatternIds) }
                     },
                     Player = new LobbyPlayer(AuthenticationService.Instance.PlayerId, joinCode, null, allocationId)
                 };
@@ -614,7 +681,7 @@ namespace DanielLochner.Assets.CreatureCreator
         
         private void UpdateMap()
         {
-            mapUI.Setup(mapOS, modeOS, customIdOS);
+            mapUI.Setup(mapOS, modeOS, customMapOS);
         }
         private void UpdateStatus(string status, Color color, float duration = 5)
         {

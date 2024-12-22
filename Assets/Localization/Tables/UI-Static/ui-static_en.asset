@@ -2837,7 +2837,20 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 251879950246055936
-    m_Localized: Custom ID
+    m_Localized: Custom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252501792765874176
+    m_Localized: Modded World
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252501818028167168
+    m_Localized: This modded world has a map, body parts or patterns that you don't
+      have installed. Would you like to download them?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252626441638088704
+    m_Localized: You haven't installed the required mods for this world.
     m_Metadata:
       m_Items: []
   references:

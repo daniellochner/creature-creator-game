@@ -645,7 +645,7 @@ namespace DanielLochner.Assets.CreatureCreator
         #region Video
         public void ApplyResolution()
         {
-            SettingsManager.Instance.SetResolution(Screen.resolutions[resolutionOS.Selected]);
+            SettingsManager.Instance.SetResolution(Screen.resolutions[resolutionOS.SelectedIndex]);
         }
         public void AppleScreenScale()
         {

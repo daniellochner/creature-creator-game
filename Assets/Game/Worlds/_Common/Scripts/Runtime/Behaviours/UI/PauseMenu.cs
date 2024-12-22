@@ -30,7 +30,7 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public void Leave()
         {
-            if (CustomMapLoader.IsUsingSDK)
+            if (CustomMapLoader.IsCustomMapLoadedFromSDK)
             {
                 ConfirmationDialog.Confirm(LocalizationUtility.Localize("mainmenu_quit_title"), LocalizationUtility.Localize("mainmenu_quit_message"), onYes: delegate
                 {

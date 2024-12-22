@@ -7,15 +7,14 @@ using UnityEngine.SceneManagement;
 public static class CustomMapLoader
 {
 	public static bool IsCustomMapLoaded { get; private set; }
-    public static bool IsUsingSDK { get; set; }
+    public static bool IsCustomMapLoadedFromSDK => IsCustomMapLoaded && !string.IsNullOrEmpty(CustomMapPath);
+    public static string CustomMapPath { get; set; }
 
-	//public static WorkshopMap LoadedCustomMap { get; private set; }
-
-	// we can't load the same asset bundle twice, or it gives an error.
-	// so we store the ones already loaded so that we can unload them
-	// again if needed (i.e. loading a map twice). I unload instead of reusing
-	// so that if a map is updated while we are playing we will still have the new version.
-	static Dictionary<string, AssetBundle> loadedAssetBundles = new Dictionary<string, AssetBundle>();
+    // we can't load the same asset bundle twice, or it gives an error.
+    // so we store the ones already loaded so that we can unload them
+    // again if needed (i.e. loading a map twice). I unload instead of reusing
+    // so that if a map is updated while we are playing we will still have the new version.
+    private static Dictionary<string, AssetBundle> loadedAssetBundles = new Dictionary<string, AssetBundle>();
 
 	public static event Action<Scene> OnCustomMapLoaded;
 	public static event Action<string> OnCustomMapLoadFailed;
@@ -29,11 +28,12 @@ public static class CustomMapLoader
 		{
 			if(path == null)
 			{
-				OnCustomMapLoadFailed?.Invoke($"Failed to load Custom Map: path was null");
+				OnCustomMapLoadFailed?.Invoke($"Failed to load custom map: path was null");
 				return;
 			}
 
-			//Debug.Log($"Custom map load started from {path}");
+            path = Path.Combine(path, "Map");
+
 			string assetBundleFolderName = "Bundles";
 
 			// Get the asset bundles in the folder
@@ -170,5 +170,6 @@ public static class CustomMapLoader
 
 		OnCustomMapUnloaded?.Invoke();
 		IsCustomMapLoaded = false;
-	}
+        CustomMapPath = "";
+    }
 }

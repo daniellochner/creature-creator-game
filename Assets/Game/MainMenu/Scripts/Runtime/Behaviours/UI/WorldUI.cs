@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
@@ -31,13 +32,13 @@ namespace DanielLochner.Assets.CreatureCreator
             Players = lobby.Players.Count;
 
             playersText.text = $"{Players}/{lobby.MaxPlayers}";
-            joinButton.onClick.AddListener(delegate 
-            {
-                multiplayerUI.Join(lobby.Id);
-            });
 
             WorldMP world = new WorldMP(lobby);
             mapText.text = $"{FormatMap(world.MapId)} ({FormatMode(world.Mode == Mode.Creative)})";
+            joinButton.onClick.AddListener(delegate 
+            {
+                multiplayerUI.Join(world.Id);
+            });
 
             string worldName = lobby.Name.NoParse();
             if (world.IsBeta)

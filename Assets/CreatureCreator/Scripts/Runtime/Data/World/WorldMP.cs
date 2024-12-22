@@ -30,7 +30,7 @@ namespace DanielLochner.Assets.CreatureCreator
         public string InstitutionId { get; private set; }
 
         public bool IsBeta => Version.EndsWith("-beta");
-        public bool IsModded => false;
+        public bool IsModded => IsCustom;
         #endregion
 
         #region Methods
@@ -52,7 +52,9 @@ namespace DanielLochner.Assets.CreatureCreator
             Mode = (Mode)lobby.TryGetValue<int>("mode");
             MapId = lobby.TryGetValue<string>("mapId");
             SpawnPoint = lobby.TryGetValue<int>("spawnPoint");
-            CustomMapPath = Path.Combine(CCConstants.MapsDir, $"{lobby.TryGetValue<string>("customMapId")}");
+            CustomMapId = lobby.TryGetValue<string>("customMapId");
+            CustomBodyPartIds = new List<string>(lobby.TryGetValue("customBodyPartIds", "").Split(","));
+            CustomPatternIds = new List<string>(lobby.TryGetValue("customPatternIds", "").Split(","));
 
             HostPlayerId = lobby.TryGetValue<string>("hostPlayerId");
             KickedPlayers = new List<string>(lobby.TryGetValue("kickedPlayers", "").Split(","));

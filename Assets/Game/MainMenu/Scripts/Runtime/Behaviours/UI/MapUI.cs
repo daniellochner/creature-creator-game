@@ -17,7 +17,7 @@ namespace DanielLochner.Assets.CreatureCreator
         [SerializeField] private TextMeshProUGUI timeText;
         [SerializeField] private SimpleScrollSnap.SimpleScrollSnap leaderboardsScrollSnap;
 
-        private OptionSelector mapOS, modeOS, customIdOS;
+        private OptionSelector mapOS, modeOS, customMapOS;
         #endregion
 
         #region Methods
@@ -25,10 +25,10 @@ namespace DanielLochner.Assets.CreatureCreator
         {
             this.mapOS = mapOS;
             this.modeOS = modeOS;
-            this.customIdOS = customIdOS;
+            this.customMapOS = customIdOS;
 
-            OnMapChanged(mapOS.Selected);
-            OnModeChanged(modeOS.Selected);
+            OnMapChanged(mapOS.SelectedIndex);
+            OnModeChanged(modeOS.SelectedIndex);
         }
 
         public void View(Transform anchor)
@@ -43,7 +43,7 @@ namespace DanielLochner.Assets.CreatureCreator
         public void OpenLeaderboard()
         {
             LeaderboardsMenu.Instance.Open();
-            leaderboardsScrollSnap.GoToPanel(mapOS.Selected);
+            leaderboardsScrollSnap.GoToPanel(mapOS.SelectedIndex);
         }
 
         public void OnMapChanged(int option)
@@ -51,8 +51,8 @@ namespace DanielLochner.Assets.CreatureCreator
             Map map = (Map)option;
             if (map == Map.Custom)
             {
-                CustomIdOption customIdOption = (CustomIdOption)customIdOS.Options[customIdOS.Selected];
-                byte[] thumbnailBytes = File.ReadAllBytes(Path.Combine(CCConstants.MapsDir, customIdOption.MapId, "thumb.png"));
+                CustomMapOption customMapOption = (CustomMapOption)customMapOS.Selected;
+                byte[] thumbnailBytes = File.ReadAllBytes(Path.Combine(CCConstants.MapsDir, customMapOption.MapId, "thumb.png"));
                 Texture2D thumbnailTex = new Texture2D(1920, 1080);
                 if (ImageConversion.LoadImage(thumbnailTex, thumbnailBytes))
                 {
@@ -83,7 +83,7 @@ namespace DanielLochner.Assets.CreatureCreator
         public void UpdatePadlock()
         {
             bool unlocked = true;
-            Map map = (Map)mapOS.Selected;
+            Map map = (Map)mapOS.SelectedIndex;
             if (map == Map.ComingSoon)
             {
                 unlocked = false;
@@ -95,7 +95,7 @@ namespace DanielLochner.Assets.CreatureCreator
             }
             else
             {
-                Mode mode = (Mode)modeOS.Selected;
+                Mode mode = (Mode)modeOS.SelectedIndex;
                 if (mode == Mode.Adventure)
                 {
                     if (!ProgressManager.Instance.IsMapUnlocked(map))
@@ -109,7 +109,7 @@ namespace DanielLochner.Assets.CreatureCreator
         }
         public void UpdateTime()
         {
-            Map map = (Map)mapOS.Selected;
+            Map map = (Map)mapOS.SelectedIndex;
             if (LeaderboardsManager.Instance.MyTimes.TryGetValue(map, out var time))
             {
                 timeText.text = FormatTime((int)(time.Score));

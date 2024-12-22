@@ -25,7 +25,8 @@ namespace DanielLochner.Assets
         #endregion
 
         #region Properties
-        public int Selected => currentOptionIndex;
+        public Option Selected => Options[SelectedIndex];
+        public int SelectedIndex => currentOptionIndex;
         public List<Option> Options => options;
         public UnityEvent<int> OnSelected => onSelected;
         #endregion

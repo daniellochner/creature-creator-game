@@ -19,7 +19,7 @@ namespace DanielLochner.Assets.CreatureCreator
         [SerializeField] private Menu singleplayerMenu;
         [SerializeField] private OptionSelector mapOS;
         [SerializeField] private OptionSelector modeOS;
-        [SerializeField] private OptionSelector customIdOS;
+        [SerializeField] private OptionSelector customMapOS;
         [SerializeField] private Toggle npcToggle;
         [SerializeField] private Toggle pveToggle;
         [SerializeField] private CanvasGroup pveCG;
@@ -81,17 +81,17 @@ namespace DanielLochner.Assets.CreatureCreator
             {
                 foreach (var customMapPath in customMapPaths)
                 {
-                    UnsanitizedMapConfigData config = SaveUtility.Load<UnsanitizedMapConfigData>(Path.Combine(customMapPath, "config.json"));
+                    MapConfigData config = SaveUtility.Load<MapConfigData>(Path.Combine(customMapPath, "config.json"));
 
                     string customMapId = Path.GetFileNameWithoutExtension(customMapPath);
                     string customMapName = config.Name;
 
-                    customIdOS.Options.Add(new CustomIdOption()
+                    customMapOS.Options.Add(new CustomMapOption()
                     {
                         Id = $"{customMapId}#{customMapName}",
                     });
                 }
-                customIdOS.Select(0, false);
+                customMapOS.Select(0, false);
             }
 
             modeOS.SetupUsingEnum<Mode>();
@@ -115,20 +115,20 @@ namespace DanielLochner.Assets.CreatureCreator
             try
             {
                 // Setup World
-                Map map = (Map)mapOS.Selected;
-                Mode mode = (Mode)modeOS.Selected;
+                Map map = (Map)mapOS.SelectedIndex;
+                Mode mode = (Mode)modeOS.SelectedIndex;
                 bool spawnNPC = npcToggle.isOn;
                 bool enablePVE = pveToggle.isOn;
                 bool unlimited = unlimitedToggle.isOn && (mode == Mode.Creative);
 
-                string customMapPath = "";
+                string customMapId = "";
                 if (map == Map.Custom)
                 {
-                    CustomIdOption customIdOption = (CustomIdOption)customIdOS.Options[customIdOS.Selected];
-                    customMapPath = Path.Combine(CCConstants.MapsDir, customIdOption.MapId);
+                    CustomMapOption customMapOption = (CustomMapOption)customMapOS.Selected;
+                    customMapId = customMapOption.MapId;
                 }
 
-                WorldManager.Instance.World = new WorldSP(map, mode, spawnNPC, enablePVE, unlimited, customMapPath);
+                WorldManager.Instance.World = new WorldSP(map, mode, spawnNPC, enablePVE, unlimited, customMapId);
 
                 // Check Premium
                 if (unlimited && !PremiumManager.Data.IsPremium)
@@ -166,7 +166,7 @@ namespace DanielLochner.Assets.CreatureCreator
 
         private void UpdateMap()
         {
-            mapUI.Setup(mapOS, modeOS, customIdOS);
+            mapUI.Setup(mapOS, modeOS, customMapOS);
         }
         private void UpdateStatus(string status, Color color, float duration = 5)
         {

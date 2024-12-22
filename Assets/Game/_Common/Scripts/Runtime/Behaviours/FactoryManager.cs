@@ -342,12 +342,30 @@ namespace DanielLochner.Assets.CreatureCreator
             }
         }
 
+        public void SubscribeAndDownloadItem(ulong itemId, Action<string> onDownloaded, Action<string> onFailed)
+        {
+            SubscribeItem(itemId);
+            DownloadItem(itemId, onDownloaded, onFailed);
+        }
 
         public void DownloadItem(ulong itemId, Action<string> onDownloaded, Action<string> onFailed)
         {
             if (!IsDownloadingItem)
             {
+#if UNITY_STANDALONE
+                //
+                CallResult<SteamUGCQueryCompleted_t> query = CallResult<SteamUGCQueryCompleted_t>.Create(delegate (SteamUGCQueryCompleted_t param, bool hasFailed)
+                {
+
+                });
+
+
+                //SteamAPICall_t call = SteamUGC.SendQueryUGCRequest(handle);
+                //query.Set(call);
+
+#else
                 StartCoroutine(DownloadItemRoutine(itemId, onDownloaded, onFailed));
+#endif
             }
         }
 
@@ -466,7 +484,7 @@ namespace DanielLochner.Assets.CreatureCreator
                     {
                         if (SteamUGC.GetItemInstallInfo(fileId, out ulong sizeOnDisk, out string itemPath, 1024, out uint timeStamp) && Directory.Exists(itemPath))
                         {
-                            string itemId = Path.GetFileNameWithoutExtension(itemPath);
+                            ulong itemId = fileId.m_PublishedFileId;
                             if (TryGetItemType(itemPath, out ItemType type))
                             {
                                 switch (type)
@@ -480,21 +498,21 @@ namespace DanielLochner.Assets.CreatureCreator
                                         break;
 
                                     case ItemType.Map:
-                                        string mapPathDst = Path.Combine(CCConstants.MapsDir, itemId);
+                                        string mapPathDst = Path.Combine(CCConstants.MapsDir, itemId.ToString());
                                         SystemUtility.CopyDirectory(itemPath, mapPathDst, true);
-                                        LoadedWorkshopMaps.Add(itemId);
+                                        LoadedWorkshopMaps.Add(itemId.ToString());
                                         break;
 
                                     case ItemType.BodyPart:
-                                        string bodyPartPathDst = Path.Combine(CCConstants.BodyPartsDir, itemId);
+                                        string bodyPartPathDst = Path.Combine(CCConstants.BodyPartsDir, itemId.ToString());
                                         SystemUtility.CopyDirectory(itemPath, bodyPartPathDst, true);
-                                        LoadedWorkshopBodyParts.Add(itemId);
+                                        LoadedWorkshopBodyParts.Add(itemId.ToString());
                                         break;
 
                                     case ItemType.Pattern:
-                                        string patternPathDst = Path.Combine(CCConstants.PatternsDir, itemId);
+                                        string patternPathDst = Path.Combine(CCConstants.PatternsDir, itemId.ToString());
                                         SystemUtility.CopyDirectory(itemPath, patternPathDst, true);
-                                        LoadedWorkshopPatterns.Add(itemId);
+                                        LoadedWorkshopPatterns.Add(itemId.ToString());
                                         break;
                                 }
                             }
