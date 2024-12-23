@@ -77,10 +77,11 @@ namespace DanielLochner.Assets.CreatureCreator
             else
             {
                 FactoryManager.Instance.SubscribeItem(item.id);
+                Download(false);
             }
             SetSubscribed(!isSubscribed);
         }
-        public void Download()
+        public void Download(bool notify)
         {
             if (!PremiumManager.Data.IsPremium && PremiumManager.Data.DownloadsToday >= 3)
             {
@@ -98,7 +99,10 @@ namespace DanielLochner.Assets.CreatureCreator
                     {
                         SetDownloading(false, false);
 
-                        InformationDialog.Inform(LocalizationUtility.Localize("factory_download_title"), LocalizationUtility.Localize("factory_download_message", name));
+                        if (notify)
+                        {
+                            InformationDialog.Inform(LocalizationUtility.Localize("factory_download_title"), LocalizationUtility.Localize("factory_download_message", name));
+                        }
                     },
                     delegate (string error)
                     {
@@ -159,6 +163,12 @@ namespace DanielLochner.Assets.CreatureCreator
         {
             downloadingIcon.SetActive(isDownloading);
             downloadBtn.SetActive(!isDownloading && isDownloadable);
+
+            if (SystemUtility.IsDevice(DeviceType.Desktop))
+            {
+                downloadPanel.SetActive(isDownloading);
+                subscribePanel.SetActive(!isDownloading);
+            }
         }
         #endregion
     }

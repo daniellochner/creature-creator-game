@@ -353,16 +353,24 @@ namespace DanielLochner.Assets.CreatureCreator
             if (!IsDownloadingItem)
             {
 #if UNITY_STANDALONE
-                //
-                CallResult<SteamUGCQueryCompleted_t> query = CallResult<SteamUGCQueryCompleted_t>.Create(delegate (SteamUGCQueryCompleted_t param, bool hasFailed)
+                PublishedFileId_t fileId = new PublishedFileId_t(itemId);
+                if (SteamUGC.DownloadItem(fileId, true))
                 {
+                    Callback<DownloadItemResult_t> query = Callback<DownloadItemResult_t>.Create(delegate (DownloadItemResult_t param)
+                    {
+                        if (param.m_unAppID.m_AppId != CCConstants.AppId)
+                        {
+                            return;
+                        }
+                        if (param.m_eResult != EResult.k_EResultOK)
+                        {
+                            onFailed?.Invoke(param.m_eResult.ToString());
+                            return;
+                        }
 
-                });
-
-
-                //SteamAPICall_t call = SteamUGC.SendQueryUGCRequest(handle);
-                //query.Set(call);
-
+                        onDownloaded?.Invoke(param.m_nPublishedFileId.ToString());
+                    });
+                }
 #else
                 StartCoroutine(DownloadItemRoutine(itemId, onDownloaded, onFailed));
 #endif

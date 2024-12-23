@@ -121,6 +121,7 @@ namespace DanielLochner.Assets.CreatureCreator
             else
             {
                 FactoryManager.Instance.SubscribeItem(item.id);
+                itemUI.Download(false);
             }
             SetSubscribed(!isSubscribed);
         }
@@ -130,7 +131,7 @@ namespace DanielLochner.Assets.CreatureCreator
         }
         public void Download()
         {
-            itemUI.Download();
+            itemUI.Download(true);
         }
 
         public void SetLiked(bool isLiked)
