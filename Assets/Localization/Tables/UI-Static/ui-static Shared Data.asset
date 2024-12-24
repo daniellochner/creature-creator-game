@@ -2783,6 +2783,26 @@ MonoBehaviour:
     m_Key: network_status_mods-needed
     m_Metadata:
       m_Items: []
+  - m_Id: 252825443499347968
+    m_Key: mainmenu_mods_none
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825641902510080
+    m_Key: mainmenu_mods_installed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825692905246720
+    m_Key: mainmenu_mods_installing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825958689902592
+    m_Key: mainmenu_mods_title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253168844983865344
+    m_Key: mainmenu_mods_done
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

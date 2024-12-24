@@ -25,8 +25,8 @@ namespace DanielLochner.Assets.CreatureCreator
         [SerializeField] private CanvasGroup pveCG;
         [SerializeField] private Toggle unlimitedToggle;
         [SerializeField] private CanvasGroup unlimitedCG;
-        [SerializeField] private CanvasGroup customIdsCG;
-        [SerializeField] private GameObject customIdsGO;
+        [SerializeField] private CanvasGroup customMapCG;
+        [SerializeField] private GameObject customMapGO;
         [SerializeField] private TextMeshProUGUI statusText;
         [SerializeField] private BlinkingText statusBT;
         [SerializeField] private MapUI mapUI;
@@ -56,12 +56,11 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public void Setup()
         {
-            var customMapPaths = Directory.GetDirectories(CCConstants.MapsDir);
             var ignoredMaps = new List<Map>()
             {
                 Map.ComingSoon
             };
-            var hasCustom = customMapPaths.Length > 0;
+            var hasCustom = ModsManager.Instance.CustomMapIds.Count > 0;
             if (!hasCustom)
             {
                 ignoredMaps.Add(Map.Custom);
@@ -70,29 +69,23 @@ namespace DanielLochner.Assets.CreatureCreator
             mapOS.Select(Map.Island, false);
             mapOS.OnSelected.AddListener(delegate (int option)
             {
-                bool showCustomIds = (Map)option == Map.Custom;
-                customIdsCG.interactable = showCustomIds;
-                customIdsCG.alpha = showCustomIds ? 1f : 0.25f;
+                bool isCustom = (Map)option == Map.Custom;
+                customMapCG.SetEnabled(isCustom);
             });
-            singleplayerMenu.OnOpen += UpdateMap;
-
-            customIdsGO.SetActive(hasCustom);
+            customMapGO.SetActive(hasCustom);
             if (hasCustom)
             {
-                foreach (var customMapPath in customMapPaths)
+                foreach (var customMapId in ModsManager.Instance.CustomMapIds)
                 {
-                    MapConfigData config = SaveUtility.Load<MapConfigData>(Path.Combine(customMapPath, "config.json"));
-
-                    string customMapId = Path.GetFileNameWithoutExtension(customMapPath);
-                    string customMapName = config.Name;
-
+                    MapConfigData config = SaveUtility.Load<MapConfigData>(Path.Combine(CCConstants.MapsDir, customMapId, "config.json"));
                     customMapOS.Options.Add(new CustomMapOption()
                     {
-                        Id = $"{customMapId}#{customMapName}",
+                        Id = $"{customMapId}#{config.Name}",
                     });
                 }
                 customMapOS.Select(0, false);
             }
+            singleplayerMenu.OnOpen += UpdateMap;
 
             modeOS.SetupUsingEnum<Mode>();
             modeOS.OnSelected.AddListener(delegate (int option)
@@ -105,8 +98,7 @@ namespace DanielLochner.Assets.CreatureCreator
 
             npcToggle.onValueChanged.AddListener(delegate (bool isOn)
             {
-                pveCG.interactable = isOn;
-                pveCG.alpha = isOn ? 1f : 0.25f;
+                pveCG.SetEnabled(isOn);
             });
         }
 

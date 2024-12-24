@@ -35,12 +35,15 @@ namespace DanielLochner.Assets.CreatureCreator
         private FactoryItem item;
         #endregion
 
+        #region Properties
+        private bool ShouldSubscribe => SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational;
+        #endregion
+
         #region Methods
         private void Awake()
         {
-            bool shouldSubscribe = SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational;
-            subscribePanel.SetActive(shouldSubscribe);
-            downloadPanel.SetActive(!shouldSubscribe);
+            subscribePanel.SetActive(ShouldSubscribe);
+            downloadPanel.SetActive(!ShouldSubscribe);
         }
 
         public void Setup(FactoryItem item)
@@ -164,7 +167,7 @@ namespace DanielLochner.Assets.CreatureCreator
             downloadingIcon.SetActive(isDownloading);
             downloadBtn.SetActive(!isDownloading && isDownloadable);
 
-            if (SystemUtility.IsDevice(DeviceType.Desktop))
+            if (ShouldSubscribe)
             {
                 downloadPanel.SetActive(isDownloading);
                 subscribePanel.SetActive(!isDownloading);

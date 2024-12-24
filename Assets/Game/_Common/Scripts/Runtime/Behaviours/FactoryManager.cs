@@ -342,12 +342,6 @@ namespace DanielLochner.Assets.CreatureCreator
             }
         }
 
-        public void SubscribeAndDownloadItem(ulong itemId, Action<string> onDownloaded, Action<string> onFailed)
-        {
-            SubscribeItem(itemId);
-            DownloadItem(itemId, onDownloaded, onFailed);
-        }
-
         public void DownloadItem(ulong itemId, Action<string> onDownloaded, Action<string> onFailed)
         {
             if (!IsDownloadingItem)
@@ -466,7 +460,6 @@ namespace DanielLochner.Assets.CreatureCreator
             IsDownloadingUsername = false;
         }
 
-
         public void LoadWorkshopItems()
         {
             if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
@@ -493,11 +486,11 @@ namespace DanielLochner.Assets.CreatureCreator
                         if (SteamUGC.GetItemInstallInfo(fileId, out ulong sizeOnDisk, out string itemPath, 1024, out uint timeStamp) && Directory.Exists(itemPath))
                         {
                             ulong itemId = fileId.m_PublishedFileId;
-                            if (TryGetItemType(itemPath, out ItemType type))
+                            if (TryGetItemType(itemPath, out FactoryItemType type))
                             {
                                 switch (type)
                                 {
-                                    case ItemType.Creature:
+                                    case FactoryItemType.Creature:
                                         string creaturePathSrc = Directory.GetFiles(itemPath)[0];
                                         string creaturePathDst = Path.Combine(CCConstants.CreaturesDir, Path.GetFileName(creaturePathSrc));
                                         SystemUtility.CopyFile(creaturePathSrc, creaturePathDst);
@@ -505,19 +498,19 @@ namespace DanielLochner.Assets.CreatureCreator
                                         LoadedWorkshopCreatures.Add(creatureName);
                                         break;
 
-                                    case ItemType.Map:
+                                    case FactoryItemType.Map:
                                         string mapPathDst = Path.Combine(CCConstants.MapsDir, itemId.ToString());
                                         SystemUtility.CopyDirectory(itemPath, mapPathDst, true);
                                         LoadedWorkshopMaps.Add(itemId.ToString());
                                         break;
 
-                                    case ItemType.BodyPart:
+                                    case FactoryItemType.BodyPart:
                                         string bodyPartPathDst = Path.Combine(CCConstants.BodyPartsDir, itemId.ToString());
                                         SystemUtility.CopyDirectory(itemPath, bodyPartPathDst, true);
                                         LoadedWorkshopBodyParts.Add(itemId.ToString());
                                         break;
 
-                                    case ItemType.Pattern:
+                                    case FactoryItemType.Pattern:
                                         string patternPathDst = Path.Combine(CCConstants.PatternsDir, itemId.ToString());
                                         SystemUtility.CopyDirectory(itemPath, patternPathDst, true);
                                         LoadedWorkshopPatterns.Add(itemId.ToString());
@@ -531,27 +524,18 @@ namespace DanielLochner.Assets.CreatureCreator
             }
         }
 
-        public bool TryGetItemType(string path, out ItemType type)
+        public bool TryGetItemType(string path, out FactoryItemType type)
         {
             var files = Directory.GetFiles(path);
             if (files.Length == 1) // one data file for creature
             {
-                type = ItemType.Creature;
+                type = FactoryItemType.Creature;
             }
             else
             {
-                type = ItemType.Map;
+                type = FactoryItemType.Map;
             }
             return true;
-        }
-
-
-        public enum ItemType
-        {
-            Creature,
-            Map,
-            BodyPart,
-            Pattern
         }
     }
 }

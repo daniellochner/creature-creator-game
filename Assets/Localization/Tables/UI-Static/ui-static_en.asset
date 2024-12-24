@@ -2846,11 +2846,31 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 252501818028167168
     m_Localized: This modded world has a map, body parts or patterns that you don't
-      have installed. Would you like to download them?
+      have installed. Would you like to download them? ({0})
     m_Metadata:
       m_Items: []
   - m_Id: 252626441638088704
-    m_Localized: You haven't installed the required mods for this world.
+    m_Localized: You need the required mods.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825443499347968
+    m_Localized: No mods...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825641902510080
+    m_Localized: Installed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825692905246720
+    m_Localized: Installing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825958689902592
+    m_Localized: Mods
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253168844983865344
+    m_Localized: Your mods have finished downloading.
     m_Metadata:
       m_Items: []
   references:

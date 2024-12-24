@@ -79,11 +79,7 @@ namespace DanielLochner.Assets.CreatureCreator
                 SetupSP();
             }
 
-            if (!EducationManager.Instance.IsEducational)
-            {
-                FactoryManager.Instance.LoadWorkshopItems();
-            }
-
+            FactoryManager.Instance.LoadWorkshopItems();
             Player.Instance.Editor.Platform = StartingPlatform;
             EditorManager.Instance.Setup();
 

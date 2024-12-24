@@ -49,6 +49,8 @@ namespace DanielLochner.Assets.CreatureCreator
         [SerializeField] private OptionSelector modeOS;
         [SerializeField] private OptionSelector customMapOS;
         [SerializeField] private OptionSelector spawnPointOS;
+        [SerializeField] private CanvasGroup customMapCG;
+        [SerializeField] private GameObject customMapGO;
         [SerializeField] private CanvasGroup spawnPointCG;
         [SerializeField] private OptionSelector visibilityOS;
         [SerializeField] private CanvasGroup passwordCG;
@@ -178,23 +180,55 @@ namespace DanielLochner.Assets.CreatureCreator
 
         private void Setup()
         {
-            mapOS.SetupUsingEnum<Map>(Map.ComingSoon, Map.Custom);
+            var ignoredMaps = new List<Map>()
+            {
+                Map.ComingSoon
+            };
+            var hasCustom = ModsManager.Instance.CustomMapIds.Count > 0;
+            if (!hasCustom)
+            {
+                ignoredMaps.Add(Map.Custom);
+            }
+            mapOS.SetupUsingEnum<Map>(ignoredMaps.ToArray());
+            mapOS.Select(Map.Island, false);
             mapOS.OnSelected.AddListener(delegate (int option)
             {
-                int spawnPoints = DatabaseManager.GetDatabaseEntry<MapData>("Maps", ((Map)option).ToString())?.SpawnPoints ?? 1;
+                bool isCustom = (Map)option == Map.Custom;
+                customMapCG.SetEnabled(isCustom);
 
-                spawnPointOS.Options.Clear();
-                for (int i = 0; i < spawnPoints; i++)
+                if (!isCustom)
                 {
-                    spawnPointOS.Options.Add(new OptionSelector.Option()
+                    int spawnPoints = DatabaseManager.GetDatabaseEntry<MapData>("Maps", ((Map)option).ToString())?.SpawnPoints ?? 1;
+
+                    spawnPointOS.Options.Clear();
+                    for (int i = 0; i < spawnPoints; i++)
                     {
-                        Id = $"P{i + 1}"
+                        spawnPointOS.Options.Add(new OptionSelector.Option()
+                        {
+                            Id = $"P{i + 1}"
+                        });
+                    }
+                    spawnPointOS.Select(0);
+                    spawnPointCG.SetEnabled(spawnPoints > 1);
+                }
+                else
+                {
+                    spawnPointCG.SetEnabled(false);
+                }
+            });
+            customMapGO.SetActive(hasCustom);
+            if (hasCustom)
+            {
+                foreach (var customMapId in ModsManager.Instance.CustomMapIds)
+                {
+                    MapConfigData config = SaveUtility.Load<MapConfigData>(Path.Combine(CCConstants.MapsDir, customMapId, "config.json"));
+                    customMapOS.Options.Add(new CustomMapOption()
+                    {
+                        Id = $"{customMapId}#{config.Name}",
                     });
                 }
-                spawnPointOS.Select(0);
-                spawnPointCG.SetEnabled(spawnPoints > 1);
-            });
-            mapOS.Select(Map.Island, false);
+                customMapOS.Select(0, false);
+            }
             multiplayerMenu.OnOpen += UpdateMap;
 
             modeOS.SetupUsingEnum<Mode>(Mode.Timed);
@@ -204,15 +238,13 @@ namespace DanielLochner.Assets.CreatureCreator
             visibilityOS.OnSelected.AddListener(delegate (int option)
             {
                 bool show = (Visibility)option == Visibility.Public;
-                passwordCG.interactable = show;
-                passwordCG.alpha = show ? 1f : 0.25f;
+                passwordCG.SetEnabled(show);
             });
             visibilityOS.Select(Visibility.Public);
 
             npcToggle.onValueChanged.AddListener(delegate (bool isOn)
             {
-                pveCG.interactable = isOn;
-                pveCG.alpha = isOn ? 1f : 0.25f;
+                pveCG.SetEnabled(isOn);
             });
 
             if (!PremiumManager.Data.IsPremium)
@@ -284,58 +316,26 @@ namespace DanielLochner.Assets.CreatureCreator
                 }
 
                 // Check Mods
-                if (world.IsCustom)
+                if (world.IsCustom && !ModsManager.Instance.HasRequiredMods(world, out string reqMapId, out List<string> reqBodyPartIds, out List<string> reqPatternIds))
                 {
-                    string reqMapId = "";
-                    if (!FactoryManager.Instance.LoadedWorkshopMaps.Contains(world.CustomMapId))
+                    int reqMods = (!string.IsNullOrEmpty(reqMapId) ? 1 : 0) + reqBodyPartIds.Count + reqPatternIds.Count;
+                    ConfirmationDialog.Confirm(LocalizationUtility.Localize("mainmenu_multiplayer_custom_title"), LocalizationUtility.Localize("mainmenu_multiplayer_custom_message", reqMods), onYes: delegate
                     {
-                        reqMapId = world.CustomMapId;
-                    }
-                    bool needMap = reqMapId != "";
-
-                    var reqBodyPartIds = new List<string>();
-                    foreach (var bodyPartId in world.CustomBodyPartIds)
-                    {
-                        if (!FactoryManager.Instance.LoadedWorkshopBodyParts.Contains(bodyPartId))
+                        if (!string.IsNullOrEmpty(reqMapId))
                         {
-                            reqBodyPartIds.Add(bodyPartId);
+                            ModsMenu.Instance.AddMod(reqMapId, FactoryItemType.Map);
                         }
-                    }
-                    bool needBodyPart = reqBodyPartIds.Count > 0;
-
-                    var reqPatternIds = new List<string>();
-                    foreach (var patternId in world.CustomPatternIds)
-                    {
-                        if (!FactoryManager.Instance.LoadedWorkshopPatterns.Contains(patternId))
+                        foreach (var bodyPartId in reqBodyPartIds)
                         {
-                            reqPatternIds.Add(patternId);
+                            ModsMenu.Instance.AddMod(bodyPartId, FactoryItemType.BodyPart);
                         }
-                    }
-                    bool needPattern = reqPatternIds.Count > 0;
-
-                    if (needMap || needBodyPart || needPattern)
-                    {
-                        string message = LocalizationUtility.Localize("mainmenu_multiplayer_custom_message");
-                        //if (needMap)
-                        //{
-                        //    message += $"{LocalizationUtility.Localize("", reqMapId)}<br>";
-                        //}
-                        //if (needBodyPart)
-                        //{
-                        //    message += $"{LocalizationUtility.Localize("", reqBodyPartIds.JoinAnd())}<br>";
-                        //}
-                        //if (needPattern)
-                        //{
-                        //    message += $"{LocalizationUtility.Localize("", reqPatternIds.JoinAnd())}<br>";
-                        //}
-
-                        ConfirmationDialog.Confirm(LocalizationUtility.Localize("mainmenu_multiplayer_custom_title"), message, onYes: delegate
+                        foreach (var patternId in reqPatternIds)
                         {
-                            // ModInstallerManager.Instance.Install(reqMapId, reqBodyPartIds, reqPatternIds);
-                        });
-
-                        throw new Exception(LocalizationUtility.Localize("network_status_mods-needed"));
-                    }
+                            ModsMenu.Instance.AddMod(patternId, FactoryItemType.Pattern);
+                        }
+                        ModsMenu.Instance.Setup(() => InformationDialog.Inform(LocalizationUtility.Localize("mainmenu_mods_title"), LocalizationUtility.Localize("mainmenu_mods_done")));
+                    });
+                    throw new Exception(LocalizationUtility.Localize("network_status_mods-needed"));
                 }
 
                 // Set Connection Data
