@@ -40,14 +40,14 @@ namespace DanielLochner.Assets.CreatureCreator
         {
             foreach (var pass in GetComponentsInChildren<CustomMapLoadingPass>())
             {
-                pass.Load(scene);
+                pass.Load(scene, world.transform);
             }
             world.SetActive(true);
         }
         private void OnCustomMapLoadFailed(string reason)
         {
             error.SetActive(true);
-            errorText.text = $"Error: {reason}";
+            errorText.text = reason;
         }
     }
 }

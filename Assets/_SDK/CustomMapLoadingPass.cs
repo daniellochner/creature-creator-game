@@ -3,5 +3,5 @@ using UnityEngine.SceneManagement;
 
 public abstract class CustomMapLoadingPass : MonoBehaviour
 {
-	public abstract void Load(Scene scene);
+	public abstract void Load(Scene scene, Transform world);
 }

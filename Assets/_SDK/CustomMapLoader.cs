@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public static class CustomMapLoader
 {
 	public static bool IsCustomMapLoaded { get; private set; }
-    public static bool IsCustomMapLoadedFromSDK => IsCustomMapLoaded && !string.IsNullOrEmpty(CustomMapPath);
+    public static bool IsCustomMapLoadedFromSDK => !string.IsNullOrEmpty(CustomMapPath);
     public static string CustomMapPath { get; set; }
 
     // we can't load the same asset bundle twice, or it gives an error.

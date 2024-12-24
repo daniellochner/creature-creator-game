@@ -8,14 +8,14 @@ public class CustomMapLoadingPassPlatforms : CustomMapLoadingPass
 	[SerializeField] private Platform platformPrefab;
     [SerializeField] private GameSetup gameSetup;
 
-	public override void Load(Scene scene)
+	public override void Load(Scene scene, Transform world)
 	{
         if (scene.TryGetComponent(out MapInfo info))
         {
             List<Platform> platforms = new List<Platform>();
             foreach (var proxy in info.platformProxies)
             {
-                var platform = Instantiate(platformPrefab, proxy.transform.position, proxy.transform.rotation);
+                var platform = Instantiate(platformPrefab, proxy.transform.position, proxy.transform.rotation, world);
                 platforms.Add(platform);
                 Destroy(proxy.gameObject);
             }

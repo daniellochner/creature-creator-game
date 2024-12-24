@@ -31,12 +31,15 @@ namespace DanielLochner.Assets.CreatureCreator
         public GameObject downloadPanel;
 
         private Coroutine previewCoroutine;
-        private bool isLiked, isDisliked, isSubscribed;
-        private FactoryItem item;
         #endregion
 
         #region Properties
         private bool ShouldSubscribe => SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational;
+
+        public bool IsLiked { get; set; }
+        public bool IsDisliked { get; set; }
+        public bool IsSubscribed { get; set; }
+        public FactoryItem Item { get; set; }
         #endregion
 
         #region Methods
@@ -48,7 +51,7 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public void Setup(FactoryItem item)
         {
-            this.item = item;
+            Item = item;
 
             nameText.text = item.name;
             upVotesText.text = item.upVotes.ToString();
@@ -61,28 +64,45 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public void View()
         {
-            FactoryItemMenu.Instance.View(item, this, previewImg.sprite, isSubscribed, isLiked, isDisliked);
-        }
-        public void Like()
-        {
-            if (!isLiked)
+            if (info.activeSelf)
             {
-                FactoryManager.Instance.LikeItem(item.id);
-            }
-            SetLiked(!isLiked);
-        }
-        public void Subscribe()
-        {
-            if (isSubscribed)
-            {
-                FactoryManager.Instance.UnsubscribeItem(item.id);
+                FactoryItemMenu.Instance.View(this);
             }
             else
             {
-                FactoryManager.Instance.SubscribeItem(item.id);
+                Setup(Item);
+            }
+        }
+        public void Like()
+        {
+            if (!IsLiked)
+            {
+                FactoryManager.Instance.LikeItem(Item.id);
+                SetDisliked(false);
+            }
+            SetLiked(!IsLiked);
+        }
+        public void Dislike()
+        {
+            if (!IsDisliked)
+            {
+                FactoryManager.Instance.DislikeItem(Item.id);
+                SetLiked(false);
+            }
+            SetDisliked(!IsDisliked);
+        }
+        public void Subscribe()
+        {
+            if (IsSubscribed)
+            {
+                FactoryManager.Instance.UnsubscribeItem(Item.id);
+            }
+            else
+            {
+                FactoryManager.Instance.SubscribeItem(Item.id);
                 Download(false);
             }
-            SetSubscribed(!isSubscribed);
+            SetSubscribed(!IsSubscribed);
         }
         public void Download(bool notify)
         {
@@ -98,7 +118,7 @@ namespace DanielLochner.Assets.CreatureCreator
             {
                 SetDownloading(true);
 
-                FactoryManager.Instance.DownloadItem(item.id, delegate (string name)
+                FactoryManager.Instance.DownloadItem(Item.id, delegate (string name)
                     {
                         SetDownloading(false, false);
 
@@ -123,17 +143,18 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public void SetLiked(bool isLiked)
         {
-            this.isLiked = isLiked;
-            uint likes = item.upVotes + (isLiked ? 1u : 0u);
+            IsLiked = isLiked;
+
+            uint likes = Item.upVotes + (isLiked ? 1u : 0u);
             upVotesText.text = $"{likes}";
         }
         public void SetDisliked(bool isDisliked)
         {
-            this.isDisliked = isDisliked;
+            IsDisliked = isDisliked;
         }
         public void SetSubscribed(bool isSubscribed)
         {
-            this.isSubscribed = isSubscribed;
+            IsSubscribed = isSubscribed;
             subscribeBtn.image.sprite = isSubscribed ? removeIcon : addIcon;
         }
 
@@ -144,6 +165,8 @@ namespace DanielLochner.Assets.CreatureCreator
         private IEnumerator SetPreviewRoutine(string url)
         {
             refreshIcon.SetActive(true);
+            errorIcon.SetActive(false);
+            info.SetActive(false);
 
             UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
             yield return request.SendWebRequest();

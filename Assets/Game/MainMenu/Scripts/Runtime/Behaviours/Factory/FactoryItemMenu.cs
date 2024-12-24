@@ -28,10 +28,9 @@ namespace DanielLochner.Assets.CreatureCreator
         public GameObject refreshIcon;
         public GameObject errorIcon;
 
-        private FactoryItem item;
+        public GameObject subscribePanel;
+        public GameObject downloadPanel;
 
-        private bool isLiked, isDisliked, isSubscribed;
-        private Coroutine previewCoroutine;
         private FactoryItemUI itemUI;
 
 
@@ -41,150 +40,66 @@ namespace DanielLochner.Assets.CreatureCreator
             {
                 downloadBtn.SetActive(itemUI.downloadBtn.activeSelf);
                 downloadingIcon.SetActive(itemUI.downloadingIcon.activeSelf);
+
+                subscribeImg.sprite = itemUI.IsSubscribed ? removeIcon : addIcon;
+
+                subscribePanel.SetActive(itemUI.subscribePanel.activeSelf);
+                downloadPanel.SetActive(itemUI.downloadPanel.activeSelf);
+
+                uint likes = itemUI.Item.upVotes + (itemUI.IsLiked ? 1u : 0u);
+                upVotesText.text = $"{likes}";
+
+                uint dislikes = itemUI.Item.downVotes + (itemUI.IsDisliked ? 1u : 0u);
+                downVotesText.text = $"{dislikes}";
             }
         }
 
-        public void View(FactoryItem item, FactoryItemUI itemUI, Sprite preview = null, bool isSubscribed = false, bool isLiked = false, bool isDisliked = false)
+        public void View(FactoryItemUI itemUI)
         {
-            if (this.item != item)
+            if (this.itemUI != itemUI)
             {
-                this.item = item;
-                this.isSubscribed = isSubscribed;
-                this.isLiked = isLiked;
-                this.isDisliked = isDisliked;
                 this.itemUI = itemUI;
 
-                nameText.text = item.name;
-                descriptionText.text = item.description;
-                upVotesText.text = item.upVotes.ToString();
-                downVotesText.text = item.downVotes.ToString();
-                timeCreatedText.text = DateTimeUtility.UnixTimeStampToDateTime(item.timeCreated).ToString();
+                nameText.text = itemUI.Item.name;
+                descriptionText.text = itemUI.Item.description;
+                upVotesText.text = itemUI.Item.upVotes.ToString();
+                downVotesText.text = itemUI.Item.downVotes.ToString();
+                timeCreatedText.text = DateTimeUtility.UnixTimeStampToDateTime(itemUI.Item.timeCreated).ToString();
+                iconImg.sprite = itemUI.previewImg.sprite;
 
-                if (preview == null)
-                {
-                    SetPreview(item.previewURL);
-                }
-                else
-                {
-                    iconImg.sprite = preview;
-                }
-
-                if (FactoryManager.Data.CachedUsernames.TryGetValue(item.creatorId, out string username))
+                if (FactoryManager.Data.CachedUsernames.TryGetValue(itemUI.Item.creatorId, out string username))
                 {
                     SetCreator(username, false);
                 }
                 else
                 {
-                    SetCreator($"[{item.creatorId}]", true);
+                    SetCreator($"[{itemUI.Item.creatorId}]", true);
                 }
-
-                SetSubscribed(isSubscribed);
-                SetLiked(isLiked);
-                SetDisliked(isDisliked);
             }
 
             Open();
+            Update();
         }
 
         public void Like()
         {
-            if (!isLiked)
-            {
-                FactoryManager.Instance.LikeItem(item.id);
-            }
-            SetLiked(!isLiked);
-
-            if (isDisliked)
-            {
-                SetDisliked(false);
-            }
+            itemUI.Like();
         }
         public void Dislike()
         {
-            if (!isDisliked)
-            {
-                FactoryManager.Instance.DislikeItem(item.id);
-            }
-            SetDisliked(!isDisliked);
-
-            if (isLiked)
-            {
-                SetLiked(false);
-            }
+            itemUI.Dislike();
         }
         public void Subscribe()
         {
-            if (isSubscribed)
-            {
-                FactoryManager.Instance.UnsubscribeItem(item.id);
-            }
-            else
-            {
-                FactoryManager.Instance.SubscribeItem(item.id);
-                itemUI.Download(false);
-            }
-            SetSubscribed(!isSubscribed);
-        }
-        public void ViewMore()
-        {
-            FactoryManager.Instance.ViewWorkshopItem(item.id);
+            itemUI.Subscribe();
         }
         public void Download()
         {
             itemUI.Download(true);
         }
-
-        public void SetLiked(bool isLiked)
+        public void ViewMore()
         {
-            this.isLiked = isLiked;
-
-            uint likes = item.upVotes + (isLiked ? 1u : 0u);
-            upVotesText.text = $"{likes}";
-
-            itemUI.SetLiked(isLiked);
-            itemUI.SetDisliked(isDisliked);
-        }
-        public void SetDisliked(bool isDisliked)
-        {
-            this.isDisliked = isDisliked;
-
-            uint dislikes = item.downVotes + (isDisliked ? 1u : 0u);
-            downVotesText.text = $"{dislikes}";
-
-            itemUI.SetDisliked(isDisliked);
-            itemUI.SetLiked(isLiked);
-        }
-        public void SetSubscribed(bool isSubscribed)
-        {
-            this.isSubscribed = isSubscribed;
-            subscribeImg.sprite = this.isSubscribed ? removeIcon : addIcon;
-
-            itemUI.SetSubscribed(isSubscribed);
-        }
-
-        public void SetPreview(string url)
-        {
-            this.StopStartCoroutine(SetPreviewRoutine(url), ref previewCoroutine);
-        }
-        private IEnumerator SetPreviewRoutine(string url)
-        {
-            refreshIcon.SetActive(true);
-
-            UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
-            yield return request.SendWebRequest();
-
-            if (request.result == UnityWebRequest.Result.Success)
-            {
-                Texture2D preview = ((DownloadHandlerTexture)request.downloadHandler).texture;
-                iconImg.sprite = Sprite.Create(preview, new Rect(0, 0, preview.width, preview.height), new Vector2(0.5f, 0.5f));
-                previewIcon.SetActive(true);
-            }
-            else
-            {
-                errorIcon.SetActive(true);
-            }
-
-            refreshIcon.SetActive(false);
+            FactoryManager.Instance.ViewWorkshopItem(itemUI.Item.id);
         }
 
         private void SetCreator(string username, bool interactable)
@@ -195,7 +110,7 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public void LoadCreatorUsername()
         {
-            FactoryManager.Instance.DownloadUsername(item.creatorId, delegate (string username)
+            FactoryManager.Instance.DownloadUsername(itemUI.Item.creatorId, delegate (string username)
             {
                 SetCreator(username, false);
             },

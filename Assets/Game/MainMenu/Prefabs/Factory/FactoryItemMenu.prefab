@@ -2334,6 +2334,8 @@ MonoBehaviour:
   previewIcon: {fileID: 4562061930507600878}
   refreshIcon: {fileID: 8919220457892867833}
   errorIcon: {fileID: 7825037439596586311}
+  subscribePanel: {fileID: 4562061931550262356}
+  downloadPanel: {fileID: 4406863600387999554}
 --- !u!1 &5428741539939753112
 GameObject:
   m_ObjectHideFlags: 0

@@ -2873,6 +2873,18 @@ MonoBehaviour:
     m_Localized: Your mods have finished downloading.
     m_Metadata:
       m_Items: []
+  - m_Id: 253275489340592128
+    m_Localized: 'Failed: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275592780517376
+    m_Localized: Uploading... {0}%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275800620863488
+    m_Localized: Uploaded!
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

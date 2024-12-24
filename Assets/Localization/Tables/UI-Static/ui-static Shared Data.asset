@@ -2803,6 +2803,18 @@ MonoBehaviour:
     m_Key: mainmenu_mods_done
     m_Metadata:
       m_Items: []
+  - m_Id: 253275489340592128
+    m_Key: startup_failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275592780517376
+    m_Key: startup_uploading
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275800620863488
+    m_Key: startup_uploaded
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

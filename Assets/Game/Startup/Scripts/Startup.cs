@@ -112,20 +112,21 @@ namespace DanielLochner.Assets.CreatureCreator
                     AuthenticationManager.Instance.Authenticate();
                 }
             }
-        }
-        private IEnumerator EnterRoutine()
-        {
+
 #if UNITY_IOS
             if (ATTrackingStatusBinding.GetAuthorizationTrackingStatus() == ATTrackingStatusBinding.AuthorizationTrackingStatus.NOT_DETERMINED)
             {
                 ATTrackingStatusBinding.RequestAuthorizationTracking();
             }
 #endif
-
+        }
+        private IEnumerator EnterRoutine()
+        {
             string[] commandLineArgs = Environment.GetCommandLineArgs();
 
             bool load = false;
             bool upload = false;
+            string path = "";
             for (int i = 0; i < commandLineArgs.Length; i++)
             {
                 string arg = commandLineArgs[i];
@@ -142,7 +143,7 @@ namespace DanielLochner.Assets.CreatureCreator
 
                 if (load || upload)
                 {
-                    CustomMapLoader.CustomMapPath = commandLineArgs[i + 1];
+                    CustomMapLoader.CustomMapPath = path = commandLineArgs[i + 1];
                     break;
                 }
             }
@@ -173,11 +174,25 @@ namespace DanielLochner.Assets.CreatureCreator
             if (upload)
             {
                 // Upload
-                SetPromptId("startup_uploading");
+                SetPromptId("startup_uploading", 0);
+                Action<float> onProgress = delegate (float p)
+                {
+                    SetPromptId("startup_uploading", Mathf.Round(p * 100f));
+                };
+                Action<string> onUploaded = delegate (string itemId)
+                {
+                    SetPromptId("startup_uploaded");
+                };
+                Action<string> onFailed = delegate (string reason)
+                {
+                    SetPromptId("startup_failed");
+                };
+                string previewPath = Path.Combine(path, "thumb.png");
+                yield return FactoryManager.Instance.UploadItemRoutine("Title", "Description", FactoryTagType.Map, path, previewPath, onProgress, onUploaded, onFailed);
 
-
-                SetPromptId("startup_uploaded");
-                yield return new WaitForSeconds(1f);
+                // Wait
+                yield return new WaitUntil(() => Input.anyKeyDown && !CanvasUtility.IsPointerOverUI);
+                Application.Quit();
             }
             else
             {
@@ -204,9 +219,9 @@ namespace DanielLochner.Assets.CreatureCreator
         {
             institutionIdInputField.gameObject.SetActive(isActive);
         }
-        private void SetPromptId(string promptId)
+        private void SetPromptId(string promptId, params object[] args)
         {
-            promptText.text = LocalizationUtility.Localize(currentPromptId = promptId);
+            promptText.text = LocalizationUtility.Localize(currentPromptId = promptId, args);
         }
         private void SetPrompt(string prompt)
         {
