@@ -21,6 +21,7 @@ using Unity.Netcode.Transports.UTP;
 using Unity.Services.RemoteConfig;
 using LobbyPlayer = Unity.Services.Lobbies.Models.Player;
 using System.IO;
+using UnityEngine.SceneManagement;
 
 namespace DanielLochner.Assets.CreatureCreator
 {
@@ -393,8 +394,7 @@ namespace DanielLochner.Assets.CreatureCreator
 
                 // Start Client
                 UpdateStatus(LocalizationUtility.Localize("network_status_starting-client"), Color.yellow, -1);
-                Play();
-                NetworkManager.Singleton.StartClient();
+                Play(false);
             }
             catch (Exception e)
             {
@@ -552,8 +552,7 @@ namespace DanielLochner.Assets.CreatureCreator
 
                 // Start Host
                 UpdateStatus(LocalizationUtility.Localize("network_status_starting-host"), Color.yellow, -1);
-                Play();
-                NetworkManager.Singleton.StartHost();
+                Play(true);
             }
             catch (Exception e)
             {
@@ -634,9 +633,22 @@ namespace DanielLochner.Assets.CreatureCreator
         {
             Join(lobbyCodeInputField.text);
         }
-        public void Play()
+        public void Play(bool isHost)
         {
-            WorldManager.Instance.World = new WorldMP(LobbyHelper.Instance.JoinedLobby);
+            var world = WorldManager.Instance.World = new WorldMP(LobbyHelper.Instance.JoinedLobby);
+            NetworkManager.Singleton.NetworkConfig.EnableSceneManagement = !world.IsCustom;
+            if (world.IsCustom)
+            {
+                SceneManager.LoadScene("Custom");
+            }
+            if (isHost)
+            {
+                NetworkManager.Singleton.StartHost();
+            }
+            else
+            {
+                NetworkManager.Singleton.StartClient();
+            }
         }
 
         public void SortBy()

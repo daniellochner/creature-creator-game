@@ -2815,6 +2815,10 @@ MonoBehaviour:
     m_Key: startup_uploaded
     m_Metadata:
       m_Items: []
+  - m_Id: 253668911192838144
+    m_Key: option_map_custom
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

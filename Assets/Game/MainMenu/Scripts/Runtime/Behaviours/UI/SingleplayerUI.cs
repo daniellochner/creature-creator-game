@@ -9,6 +9,7 @@ using TMPro;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace DanielLochner.Assets.CreatureCreator
@@ -129,14 +130,12 @@ namespace DanielLochner.Assets.CreatureCreator
                 bool spawnNPC = npcToggle.isOn;
                 bool enablePVE = pveToggle.isOn;
                 bool unlimited = unlimitedToggle.isOn && (mode == Mode.Creative);
-
                 string customMapId = "";
                 if (map == Map.Custom)
                 {
                     CustomMapOption customMapOption = (CustomMapOption)customMapOS.Selected;
                     customMapId = customMapOption.MapId;
                 }
-
                 WorldManager.Instance.World = new WorldSP(map, mode, spawnNPC, enablePVE, unlimited, customMapId);
 
                 // Check Premium
@@ -160,6 +159,7 @@ namespace DanielLochner.Assets.CreatureCreator
                 NetworkManager.Singleton.NetworkConfig.ConnectionData = Encoding.UTF8.GetBytes(JsonUtility.ToJson(new ConnectionData("", "", "", ProgressManager.Data.Level)));
 
                 // Start Host
+                NetworkManager.Singleton.NetworkConfig.EnableSceneManagement = true;
                 NetworkManager.Singleton.StartHost();
             }
             catch (Exception e)

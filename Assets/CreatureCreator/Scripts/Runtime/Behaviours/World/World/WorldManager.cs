@@ -57,13 +57,15 @@ namespace DanielLochner.Assets.CreatureCreator
 
         private void OnServerStarted()
         {
-            NetworkManager.Singleton.SceneManager.OnLoad += OnLoad;
-
-            NetworkManager.Singleton.SceneManager.LoadScene(World.MapName, LoadSceneMode.Single);
+            if (NetworkManager.Singleton.NetworkConfig.EnableSceneManagement)
+            {
+                NetworkManager.Singleton.SceneManager.OnLoad += OnLoad;
+                NetworkManager.Singleton.SceneManager.LoadScene(World.MapName, LoadSceneMode.Single);
+            }
         }
         private void OnClientStarted()
         {
-            if (!NetworkManager.Singleton.IsHost)
+            if (NetworkManager.Singleton.NetworkConfig.EnableSceneManagement && !NetworkManager.Singleton.IsHost)
             {
                 NetworkManager.Singleton.SceneManager.OnLoad += OnLoad;
             }

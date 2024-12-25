@@ -33,7 +33,7 @@ namespace DanielLochner.Assets.CreatureCreator
             reqBodyPartIds = new List<string>();
             foreach (var bodyPartId in world.CustomBodyPartIds)
             {
-                if (!CustomBodyPartIds.Contains(bodyPartId))
+                if (!string.IsNullOrEmpty(bodyPartId) && !CustomBodyPartIds.Contains(bodyPartId))
                 {
                     reqBodyPartIds.Add(bodyPartId);
                 }
@@ -44,7 +44,7 @@ namespace DanielLochner.Assets.CreatureCreator
             reqPatternIds = new List<string>();
             foreach (var patternId in world.CustomPatternIds)
             {
-                if (!CustomPatternIds.Contains(patternId))
+                if (!string.IsNullOrEmpty(patternId) && !CustomPatternIds.Contains(patternId))
                 {
                     reqPatternIds.Add(patternId);
                 }
