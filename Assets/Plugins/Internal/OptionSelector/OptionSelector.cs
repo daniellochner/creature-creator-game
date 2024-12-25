@@ -49,6 +49,7 @@ namespace DanielLochner.Assets
         {
             var ignoredTypes = new List<T>(ignored);
 
+            options.Clear();
             foreach (var typeObj in Enum.GetValues(typeof(T)))
             {
                 T type = (T)typeObj;

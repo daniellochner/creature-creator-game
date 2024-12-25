@@ -48,7 +48,7 @@ namespace DanielLochner.Assets.CreatureCreator
             }
             else
             {
-                shareButton.gameObject.SetActive(!FactoryManager.Instance.LoadedWorkshopCreatures.Contains(creatureName));
+                shareButton.gameObject.SetActive(!FactoryManager.Instance.LoadedCreatures.Contains(creatureName));
             }
 #endif
         }

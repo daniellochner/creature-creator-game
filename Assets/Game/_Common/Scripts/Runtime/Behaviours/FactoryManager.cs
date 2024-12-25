@@ -5,6 +5,7 @@ using System;
 using UnityEngine.Networking;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 #if UNITY_STANDALONE
 using Steamworks;
@@ -22,19 +23,21 @@ namespace DanielLochner.Assets.CreatureCreator
         private static ulong STEAM_ID = 1990050;
 
 
-        public List<string> LoadedWorkshopCreatures { get; } = new();
-        public List<string> LoadedWorkshopMaps { get; } = new();
-        public List<string> LoadedWorkshopBodyParts { get; } = new();
-        public List<string> LoadedWorkshopPatterns { get; } = new();
+        public List<string> LoadedCreatures { get; } = new();
+        public List<string> LoadedMaps { get; } = new();
+        public List<string> LoadedBodyParts { get; } = new();
+        public List<string> LoadedPatterns { get; } = new();
 
         public bool IsDownloadingItem { get; private set; }
         public bool IsDownloadingUsername { get; private set; }
+
+        public Action OnLoaded { get; set; }
 
 
         protected override void Start()
         {
             base.Start();
-            LoadWorkshopItems();
+            LoadItems();
         }
 
         public void ViewWorkshop()
@@ -359,7 +362,8 @@ namespace DanielLochner.Assets.CreatureCreator
                 PublishedFileId_t fileId = new PublishedFileId_t(itemId);
                 if (SteamUGC.DownloadItem(fileId, true))
                 {
-                    Callback<DownloadItemResult_t> query = Callback<DownloadItemResult_t>.Create(delegate (DownloadItemResult_t param)
+                    Callback<DownloadItemResult_t> callback = null;
+                    callback = Callback<DownloadItemResult_t>.Create(delegate (DownloadItemResult_t param)
                     {
                         if (param.m_unAppID.m_AppId != CCConstants.AppId)
                         {
@@ -371,7 +375,10 @@ namespace DanielLochner.Assets.CreatureCreator
                             return;
                         }
 
-                        onDownloaded?.Invoke(param.m_nPublishedFileId.ToString());
+                        onDownloaded?.Invoke(itemId.ToString());
+                        LoadItems(itemId);
+
+                        callback.Dispose();
                     });
                 }
 #else
@@ -401,6 +408,7 @@ namespace DanielLochner.Assets.CreatureCreator
                 File.WriteAllText(creaturePath, data);
 
                 onDownloaded?.Invoke(name);
+                LoadItems(itemId);
             }
             else
             {
@@ -469,15 +477,15 @@ namespace DanielLochner.Assets.CreatureCreator
             IsDownloadingUsername = false;
         }
 
-        public void LoadWorkshopItems()
+        public void LoadItems(params ulong[] itemIds)
         {
             if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
             {
 #if UNITY_STANDALONE
-                LoadedWorkshopCreatures.Clear();
-                LoadedWorkshopMaps.Clear();
-                LoadedWorkshopBodyParts.Clear();
-                LoadedWorkshopPatterns.Clear();
+                LoadedCreatures.Clear();
+                LoadedMaps.Clear();
+                LoadedBodyParts.Clear();
+                LoadedPatterns.Clear();
 
                 uint n = SteamUGC.GetNumSubscribedItems();
                 if (n > 0)
@@ -492,9 +500,13 @@ namespace DanielLochner.Assets.CreatureCreator
 
                     foreach (PublishedFileId_t fileId in items)
                     {
+                        ulong itemId = fileId.m_PublishedFileId;
+                        if (itemIds.Length > 0 && !itemIds.Contains(itemId))
+                        {
+                            continue;
+                        }
                         if (SteamUGC.GetItemInstallInfo(fileId, out ulong sizeOnDisk, out string itemPath, 1024, out uint timeStamp) && Directory.Exists(itemPath))
                         {
-                            ulong itemId = fileId.m_PublishedFileId;
                             if (TryGetItemType(itemPath, out FactoryItemType type))
                             {
                                 switch (type)
@@ -504,25 +516,25 @@ namespace DanielLochner.Assets.CreatureCreator
                                         string creaturePathDst = Path.Combine(CCConstants.CreaturesDir, Path.GetFileName(creaturePathSrc));
                                         SystemUtility.CopyFile(creaturePathSrc, creaturePathDst);
                                         string creatureName = Path.GetFileNameWithoutExtension(creaturePathSrc);
-                                        LoadedWorkshopCreatures.Add(creatureName);
+                                        LoadedCreatures.Add(creatureName);
                                         break;
 
                                     case FactoryItemType.Map:
                                         string mapPathDst = Path.Combine(CCConstants.MapsDir, itemId.ToString());
                                         SystemUtility.CopyDirectory(itemPath, mapPathDst, true);
-                                        LoadedWorkshopMaps.Add(itemId.ToString());
+                                        LoadedMaps.Add(itemId.ToString());
                                         break;
 
                                     case FactoryItemType.BodyPart:
                                         string bodyPartPathDst = Path.Combine(CCConstants.BodyPartsDir, itemId.ToString());
                                         SystemUtility.CopyDirectory(itemPath, bodyPartPathDst, true);
-                                        LoadedWorkshopBodyParts.Add(itemId.ToString());
+                                        LoadedBodyParts.Add(itemId.ToString());
                                         break;
 
                                     case FactoryItemType.Pattern:
                                         string patternPathDst = Path.Combine(CCConstants.PatternsDir, itemId.ToString());
                                         SystemUtility.CopyDirectory(itemPath, patternPathDst, true);
-                                        LoadedWorkshopPatterns.Add(itemId.ToString());
+                                        LoadedPatterns.Add(itemId.ToString());
                                         break;
                                 }
                             }
@@ -531,6 +543,8 @@ namespace DanielLochner.Assets.CreatureCreator
                 }
 #endif
             }
+
+            OnLoaded?.Invoke();
         }
 
         public bool TryGetItemType(string path, out FactoryItemType type)

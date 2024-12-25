@@ -40,6 +40,10 @@ namespace DanielLochner.Assets.CreatureCreator
         {
             Setup();
         }
+        private void OnDestroy()
+        {
+            Shutdown();
+        }
 
         private void OnEnable()
         {
@@ -54,38 +58,16 @@ namespace DanielLochner.Assets.CreatureCreator
             statusText.text = "";
         }
 
-        public void Setup()
+        private void Setup()
         {
-            var ignoredMaps = new List<Map>()
-            {
-                Map.ComingSoon
-            };
-            var hasCustom = ModsManager.Instance.CustomMapIds.Count > 0;
-            if (!hasCustom)
-            {
-                ignoredMaps.Add(Map.Custom);
-            }
-            mapOS.SetupUsingEnum<Map>(ignoredMaps.ToArray());
-            mapOS.Select(Map.Island, false);
+            SetupMap();
             mapOS.OnSelected.AddListener(delegate (int option)
             {
                 bool isCustom = (Map)option == Map.Custom;
                 customMapCG.SetEnabled(isCustom);
             });
-            customMapGO.SetActive(hasCustom);
-            if (hasCustom)
-            {
-                foreach (var customMapId in ModsManager.Instance.CustomMapIds)
-                {
-                    MapConfigData config = SaveUtility.Load<MapConfigData>(Path.Combine(CCConstants.MapsDir, customMapId, "config.json"));
-                    customMapOS.Options.Add(new CustomMapOption()
-                    {
-                        Id = $"{customMapId}#{config.Name}",
-                    });
-                }
-                customMapOS.Select(0, false);
-            }
             singleplayerMenu.OnOpen += UpdateMap;
+            FactoryManager.Instance.OnLoaded += SetupMap;
 
             modeOS.SetupUsingEnum<Mode>();
             modeOS.OnSelected.AddListener(delegate (int option)
@@ -100,6 +82,41 @@ namespace DanielLochner.Assets.CreatureCreator
             {
                 pveCG.SetEnabled(isOn);
             });
+        }
+        private void SetupMap()
+        {
+            var ignoredMaps = new List<Map>()
+            {
+                Map.ComingSoon
+            };
+            var hasCustom = ModsManager.Instance.CustomMapIds.Count > 0;
+            if (!hasCustom)
+            {
+                ignoredMaps.Add(Map.Custom);
+            }
+            mapOS.SetupUsingEnum<Map>(ignoredMaps.ToArray());
+            mapOS.Select(Map.Island, false);
+
+            customMapGO.SetActive(hasCustom);
+            if (hasCustom)
+            {
+                foreach (var customMapId in ModsManager.Instance.CustomMapIds)
+                {
+                    MapConfigData config = SaveUtility.Load<MapConfigData>(Path.Combine(CCConstants.MapsDir, customMapId, "config.json"));
+                    customMapOS.Options.Add(new CustomMapOption()
+                    {
+                        Id = $"{customMapId}#{config.Name}",
+                    });
+                }
+                customMapOS.Select(0, false);
+            }
+        }
+        private void Shutdown()
+        {
+            if (FactoryManager.Instance != null)
+            {
+                FactoryManager.Instance.OnLoaded -= SetupMap;
+            }
         }
 
         public void Play()
