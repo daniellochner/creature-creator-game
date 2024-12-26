@@ -28,6 +28,7 @@ namespace DanielLochner.Assets.CreatureCreator
         [SerializeField] private AudioSource enterAudioSource;
         [SerializeField] private TextMeshProUGUI promptText;
         [SerializeField] private TextMeshProUGUI eduLinkText;
+        [SerializeField] private LocalizedText copyrightText;
         [SerializeField] private TMP_InputField institutionIdInputField;
 
         private string currentPromptId;
@@ -73,6 +74,7 @@ namespace DanielLochner.Assets.CreatureCreator
         private IEnumerator LocalizeRoutine()
         {
             LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+            copyrightText.SetArguments(DateTime.Now.Year);
             yield return new WaitUntil(() => LocalizationSettings.InitializationOperation.IsDone);
         }
         private IEnumerator LinkRoutine()

@@ -1600,13 +1600,6 @@ MonoBehaviour:
     m_Localized: it
     m_Metadata:
       m_Items: []
-  - m_Id: 501583908864
-    m_Localized: "2024 \xA9 Daniel Lochner. Creature Creator e prodotti correlati
-      di Daniel Lochner sono stati resi open source sotto la licenza GPL-3. Tuttavia,
-      i contributi forniti dai membri della comunit\xE0 sono utilizzabili a discrezione
-      dei loro autori."
-    m_Metadata:
-      m_Items: []
   - m_Id: 544112660516864
     m_Localized: Autenticazione in corso...
     m_Metadata:

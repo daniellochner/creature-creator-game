@@ -3202,7 +3202,7 @@ GameObject:
   - component: {fileID: 1104814891}
   - component: {fileID: 1104814893}
   - component: {fileID: 1104814892}
-  - component: {fileID: 1104814894}
+  - component: {fileID: 1104814896}
   - component: {fileID: 1104814895}
   m_Layer: 5
   m_Name: Copyright
@@ -3240,7 +3240,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1104814890}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Script: {fileID: 11500000, guid: 33c266885f4d38445885a54ae5c2b11b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -3251,7 +3251,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "2022 \xA9 Daniel Lochner. Creature Creator and related products by Daniel
+  m_text: "{0} \xA9 Daniel Lochner. Creature Creator and related products by Daniel
     Lochner have been open-sourced under the GPL-3 license, however, contributions
     made by members of the community are usable at the discretion of their author(s)."
   m_isRightToLeft: 0
@@ -3322,6 +3322,8 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+  defaultArgs:
+  - 0
 --- !u!222 &1104814893
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3330,46 +3332,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1104814890}
   m_CullTransparentMesh: 1
---- !u!114 &1104814894
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1104814890}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_StringReference:
-    m_TableReference:
-      m_TableCollectionName: GUID:7fd94653ec287a64d8ae56e06fedb9f8
-    m_TableEntryReference:
-      m_KeyId: 501583908864
-      m_Key: 
-    m_FallbackState: 0
-    m_WaitForCompletion: 0
-    m_LocalVariables: []
-  m_FormatArguments: []
-  m_UpdateString:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1104814892}
-        m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
-        m_MethodName: set_text
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  references:
-    version: 2
-    RefIds: []
 --- !u!114 &1104814895
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3405,6 +3367,46 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1104814896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104814890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:ebb85c8a2bfb248ba8ac806c85919f98
+    m_TableEntryReference:
+      m_KeyId: 256515418661163008
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1104814892}
+        m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
+        m_MethodName: set_text
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &1255787301
 GameObject:
   m_ObjectHideFlags: 0
@@ -4595,6 +4597,7 @@ MonoBehaviour:
   enterAudioSource: {fileID: 1611439658}
   promptText: {fileID: 1907651927}
   eduLinkText: {fileID: 929492976}
+  copyrightText: {fileID: 1104814892}
   institutionIdInputField: {fileID: 5679269047837920911}
 --- !u!1 &1651982765
 GameObject:

@@ -363,10 +363,6 @@ MonoBehaviour:
     m_Key: startup_failed-to-authenticate
     m_Metadata:
       m_Items: []
-  - m_Id: 501583908864
-    m_Key: startup_copyright
-    m_Metadata:
-      m_Items: []
   - m_Id: 162794317012992
     m_Key: startup_code
     m_Metadata:

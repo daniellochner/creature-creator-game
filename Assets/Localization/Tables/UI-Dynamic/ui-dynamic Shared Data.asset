@@ -139,6 +139,10 @@ MonoBehaviour:
     m_Key: friends_menu_title
     m_Metadata:
       m_Items: []
+  - m_Id: 256515418661163008
+    m_Key: startup_copyright
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

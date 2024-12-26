@@ -1587,11 +1587,6 @@ MonoBehaviour:
     m_Localized: zh-Hans
     m_Metadata:
       m_Items: []
-  - m_Id: 501583908864
-    m_Localized: "2024 \xA9 Daniel Lochner\u3002Daniel Lochner\u7684\u300A\u751F\u7269\u521B\u9020\u5668\uFF08Creature
-      Creator\uFF09\u300B\u548C\u76F8\u5173\u4EA7\u54C1\u5DF2\u6839\u636E GPL-3\u8BB8\u53EF\u5F00\u6E90\uFF0C\u4F46\u662F\uFF0C\u793E\u533A\u6210\u5458\u7684\u8D21\u732E\u53EF\u7531\u5176\u4F5C\u8005\u81EA\u884C\u51B3\u5B9A\u662F\u5426\u4F7F\u7528\u3002"
-    m_Metadata:
-      m_Items: []
   - m_Id: 544112660516864
     m_Localized: "\u9274\u5B9A\u4E2D..."
     m_Metadata:
