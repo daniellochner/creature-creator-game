@@ -637,17 +637,28 @@ namespace DanielLochner.Assets.CreatureCreator
         {
             var world = WorldManager.Instance.World = new WorldMP(LobbyHelper.Instance.JoinedLobby);
             NetworkManager.Singleton.NetworkConfig.EnableSceneManagement = !world.IsCustom;
+            void OnStart()
+            {
+                if (isHost)
+                {
+                    NetworkManager.Singleton.StartHost();
+                }
+                else
+                {
+                    NetworkManager.Singleton.StartClient();
+                }
+            }
             if (world.IsCustom)
             {
-                SceneManager.LoadScene("Custom");
-            }
-            if (isHost)
-            {
-                NetworkManager.Singleton.StartHost();
+                Fader.FadeInOut(1f, delegate
+                {
+                    SceneManager.LoadScene("Custom");
+                    OnStart();
+                });
             }
             else
             {
-                NetworkManager.Singleton.StartClient();
+                OnStart();
             }
         }
 
