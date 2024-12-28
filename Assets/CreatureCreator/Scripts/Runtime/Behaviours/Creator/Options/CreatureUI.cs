@@ -25,15 +25,6 @@ namespace DanielLochner.Assets.CreatureCreator
         public Button RemoveButton => removeButton;
         public Button ShareButton => shareButton;
         public GameObject Progress => progress;
-
-        public bool IsSharing
-        {
-            set
-            {
-                progress.SetActive(value);
-                shareButton.gameObject.SetActive(!value);
-            }
-        }
         #endregion
 
         #region Methods
@@ -41,16 +32,23 @@ namespace DanielLochner.Assets.CreatureCreator
         {
             nameText.text = name = creatureName;
 
-#if UNITY_STANDALONE
-            if (EducationManager.Instance.IsEducational)
+            if (SystemUtility.IsDevice(DeviceType.Desktop))
             {
-                shareButton.gameObject.SetActive(false);
+                if (EducationManager.Instance.IsEducational)
+                {
+                    shareButton.gameObject.SetActive(false);
+                }
+                else
+                {
+                    shareButton.gameObject.SetActive(!FactoryManager.Instance.LoadedCreatures.Contains(creatureName));
+                }
             }
-            else
-            {
-                shareButton.gameObject.SetActive(!FactoryManager.Instance.LoadedCreatures.Contains(creatureName));
-            }
-#endif
+        }
+        
+        public void SetSharing(bool isSharing)
+        {
+            progress.SetActive(isSharing);
+            shareButton.gameObject.SetActive(!isSharing);
         }
         #endregion
     }

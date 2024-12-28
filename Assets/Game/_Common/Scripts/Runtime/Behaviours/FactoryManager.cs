@@ -562,7 +562,7 @@ namespace DanielLochner.Assets.CreatureCreator
         }
 
 
-        public void UploadItem(string title, string description, FactoryTagType tagType, string dataPath, string previewPath, Action<float> onProgress, Action<string> onUploaded, Action<string> onFailed)
+        public void UploadItem(string title, string description, FactoryTagType tagType, string dataPath, string previewPath, Action<float> onProgress = null, Action<string> onUploaded = null, Action<string> onFailed = null)
         {
             StartCoroutine(UploadItemRoutine(title, description, tagType, dataPath, previewPath, onProgress, onUploaded, onFailed));
         }
