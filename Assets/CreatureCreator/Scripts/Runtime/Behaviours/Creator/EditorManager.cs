@@ -11,12 +11,12 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using RotaryHeart.Lib.SerializableDictionary;
 using UnityFBXExporter;
-using ProfanityDetector;
 using UnityEngine.EventSystems;
 using System.Collections;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization;
 using Crosstales.FB;
+using Crosstales.BWF;
 
 #if UNITY_STANDALONE
 using Steamworks;
@@ -2084,18 +2084,10 @@ namespace DanielLochner.Assets.CreatureCreator
 
             if (checkForProfanity)
             {
-                ProfanityFilter filter = new ProfanityFilter();
-                if (filter.ContainsProfanity(creatureName))
+                var profanity = BWFManager.Instance.GetAll(creatureName);
+                if (profanity.Count > 0)
                 {
-                    IReadOnlyCollection<string> profanities = filter.DetectAllProfanities(creatureName);
-                    if (profanities.Count > 0)
-                    {
-                        InformationDialog.Inform(LocalizationUtility.Localize("cc_profanity-detected"), LocalizationUtility.Localize("cc_remove-profanity", string.Join(", ", profanities)));
-                    }
-                    else
-                    {
-                        InformationDialog.Inform(LocalizationUtility.Localize("cc_profanity-detected"), LocalizationUtility.Localize("cc_profane-terms"));
-                    }
+                    InformationDialog.Inform(LocalizationUtility.Localize("profanity_detected_title"), LocalizationUtility.Localize("profanity_detected_message_terms", profanity.JoinAnd()));
                     return false;
                 }
             }

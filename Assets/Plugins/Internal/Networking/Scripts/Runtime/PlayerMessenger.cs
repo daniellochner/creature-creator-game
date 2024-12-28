@@ -1,4 +1,3 @@
-using ProfanityDetector;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;

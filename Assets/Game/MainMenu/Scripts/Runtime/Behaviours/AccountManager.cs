@@ -1,3 +1,4 @@
+using Crosstales.BWF;
 using Cysharp.Threading.Tasks;
 using System.Threading.Tasks;
 using TMPro;
@@ -279,7 +280,18 @@ namespace DanielLochner.Assets.CreatureCreator
 
             if (AuthenticationService.Instance.IsSignedIn)
             {
-                InputDialog.Input(LocalizationUtility.Localize("mainmenu_username_title"), LocalizationUtility.Localize("account_status_enter-a-username"), onSubmit: UpdateUsername);
+                InputDialog.Input(LocalizationUtility.Localize("mainmenu_username_title"), LocalizationUtility.Localize("account_status_enter-a-username"), onSubmit: delegate (string username)
+                {
+                    var profanity = BWFManager.Instance.GetAll(username);
+                    if (profanity.Count > 0)
+                    {
+                        InformationDialog.Inform(LocalizationUtility.Localize("profanity_detected_title"), LocalizationUtility.Localize("profanity_detected_message_terms", profanity.JoinAnd()));
+                    }
+                    else
+                    {
+                        UpdateUsername(username);
+                    }
+                });
             }
             else
             if (errorMessage != null)

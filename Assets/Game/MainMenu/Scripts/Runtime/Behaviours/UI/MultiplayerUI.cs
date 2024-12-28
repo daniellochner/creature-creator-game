@@ -1,7 +1,6 @@
 // Creature Creator - https://github.com/daniellochner/Creature-Creator
 // Copyright (c) Daniel Lochner
 
-using ProfanityDetector;
 using System.Threading.Tasks;
 using TMPro;
 using Unity.Netcode;
@@ -22,6 +21,7 @@ using Unity.Services.RemoteConfig;
 using LobbyPlayer = Unity.Services.Lobbies.Models.Player;
 using System.IO;
 using UnityEngine.SceneManagement;
+using Crosstales.BWF;
 
 namespace DanielLochner.Assets.CreatureCreator
 {
@@ -66,7 +66,6 @@ namespace DanielLochner.Assets.CreatureCreator
         [SerializeField] private MapUI mapUI;
         [SerializeField] private bool showComingSoon;
 
-        private ProfanityFilter filter = new ProfanityFilter();
         private SHA256 sha256 = SHA256.Create();
         private bool isConnecting, isRefreshing, isSortedByAscending = true;
         private Coroutine updateStatusCoroutine;
@@ -96,7 +95,7 @@ namespace DanielLochner.Assets.CreatureCreator
                     UpdateStatus(LocalizationUtility.Localize("network_status_username"), Color.white);
                     return false;
                 }
-                if (filter.ContainsProfanity(username))
+                if (BWFManager.Instance.Contains(username))
                 {
                     UpdateStatus(LocalizationUtility.Localize("network_status_profanity"), Color.white);
                     return false;
@@ -124,7 +123,7 @@ namespace DanielLochner.Assets.CreatureCreator
                     UpdateStatus(LocalizationUtility.Localize("network_status_world-name-length"), Color.white);
                     return false;
                 }
-                if (filter.ContainsProfanity(worldName))
+                if (BWFManager.Instance.Contains(worldName))
                 {
                     UpdateStatus(LocalizationUtility.Localize("network_status_world-name-profanity"), Color.white);
                     return false;
