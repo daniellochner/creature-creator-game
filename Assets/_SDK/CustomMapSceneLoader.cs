@@ -40,7 +40,7 @@ namespace DanielLochner.Assets.CreatureCreator
         {
             foreach (var pass in GetComponentsInChildren<CustomMapLoadingPass>())
             {
-                pass.Load(scene, world.transform);
+                pass.Load(scene);
             }
             world.SetActive(true);
         }

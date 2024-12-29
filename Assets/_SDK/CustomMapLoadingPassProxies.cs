@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class CustomMapLoadingPassPlatforms : CustomMapLoadingPass
+public class CustomMapLoadingPassProxies : CustomMapLoadingPass
 {
 	[SerializeField] private Platform platformPrefab;
     [SerializeField] private GameSetup gameSetup;
+    [SerializeField] private Transform worldRoot;
 
-	public override void Load(Scene scene, Transform world)
+	public override void Load(Scene scene)
 	{
         if (scene.TryGetComponent(out MapInfo info))
         {
             List<Platform> platforms = new List<Platform>();
             foreach (var proxy in info.platformProxies)
             {
-                var platform = Instantiate(platformPrefab, proxy.transform.position, proxy.transform.rotation, world);
+                var platform = Instantiate(platformPrefab, proxy.transform.position, proxy.transform.rotation, worldRoot);
                 platforms.Add(platform);
                 Destroy(proxy.gameObject);
             }
