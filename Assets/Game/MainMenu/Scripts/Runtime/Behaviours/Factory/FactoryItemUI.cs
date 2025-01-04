@@ -118,7 +118,7 @@ namespace DanielLochner.Assets.CreatureCreator
             {
                 SetDownloading(true);
 
-                FactoryManager.Instance.DownloadItem(Item.id, delegate (string name)
+                FactoryManager.Instance.DownloadItem(Item.id, Item.tag, delegate (string name)
                     {
                         SetDownloading(false, false);
 

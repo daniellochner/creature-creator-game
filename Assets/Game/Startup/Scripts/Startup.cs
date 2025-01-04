@@ -190,7 +190,7 @@ namespace DanielLochner.Assets.CreatureCreator
                     SetPromptId("startup_failed");
                 };
                 string previewPath = Path.Combine(path, "thumb.png");
-                yield return FactoryManager.Instance.UploadItemRoutine("Title", "Description", FactoryTagType.Map, path, previewPath, onProgress, onUploaded, onFailed);
+                yield return FactoryManager.Instance.UploadItemRoutine("Title", "Description", FactoryItemType.Map, path, previewPath, onProgress, onUploaded, onFailed);
 
                 // Wait
                 yield return new WaitUntil(() => Input.anyKeyDown && !CanvasUtility.IsPointerOverUI);
