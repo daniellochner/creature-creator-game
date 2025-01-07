@@ -11,12 +11,14 @@ namespace DanielLochner.Assets.CreatureCreator
         public GameObject errorIcon;
         public GameObject downloadedIcon;
         private string modId;
+        private FactoryItemType type;
 
         public bool IsDownloaded => downloadedIcon.activeSelf;
 
         public void Setup(string modId, FactoryItemType type)
         {
             this.modId = name = modId;
+            this.type = type;
             nameText.text = $"({type}) {modId}";
         }
 
@@ -25,7 +27,7 @@ namespace DanielLochner.Assets.CreatureCreator
             DownloadStatus status = DownloadStatus.Downloading;
             downloadingIcon.SetActive(true);
 
-            FactoryManager.Instance.DownloadItem(ulong.Parse(modId), delegate (string text)
+            FactoryManager.Instance.DownloadItem(ulong.Parse(modId), type, delegate (string text)
             {
                 status = DownloadStatus.Downloaded;
             },

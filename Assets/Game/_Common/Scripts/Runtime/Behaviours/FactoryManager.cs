@@ -6,6 +6,7 @@ using UnityEngine.Networking;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO.Compression;
 
 #if UNITY_STANDALONE
 using Steamworks;
@@ -257,11 +258,11 @@ namespace DanielLochner.Assets.CreatureCreator
                 SteamUGC.SetRankedByTrendDays(handle, days);
                 SteamUGC.SetReturnLongDescription(handle, true);
                 SteamUGC.SetSearchText(handle, itemQuery.SearchText);
-                if (itemQuery.TagType == FactoryTagType.Creature)
+                if (itemQuery.TagType == FactoryItemType.Creature)
                 {
-                    SteamUGC.AddExcludedTag(handle, FactoryTagType.Map.ToString());
-                    SteamUGC.AddExcludedTag(handle, FactoryTagType.BodyPart.ToString());
-                    SteamUGC.AddExcludedTag(handle, FactoryTagType.Pattern.ToString());
+                    SteamUGC.AddExcludedTag(handle, FactoryItemType.Map.ToString());
+                    SteamUGC.AddExcludedTag(handle, FactoryItemType.BodyPart.ToString());
+                    SteamUGC.AddExcludedTag(handle, FactoryItemType.Pattern.ToString());
                 }
                 else
                 {
@@ -354,7 +355,7 @@ namespace DanielLochner.Assets.CreatureCreator
             }
         }
 
-        public void DownloadItem(ulong itemId, Action<string> onDownloaded, Action<string> onFailed)
+        public void DownloadItem(ulong itemId, FactoryItemType itemType, Action<string> onDownloaded, Action<string> onFailed)
         {
             if (!IsDownloadingItem)
             {
@@ -382,37 +383,68 @@ namespace DanielLochner.Assets.CreatureCreator
                     });
                 }
 #else
-                StartCoroutine(DownloadItemRoutine(itemId, onDownloaded, onFailed));
+                StartCoroutine(DownloadItemRoutine(itemId, itemType, onDownloaded, onFailed));
 #endif
             }
         }
 
-        private IEnumerator DownloadItemRoutine(ulong itemId, Action<string> onDownloaded, Action<string> onFailed)
+        private IEnumerator DownloadItemRoutine(ulong itemId, FactoryItemType itemType, Action<string> onDownloaded, Action<string> onFailed)
         {
             IsDownloadingItem = true;
 
-            string url = $"http://{serverAddress.Value}/get_workshop_item?id={itemId}";
-
-            UnityWebRequest request = UnityWebRequest.Get(url);
-            yield return request.SendWebRequest();
-
-            if (request.result == UnityWebRequest.Result.Success)
+            string tag = "";
+            string dir = "";
+            switch (itemType)
             {
-                JObject obj = JToken.Parse(request.downloadHandler.text) as JObject;
+                case FactoryItemType.Creature:
+                    tag = "creatures";
+                    dir = CCConstants.CreaturesDir;
+                    break;
 
-                string name = obj["name"].Value<string>();
-                string data = obj["data"].Value<string>();
+                case FactoryItemType.Map:
+                    tag = "maps";
+                    dir = CCConstants.MapsDir;
+                    break;
 
-                SystemUtility.TryCreateDirectory(CCConstants.CreaturesDir);
-                string creaturePath = Path.Combine(CCConstants.CreaturesDir, $"{name}.dat");
-                File.WriteAllText(creaturePath, data);
+                case FactoryItemType.BodyPart:
+                    dir = CCConstants.BodyPartsDir;
+                    tag = "bodyParts";
+                    break;
 
-                onDownloaded?.Invoke(name);
-                LoadItems(itemId);
+                case FactoryItemType.Pattern:
+                    tag = "patterns";
+                    dir = CCConstants.PatternsDir;
+                    break;
             }
-            else
+
+            string url = $"http://{serverAddress.Value}/api/get_workshop_item?id={itemId}&tag={tag}";
+
+            string zipFileName = $"{itemId}.zip";
+            string zipFilePath = Path.Combine(Application.persistentDataPath, zipFileName);
+
+            using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
             {
-                onFailed?.Invoke(request.error);
+                webRequest.downloadHandler = new DownloadHandlerFile(zipFilePath);
+                yield return webRequest.SendWebRequest();
+
+                if (webRequest.result == UnityWebRequest.Result.ConnectionError || webRequest.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    onFailed?.Invoke(webRequest.error);
+                }
+                else
+                {
+                    string extractPath = Path.Combine(dir, Path.GetFileNameWithoutExtension(zipFileName));
+
+                    if (Directory.Exists(extractPath))
+                    {
+                        Directory.Delete(extractPath, true); // Delete the directory if it exists to avoid conflicts
+                    }
+
+                    ZipFile.ExtractToDirectory(zipFilePath, extractPath);
+
+                    onDownloaded?.Invoke(name);
+                    LoadItems(itemId);
+                }
             }
 
             IsDownloadingItem = false;
@@ -479,6 +511,11 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public void LoadItems(params ulong[] itemIds)
         {
+            SystemUtility.TryCreateDirectory(CCConstants.CreaturesDir);
+            SystemUtility.TryCreateDirectory(CCConstants.MapsDir);
+            SystemUtility.TryCreateDirectory(CCConstants.BodyPartsDir);
+            SystemUtility.TryCreateDirectory(CCConstants.PatternsDir);
+
             if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
             {
 #if UNITY_STANDALONE
@@ -490,11 +527,7 @@ namespace DanielLochner.Assets.CreatureCreator
                 uint n = SteamUGC.GetNumSubscribedItems();
                 if (n > 0)
                 {
-                    SystemUtility.TryCreateDirectory(CCConstants.CreaturesDir);
-                    SystemUtility.TryCreateDirectory(CCConstants.MapsDir);
-                    SystemUtility.TryCreateDirectory(CCConstants.BodyPartsDir);
-                    SystemUtility.TryCreateDirectory(CCConstants.PatternsDir);
-
+  
                     PublishedFileId_t[] items = new PublishedFileId_t[n];
                     SteamUGC.GetSubscribedItems(items, n);
 
@@ -562,11 +595,11 @@ namespace DanielLochner.Assets.CreatureCreator
         }
 
 
-        public void UploadItem(string title, string description, FactoryTagType tagType, string dataPath, string previewPath, Action<float> onProgress = null, Action<string> onUploaded = null, Action<string> onFailed = null)
+        public void UploadItem(string title, string description, FactoryItemType tagType, string dataPath, string previewPath, Action<float> onProgress = null, Action<string> onUploaded = null, Action<string> onFailed = null)
         {
             StartCoroutine(UploadItemRoutine(title, description, tagType, dataPath, previewPath, onProgress, onUploaded, onFailed));
         }
-        public IEnumerator UploadItemRoutine(string title, string description, FactoryTagType tagType, string dataPath, string previewPath, Action<float> onProgress, Action<string> onUploaded, Action<string> onFailed)
+        public IEnumerator UploadItemRoutine(string title, string description, FactoryItemType tagType, string dataPath, string previewPath, Action<float> onProgress, Action<string> onUploaded, Action<string> onFailed)
         {
 #if UNITY_STANDALONE
             if (SteamManager.Initialized && !EducationManager.Instance.IsEducational)

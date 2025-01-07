@@ -883,7 +883,7 @@ namespace DanielLochner.Assets.CreatureCreator
                         creatureUI.SetSharing(false);
                     }
                     creatureUI.SetSharing(true);
-                    FactoryManager.Instance.UploadItem(title, description, FactoryTagType.Creature, data, preview, null, OnComplete, OnComplete);
+                    FactoryManager.Instance.UploadItem(title, description, FactoryItemType.Creature, data, preview, null, OnComplete, OnComplete);
                 });
             }
         }
