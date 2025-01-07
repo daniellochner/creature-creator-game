@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -16,5 +17,15 @@ public static class SceneUtility
         }
         component = null;
         return false;
+    }
+
+    public static List<T> GetComponents<T>(this Scene scene, bool includeInactive) where T : Component
+    {
+        var components = new List<T>();
+        foreach (var root in scene.GetRootGameObjects())
+        {
+            components.AddRange(root.GetComponentsInChildren<T>(includeInactive));
+        }
+        return components;
     }
 }

@@ -345,7 +345,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 951099334
+  GlobalObjectIdHash: 2867390395
+  InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -969,6 +970,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea45981fb9421345a2b002bd9c19435, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
   SyncPositionX: 1
   SyncPositionY: 1
   SyncPositionZ: 1
@@ -1135,6 +1137,7 @@ MonoBehaviour:
   resultPrefabLeaveInstanceInSceneAfterBake: 0
   parentSceneObject: {fileID: 7193793692123448111}
   _meshCombiner:
+    _bakeStatus: 0
     _validationLevel: 2
     _name: 
     _textureBakeResults: {fileID: 0}
@@ -1165,9 +1168,11 @@ MonoBehaviour:
     _smrNoExtraBonesWhenCombiningMeshRenderers: 0
     _smrMergeBlendShapesWithSameNames: 0
     _assignToMeshCustomizer: {fileID: 0}
+    _meshAPItoUse: 0
     objectsInCombinedMesh: []
     lightmapIndex: -1
     mbDynamicObjectsInCombinedMesh: []
+    channelsLastBake: 0
     verts: []
     normals: []
     tangents: []
@@ -1181,11 +1186,14 @@ MonoBehaviour:
     uv7s: []
     uv8s: []
     colors: []
+    submeshTris: []
     bindPoses: []
     bones: []
     blendShapes: []
-    blendShapesInCombined: []
-    submeshTris: []
+    bufferDataFromPrevious:
+      numVertsBaked: 0
+      meshVerticesShift: {x: 0, y: 0, z: 0}
+      meshVerticiesWereShifted: 0
     _meshBirth: 0
     _mesh: {fileID: 0}
 --- !u!114 &1118714425098495938

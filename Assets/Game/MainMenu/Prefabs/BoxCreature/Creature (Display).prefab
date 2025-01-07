@@ -234,6 +234,7 @@ MonoBehaviour:
   resultPrefabLeaveInstanceInSceneAfterBake: 0
   parentSceneObject: {fileID: 3002746977344973631}
   _meshCombiner:
+    _bakeStatus: 0
     _validationLevel: 2
     _name: 
     _textureBakeResults: {fileID: 0}
@@ -264,9 +265,11 @@ MonoBehaviour:
     _smrNoExtraBonesWhenCombiningMeshRenderers: 0
     _smrMergeBlendShapesWithSameNames: 0
     _assignToMeshCustomizer: {fileID: 0}
+    _meshAPItoUse: 0
     objectsInCombinedMesh: []
     lightmapIndex: -1
     mbDynamicObjectsInCombinedMesh: []
+    channelsLastBake: 0
     verts: []
     normals: []
     tangents: []
@@ -280,11 +283,14 @@ MonoBehaviour:
     uv7s: []
     uv8s: []
     colors: []
+    submeshTris: []
     bindPoses: []
     bones: []
     blendShapes: []
-    blendShapesInCombined: []
-    submeshTris: []
+    bufferDataFromPrevious:
+      numVertsBaked: 0
+      meshVerticesShift: {x: 0, y: 0, z: 0}
+      meshVerticiesWereShifted: 0
     _meshBirth: 0
     _mesh: {fileID: 0}
 --- !u!114 &5224359030948400187

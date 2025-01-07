@@ -152,10 +152,6 @@ namespace DanielLochner.Assets.CreatureCreator
 
             if (load)
             {
-                // Wait
-                SetPromptId("startup_loading");
-                yield return new WaitForSeconds(1f);
-
                 // Setup World
                 Map map = Map.Custom;
                 Mode mode = Mode.Creative;
@@ -170,7 +166,6 @@ namespace DanielLochner.Assets.CreatureCreator
 
                 // Start
                 NetworkManager.Singleton.StartHost();
-                OnEntered();
             }
             else
             if (upload)

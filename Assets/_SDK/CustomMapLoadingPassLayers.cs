@@ -8,7 +8,7 @@ public class CustomMapLoadingPassLayers : CustomMapLoadingPass
 
 	public override void Load(Scene scene)
 	{
-        foreach (var setLayer in worldRoot.GetComponentsInChildren<SetLayer>(true))
+        foreach (var setLayer in scene.GetComponents<SetLayer>(true))
         {
             int layerIndex = LayerMask.NameToLayer(setLayer.layerName);
             if (layerIndex != -1)
