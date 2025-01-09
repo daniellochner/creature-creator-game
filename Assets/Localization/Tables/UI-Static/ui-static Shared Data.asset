@@ -2815,6 +2815,10 @@ MonoBehaviour:
     m_Key: option_map_custom
     m_Metadata:
       m_Items: []
+  - m_Id: 259025185577209856
+    m_Key: mainmenu_premium_mods
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

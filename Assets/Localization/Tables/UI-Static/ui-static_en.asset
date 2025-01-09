@@ -2120,8 +2120,9 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 36855465010466816
     m_Localized: "\u2713<indent=1em>Access all body parts and patterns.</indent>\n\u2713<indent=1em>Access
-      unlimited mode.</indent>\n\u2713<indent=1em>Create large multiplayer worlds.</indent>\n\u2713<indent=1em>Download
-      unlimited creatures.</indent>\n\u2713<indent=1em>Remove ads.</indent>"
+      unlimited mode.</indent>\n\u2713<indent=1em>Host large multiplayer worlds.</indent>\n\u2713<indent=1em>Join
+      modded multiplayer worlds.</indent>\n\u2713<indent=1em>Download unlimited creatures.</indent>\n\u2713<indent=1em>Remove
+      ads.</indent>"
     m_Metadata:
       m_Items: []
   - m_Id: 36855609021894656
@@ -2880,6 +2881,10 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 253668911192838144
     m_Localized: Custom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259025185577209856
+    m_Localized: Premium is required to join online modded worlds.
     m_Metadata:
       m_Items: []
   references:

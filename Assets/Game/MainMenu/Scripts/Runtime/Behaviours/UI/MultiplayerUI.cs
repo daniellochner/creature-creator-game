@@ -331,6 +331,15 @@ namespace DanielLochner.Assets.CreatureCreator
                     throw new Exception(LocalizationUtility.Localize("network_status_kicked"));
                 }
 
+                // Check Premium
+                if (!PremiumManager.Data.IsPremium)
+                {
+                    if (world.IsCustom)
+                    {
+                        throw new Exception(LocalizationUtility.Localize("mainmenu_premium_mods"));
+                    }
+                }
+
                 // Check Mods
                 if (world.IsCustom && !ModsManager.Instance.HasRequiredMods(world, out string reqMapId, out List<string> reqBodyPartIds, out List<string> reqPatternIds))
                 {
@@ -464,6 +473,11 @@ namespace DanielLochner.Assets.CreatureCreator
                     {
                         visibilityOS.Select(Visibility.Public);
                         throw new Exception(LocalizationUtility.Localize("mainmenu_premium_private"));
+                    }
+
+                    if (map == Map.Custom)
+                    {
+                        throw new Exception(LocalizationUtility.Localize("mainmenu_premium_mods"));
                     }
                 }
 
