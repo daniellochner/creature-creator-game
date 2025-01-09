@@ -2819,6 +2819,14 @@ MonoBehaviour:
     m_Key: mainmenu_premium_mods
     m_Metadata:
       m_Items: []
+  - m_Id: 259030364481490944
+    m_Key: startup_updating
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259030462720479232
+    m_Key: startup_updated
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

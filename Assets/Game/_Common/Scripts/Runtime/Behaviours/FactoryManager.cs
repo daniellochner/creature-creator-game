@@ -595,6 +595,48 @@ namespace DanielLochner.Assets.CreatureCreator
         }
 
 
+        public IEnumerator UpdateItemRoutine(ulong itemId, string title, string description, FactoryItemType tagType, string dataPath, string previewPath, Action<float> onProgress, Action<string> onUploaded, Action<string> onFailed)
+        {
+#if UNITY_STANDALONE
+            PublishedFileId_t fileId = new PublishedFileId_t(itemId);
+            UGCUpdateHandle_t updateHandle = SteamUGC.StartItemUpdate(SteamUtils.GetAppID(), fileId);
+            SteamUGC.SetItemTitle(updateHandle, title);
+            SteamUGC.SetItemDescription(updateHandle, description);
+            SteamUGC.SetItemContent(updateHandle, dataPath);
+            SteamUGC.SetItemPreview(updateHandle, previewPath);
+            SteamUGC.SetItemTags(updateHandle, new string[] { tagType.ToString() });
+            SteamUGC.SetItemVisibility(updateHandle, ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityPublic);
+            SteamUGC.SubmitItemUpdate(updateHandle, null);
+
+            EItemUpdateStatus updateStatus = default;
+            yield return new WaitUntil(() =>
+            {
+                updateStatus = SteamUGC.GetItemUpdateProgress(updateHandle, out ulong p, out ulong t);
+                if (p >= 0 && t > 0)
+                {
+                    onProgress?.Invoke(p / (float)t);
+                }
+                else
+                {
+                    onProgress?.Invoke(0f);
+                }
+                return updateStatus == EItemUpdateStatus.k_EItemUpdateStatusInvalid;
+            });
+
+            if (true)
+            {
+                SteamFriends.ActivateGameOverlayToWebPage($"steam://url/CommunityFilePage/{itemId}");
+                onUploaded?.Invoke(itemId.ToString());
+            }
+            else
+            {
+                onFailed?.Invoke("Error");
+            }
+#else
+            yield return null;
+#endif
+        }
+
         public void UploadItem(string title, string description, FactoryItemType tagType, string dataPath, string previewPath, Action<float> onProgress = null, Action<string> onUploaded = null, Action<string> onFailed = null)
         {
             StartCoroutine(UploadItemRoutine(title, description, tagType, dataPath, previewPath, onProgress, onUploaded, onFailed));
@@ -602,67 +644,64 @@ namespace DanielLochner.Assets.CreatureCreator
         public IEnumerator UploadItemRoutine(string title, string description, FactoryItemType tagType, string dataPath, string previewPath, Action<float> onProgress, Action<string> onUploaded, Action<string> onFailed)
         {
 #if UNITY_STANDALONE
-            if (SteamManager.Initialized && !EducationManager.Instance.IsEducational)
+            UploadStatus uploadStatus = UploadStatus.Uploading;
+            EItemUpdateStatus updateStatus = EItemUpdateStatus.k_EItemUpdateStatusUploadingContent;
+            EResult error = default;
+
+            PublishedFileId_t itemId = default;
+            UGCUpdateHandle_t updateHandle = default;
+            CallResult<CreateItemResult_t> item = CallResult<CreateItemResult_t>.Create(delegate (CreateItemResult_t createdItem, bool hasFailed)
             {
-                UploadStatus uploadStatus = UploadStatus.Uploading;
-                EItemUpdateStatus updateStatus = EItemUpdateStatus.k_EItemUpdateStatusUploadingContent;
-                EResult error = default;
-
-                PublishedFileId_t itemId = default;
-                UGCUpdateHandle_t updateHandle = default;
-                CallResult<CreateItemResult_t> item = CallResult<CreateItemResult_t>.Create(delegate (CreateItemResult_t createdItem, bool hasFailed)
+                if (createdItem.m_bUserNeedsToAcceptWorkshopLegalAgreement)
                 {
-                    if (createdItem.m_bUserNeedsToAcceptWorkshopLegalAgreement)
-                    {
-                        SteamFriends.ActivateGameOverlayToWebPage("https://steamcommunity.com/workshop/workshoplegalagreement/");
-                    }
-                    if (hasFailed)
-                    {
-                        uploadStatus = UploadStatus.Error;
-                        return;
-                    }
+                    SteamFriends.ActivateGameOverlayToWebPage("https://steamcommunity.com/workshop/workshoplegalagreement/");
+                }
+                if (hasFailed)
+                {
+                    uploadStatus = UploadStatus.Error;
+                    return;
+                }
 
-                    itemId = createdItem.m_nPublishedFileId;
-                    updateHandle = SteamUGC.StartItemUpdate(SteamUtils.GetAppID(), itemId);
-                    SteamUGC.SetItemTitle(updateHandle, title);
-                    SteamUGC.SetItemDescription(updateHandle, description);
-                    SteamUGC.SetItemContent(updateHandle, dataPath);
-                    SteamUGC.SetItemPreview(updateHandle, previewPath);
-                    SteamUGC.SetItemTags(updateHandle, new string[] { tagType.ToString() });
-                    SteamUGC.SetItemVisibility(updateHandle, ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityPublic);
-                    SteamUGC.SubmitItemUpdate(updateHandle, null);
+                itemId = createdItem.m_nPublishedFileId;
+                updateHandle = SteamUGC.StartItemUpdate(SteamUtils.GetAppID(), itemId);
+                SteamUGC.SetItemTitle(updateHandle, title);
+                SteamUGC.SetItemDescription(updateHandle, description);
+                SteamUGC.SetItemContent(updateHandle, dataPath);
+                SteamUGC.SetItemPreview(updateHandle, previewPath);
+                SteamUGC.SetItemTags(updateHandle, new string[] { tagType.ToString() });
+                SteamUGC.SetItemVisibility(updateHandle, ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityPublic);
+                SteamUGC.SubmitItemUpdate(updateHandle, null);
 
-                    uploadStatus = UploadStatus.Uploaded;
-                    error = createdItem.m_eResult;
+                uploadStatus = UploadStatus.Uploaded;
+                error = createdItem.m_eResult;
+            });
+            SteamAPICall_t createHandle = SteamUGC.CreateItem(SteamUtils.GetAppID(), EWorkshopFileType.k_EWorkshopFileTypeCommunity);
+            item.Set(createHandle);
+
+            yield return new WaitUntil(() => uploadStatus != UploadStatus.Uploading);
+
+            if (uploadStatus == UploadStatus.Uploaded)
+            {
+                yield return new WaitUntil(() =>
+                {
+                    updateStatus = SteamUGC.GetItemUpdateProgress(updateHandle, out ulong p, out ulong t);
+                    if (p >= 0 && t > 0)
+                    {
+                        onProgress?.Invoke(p / (float)t);
+                    }
+                    else
+                    {
+                        onProgress?.Invoke(0f);
+                    }
+                    return updateStatus == EItemUpdateStatus.k_EItemUpdateStatusInvalid;
                 });
-                SteamAPICall_t createHandle = SteamUGC.CreateItem(SteamUtils.GetAppID(), EWorkshopFileType.k_EWorkshopFileTypeCommunity);
-                item.Set(createHandle);
 
-                yield return new WaitUntil(() => uploadStatus != UploadStatus.Uploading);
-
-                if (uploadStatus == UploadStatus.Uploaded)
-                {
-                    yield return new WaitUntil(() =>
-                    {
-                        updateStatus = SteamUGC.GetItemUpdateProgress(updateHandle, out ulong p, out ulong t);
-                        if (p >= 0 && t > 0)
-                        {
-                            onProgress?.Invoke(p / (float)t);
-                        }
-                        else
-                        {
-                            onProgress?.Invoke(0f);
-                        }
-                        return updateStatus == EItemUpdateStatus.k_EItemUpdateStatusInvalid;
-                    });
-
-                    SteamFriends.ActivateGameOverlayToWebPage($"steam://url/CommunityFilePage/{itemId}");
-                    onUploaded?.Invoke(itemId.ToString());
-                }
-                else
-                {
-                    onFailed?.Invoke(error.ToString());
-                }
+                SteamFriends.ActivateGameOverlayToWebPage($"steam://url/CommunityFilePage/{itemId}");
+                onUploaded?.Invoke(itemId.ToString());
+            }
+            else
+            {
+                onFailed?.Invoke(error.ToString());
             }
 #else
             yield return null;

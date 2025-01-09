@@ -2887,6 +2887,14 @@ MonoBehaviour:
     m_Localized: Premium is required to join online modded worlds.
     m_Metadata:
       m_Items: []
+  - m_Id: 259030364481490944
+    m_Localized: Updating... {0}%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259030462720479232
+    m_Localized: Updated.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:
