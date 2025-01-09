@@ -32,7 +32,7 @@ namespace DanielLochner.Assets.CreatureCreator
             {
                 FactoryItemQuery query = new()
                 {
-                    TagType = FactoryTagType.Creature,
+                    TagType = FactoryItemType.Creature,
                     SortByType = FactorySortByType.MostPopular,
                     TimePeriodType = FactoryTimePeriodType.ThisWeek,
                     NumPerPage = maxItemsInCarousel,

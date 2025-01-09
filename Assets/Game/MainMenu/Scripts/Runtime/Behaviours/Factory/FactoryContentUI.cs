@@ -7,7 +7,7 @@ namespace DanielLochner.Assets.CreatureCreator
     public class FactoryContentUI : MonoBehaviour, ISetupable
     {
         #region Fields
-        public FactoryTagType tagType;
+        public FactoryItemType tagType;
         public string titleId;
 
         public FactoryItemUI factoryItemUIPrefab;

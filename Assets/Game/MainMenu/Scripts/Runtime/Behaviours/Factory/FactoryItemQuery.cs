@@ -5,7 +5,7 @@ namespace DanielLochner.Assets.CreatureCreator
     [Serializable]
     public class FactoryItemQuery
     {
-        public FactoryTagType TagType;
+        public FactoryItemType TagType;
         public FactorySortByType SortByType;
         public FactoryTimePeriodType TimePeriodType;
         public int NumPerPage;
