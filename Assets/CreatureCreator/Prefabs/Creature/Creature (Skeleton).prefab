@@ -211,7 +211,7 @@ MonoBehaviour:
     _resultSceneObject: {fileID: 0}
     _targetRenderer: {fileID: 0}
     _LOG_LEVEL: 3
-    _settingsHolder: {fileID: 0}
+    _settingsHolder: {fileID: 11400000, guid: 4047aed417f0f4993a4758b5a2fa6714, type: 2}
     _outputOption: 0
     _renderType: 1
     _lightmapOption: 1
@@ -272,7 +272,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3002746977395476858}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c2a8157bd5113c4bb62fac465525d70, type: 3}
+  m_Script: {fileID: 11500000, guid: dafcaa3d79cf34186af5c0cd4d47c722, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   colorTintPropertyName: _Color
