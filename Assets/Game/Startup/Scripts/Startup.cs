@@ -170,22 +170,50 @@ namespace DanielLochner.Assets.CreatureCreator
             else
             if (upload)
             {
-                // Upload
-                SetPromptId("startup_uploading", 0);
-                Action<float> onProgress = delegate (float p)
-                {
-                    SetPromptId("startup_uploading", Mathf.Round(p * 100f));
-                };
-                Action<string> onUploaded = delegate (string itemId)
-                {
-                    SetPromptId("startup_uploaded");
-                };
-                Action<string> onFailed = delegate (string reason)
-                {
-                    SetPromptId("startup_failed");
-                };
                 string previewPath = Path.Combine(path, "thumb.png");
-                yield return FactoryManager.Instance.UploadItemRoutine("Title", "Description", FactoryItemType.Map, path, previewPath, onProgress, onUploaded, onFailed);
+                string configPath = Path.Combine(path, "config.json");
+                MapConfigData configData = SaveUtility.Load<MapConfigData>(configPath);
+
+                if (ulong.TryParse(configData.ItemId, out ulong itemId))
+                {
+                    // Update
+                    SetPromptId("startup_updating", 0);
+                    Action<float> onProgress = delegate (float p)
+                    {
+                        SetPromptId("startup_updating", Math.Round(p * 100f, 2));
+                    };
+                    Action<string> onUpdated = delegate (string id)
+                    {
+                        SetPromptId("startup_updated");
+                    };
+                    Action<string> onFailed = delegate (string reason)
+                    {
+                        SetPromptId("startup_failed");
+                    };
+
+                    yield return FactoryManager.Instance.UpdateItemRoutine(ulong.Parse(configData.ItemId), configData.Name, configData.Description, FactoryItemType.Map, path, previewPath, onProgress, onUpdated, onFailed);
+                }
+                else
+                {
+                    // Upload
+                    SetPromptId("startup_uploading", 0);
+                    Action<float> onProgress = delegate (float p)
+                    {
+                        SetPromptId("startup_uploading", Math.Round(p * 100f, 2));
+                    };
+                    Action<string> onUploaded = delegate (string id)
+                    {
+                        SetPromptId("startup_uploaded");
+                        configData.ItemId = id; // Update the item's Id
+                        SaveUtility.Save(configPath, configData);
+                    };
+                    Action<string> onFailed = delegate (string reason)
+                    {
+                        SetPromptId("startup_failed");
+                    };
+
+                    yield return FactoryManager.Instance.UploadItemRoutine(configData.Name, configData.Description, FactoryItemType.Map, path, previewPath, onProgress, onUploaded, onFailed);
+                }
 
                 // Wait
                 yield return new WaitUntil(() => Input.anyKeyDown && !CanvasUtility.IsPointerOverUI);
