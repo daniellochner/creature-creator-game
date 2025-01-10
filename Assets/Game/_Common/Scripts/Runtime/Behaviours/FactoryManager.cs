@@ -291,7 +291,17 @@ namespace DanielLochner.Assets.CreatureCreator
                         break;
                 }
 
-                string url = $"https://api.steampowered.com/IPublishedFileService/QueryFiles/v1/?key={steamKey.Value}&appid={CCConstants.AppId}&query_type={sortBy}&search_text={itemQuery.SearchText}&days={days}&numperpage={itemQuery.NumPerPage}&page={itemQuery.Page + 1}&return_vote_data=true&return_previews=true";
+                string tags = "";
+                if (itemQuery.TagType == FactoryItemType.Creature)
+                {
+                    tags = $"excludedtags[0]={FactoryItemType.Map}&excludedtags[1]={FactoryItemType.BodyPart}&excludedtags[2]={FactoryItemType.Pattern}";
+                }
+                else
+                {
+                    tags = $"requiredtags[0]={itemQuery.TagType}";
+                }
+
+                string url = $"https://api.steampowered.com/IPublishedFileService/QueryFiles/v1/?key={steamKey.Value}&appid={CCConstants.AppId}&query_type={sortBy}&{tags}&search_text={itemQuery.SearchText}&days={days}&numperpage={itemQuery.NumPerPage}&page={itemQuery.Page + 1}&return_vote_data=true&return_previews=true";
                 StartCoroutine(GetItemsRoutine(url, itemQuery, onLoaded, onFailed));
             }
         }
