@@ -21,13 +21,8 @@ namespace DanielLochner.Assets.CreatureCreator
         public SecretKey serverAddress;
         public int hoursToCache = 1;
 
-        private static ulong STEAM_ID = 1990050;
-
 
         public List<string> LoadedCreatures { get; } = new();
-        public List<string> LoadedMaps { get; } = new();
-        public List<string> LoadedBodyParts { get; } = new();
-        public List<string> LoadedPatterns { get; } = new();
 
         public bool IsDownloadingItem { get; private set; }
         public bool IsDownloadingUsername { get; private set; }
@@ -41,21 +36,21 @@ namespace DanielLochner.Assets.CreatureCreator
             LoadItems();
         }
 
+        // View
         public void ViewWorkshop()
         {
             if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
             {
 #if UNITY_STANDALONE
-                SteamFriends.ActivateGameOverlayToWebPage($"steam://url/SteamWorkshopPage/{STEAM_ID}");
+                SteamFriends.ActivateGameOverlayToWebPage($"steam://url/SteamWorkshopPage/{CCConstants.AppId}");
 #endif
             }
             else if (SystemUtility.IsDevice(DeviceType.Handheld) || EducationManager.Instance.IsEducational)
             {
-                string url = $"https://steamcommunity.com/app/{STEAM_ID}/workshop/";
+                string url = $"https://steamcommunity.com/app/{CCConstants.AppId}/workshop/";
                 Application.OpenURL(url);
             }
         }
-
         public void ViewWorkshopItem(ulong id)
         {
             if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
@@ -71,7 +66,7 @@ namespace DanielLochner.Assets.CreatureCreator
             }
         }
 
-
+        // Manage Item
         public void LikeItem(ulong id)
         {
             if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
@@ -87,7 +82,6 @@ namespace DanielLochner.Assets.CreatureCreator
                 Data.LikedItems.Add(id);
             }
         }
-
         public void DislikeItem(ulong id)
         {
             if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
@@ -103,7 +97,6 @@ namespace DanielLochner.Assets.CreatureCreator
                 Data.DislikedItems.Add(id);
             }
         }
-
         public void SubscribeItem(ulong id)
         {
             if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
@@ -119,7 +112,6 @@ namespace DanielLochner.Assets.CreatureCreator
                 Data.SubscribedItems.Add(id);
             }
         }
-
         public void UnsubscribeItem(ulong id)
         {
             if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
@@ -136,7 +128,7 @@ namespace DanielLochner.Assets.CreatureCreator
             }
         }
 
-
+        // Get Items
         public void GetItems(FactoryItemQuery itemQuery, Action<List<FactoryItem>, uint> onLoaded, Action<string> onFailed)
         {
             if (!string.IsNullOrEmpty(itemQuery.SearchText))
@@ -299,12 +291,11 @@ namespace DanielLochner.Assets.CreatureCreator
                         break;
                 }
 
-                string url = $"https://api.steampowered.com/IPublishedFileService/QueryFiles/v1/?key={steamKey.Value}&appid={STEAM_ID}&query_type={sortBy}&search_text={itemQuery.SearchText}&days={days}&numperpage={itemQuery.NumPerPage}&page={itemQuery.Page + 1}&return_vote_data=true&return_previews=true";
+                string url = $"https://api.steampowered.com/IPublishedFileService/QueryFiles/v1/?key={steamKey.Value}&appid={CCConstants.AppId}&query_type={sortBy}&search_text={itemQuery.SearchText}&days={days}&numperpage={itemQuery.NumPerPage}&page={itemQuery.Page + 1}&return_vote_data=true&return_previews=true";
                 StartCoroutine(GetItemsRoutine(url, itemQuery, onLoaded, onFailed));
             }
         }
-
-        private IEnumerator GetItemsRoutine(string url, FactoryItemQuery query, Action<List<FactoryItem>, uint> onLoaded, Action<string> onFailed)
+        public IEnumerator GetItemsRoutine(string url, FactoryItemQuery query, Action<List<FactoryItem>, uint> onLoaded, Action<string> onFailed)
         {
             UnityWebRequest request = UnityWebRequest.Get(url);
             yield return request.SendWebRequest();
@@ -354,7 +345,20 @@ namespace DanielLochner.Assets.CreatureCreator
                 onFailed?.Invoke(request.error);
             }
         }
+        public void CacheItems(FactoryItemQuery query, List<FactoryItem> items, uint total)
+        {
+            if (!Data.CachedItems.ContainsKey(query))
+            {
+                Data.CachedItems.Add(query, new FactoryData.CachedItemData()
+                {
+                    Items = items,
+                    Total = total
+                });
+                Save();
+            }
+        }
 
+        // Download Item
         public void DownloadItem(ulong itemId, FactoryItemType itemType, Action<string> onDownloaded, Action<string> onFailed)
         {
             if (!IsDownloadingItem)
@@ -387,44 +391,18 @@ namespace DanielLochner.Assets.CreatureCreator
 #endif
             }
         }
-
-        private IEnumerator DownloadItemRoutine(ulong itemId, FactoryItemType itemType, Action<string> onDownloaded, Action<string> onFailed)
+        public IEnumerator DownloadItemRoutine(ulong itemId, FactoryItemType itemType, Action<string> onDownloaded, Action<string> onFailed)
         {
             IsDownloadingItem = true;
 
-            string tag = "";
-            string dir = "";
-            switch (itemType)
-            {
-                case FactoryItemType.Creature:
-                    tag = "creatures";
-                    dir = CCConstants.CreaturesDir;
-                    break;
+            string url = $"http://{serverAddress.Value}/api/get_workshop_item?id={itemId}";
 
-                case FactoryItemType.Map:
-                    tag = "maps";
-                    dir = CCConstants.MapsDir;
-                    break;
-
-                case FactoryItemType.BodyPart:
-                    dir = CCConstants.BodyPartsDir;
-                    tag = "bodyParts";
-                    break;
-
-                case FactoryItemType.Pattern:
-                    tag = "patterns";
-                    dir = CCConstants.PatternsDir;
-                    break;
-            }
-
-            string url = $"http://{serverAddress.Value}/api/get_workshop_item?id={itemId}&tag={tag}";
-
-            string zipFileName = $"{itemId}.zip";
-            string zipFilePath = Path.Combine(Application.persistentDataPath, zipFileName);
+            string archiveName = $"{itemId}.zip";
+            string archivePath = Path.Combine(Application.persistentDataPath, archiveName);
 
             using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
             {
-                webRequest.downloadHandler = new DownloadHandlerFile(zipFilePath);
+                webRequest.downloadHandler = new DownloadHandlerFile(archivePath);
                 yield return webRequest.SendWebRequest();
 
                 if (webRequest.result == UnityWebRequest.Result.ConnectionError || webRequest.result == UnityWebRequest.Result.ProtocolError)
@@ -433,16 +411,17 @@ namespace DanielLochner.Assets.CreatureCreator
                 }
                 else
                 {
-                    string extractPath = Path.Combine(dir, Path.GetFileNameWithoutExtension(zipFileName));
+                    string extractPath = Path.Combine(CCConstants.GetItemsDir(itemType), Path.GetFileNameWithoutExtension(archiveName));
 
                     if (Directory.Exists(extractPath))
                     {
                         Directory.Delete(extractPath, true); // Delete the directory if it exists to avoid conflicts
                     }
 
-                    ZipFile.ExtractToDirectory(zipFilePath, extractPath);
+                    ZipFile.ExtractToDirectory(archivePath, extractPath, true);
+                    File.Delete(archivePath);
 
-                    onDownloaded?.Invoke(name);
+                    onDownloaded?.Invoke(itemId.ToString());
                     LoadItems(itemId);
                 }
             }
@@ -450,20 +429,7 @@ namespace DanielLochner.Assets.CreatureCreator
             IsDownloadingItem = false;
         }
 
-        private void CacheItems(FactoryItemQuery query, List<FactoryItem> items, uint total)
-        {
-            if (!Data.CachedItems.ContainsKey(query))
-            {
-                Data.CachedItems.Add(query, new FactoryData.CachedItemData()
-                {
-                    Items = items,
-                    Total = total
-                });
-                Save();
-            }
-        }
-
-
+        // Download Username
         public void DownloadUsername(ulong userId, Action<string> onLoaded, Action<string> onFailed)
         {
             if (!IsDownloadingUsername)
@@ -471,8 +437,7 @@ namespace DanielLochner.Assets.CreatureCreator
                 StartCoroutine(DownloadUsernameRoutine(userId, onLoaded, onFailed));
             }
         }
-
-        private IEnumerator DownloadUsernameRoutine(ulong userId, Action<string> onLoaded, Action<string> onFailed)
+        public IEnumerator DownloadUsernameRoutine(ulong userId, Action<string> onLoaded, Action<string> onFailed)
         {
             IsDownloadingUsername = true;
 
@@ -509,93 +474,8 @@ namespace DanielLochner.Assets.CreatureCreator
             IsDownloadingUsername = false;
         }
 
-        public void LoadItems(params ulong[] itemIds)
-        {
-            SystemUtility.TryCreateDirectory(CCConstants.CreaturesDir);
-            SystemUtility.TryCreateDirectory(CCConstants.MapsDir);
-            SystemUtility.TryCreateDirectory(CCConstants.BodyPartsDir);
-            SystemUtility.TryCreateDirectory(CCConstants.PatternsDir);
-
-            if (SystemUtility.IsDevice(DeviceType.Desktop) && !EducationManager.Instance.IsEducational)
-            {
-#if UNITY_STANDALONE
-                LoadedCreatures.Clear();
-                LoadedMaps.Clear();
-                LoadedBodyParts.Clear();
-                LoadedPatterns.Clear();
-
-                uint n = SteamUGC.GetNumSubscribedItems();
-                if (n > 0)
-                {
-  
-                    PublishedFileId_t[] items = new PublishedFileId_t[n];
-                    SteamUGC.GetSubscribedItems(items, n);
-
-                    foreach (PublishedFileId_t fileId in items)
-                    {
-                        ulong itemId = fileId.m_PublishedFileId;
-                        if (itemIds.Length > 0 && !itemIds.Contains(itemId))
-                        {
-                            continue;
-                        }
-                        if (SteamUGC.GetItemInstallInfo(fileId, out ulong sizeOnDisk, out string itemPath, 1024, out uint timeStamp) && Directory.Exists(itemPath))
-                        {
-                            if (TryGetItemType(itemPath, out FactoryItemType type))
-                            {
-                                switch (type)
-                                {
-                                    case FactoryItemType.Creature:
-                                        string creaturePathSrc = Directory.GetFiles(itemPath)[0];
-                                        string creaturePathDst = Path.Combine(CCConstants.CreaturesDir, Path.GetFileName(creaturePathSrc));
-                                        SystemUtility.CopyFile(creaturePathSrc, creaturePathDst);
-                                        string creatureName = Path.GetFileNameWithoutExtension(creaturePathSrc);
-                                        LoadedCreatures.Add(creatureName);
-                                        break;
-
-                                    case FactoryItemType.Map:
-                                        string mapPathDst = Path.Combine(CCConstants.MapsDir, itemId.ToString());
-                                        SystemUtility.CopyDirectory(itemPath, mapPathDst, true);
-                                        LoadedMaps.Add(itemId.ToString());
-                                        break;
-
-                                    case FactoryItemType.BodyPart:
-                                        string bodyPartPathDst = Path.Combine(CCConstants.BodyPartsDir, itemId.ToString());
-                                        SystemUtility.CopyDirectory(itemPath, bodyPartPathDst, true);
-                                        LoadedBodyParts.Add(itemId.ToString());
-                                        break;
-
-                                    case FactoryItemType.Pattern:
-                                        string patternPathDst = Path.Combine(CCConstants.PatternsDir, itemId.ToString());
-                                        SystemUtility.CopyDirectory(itemPath, patternPathDst, true);
-                                        LoadedPatterns.Add(itemId.ToString());
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                }
-#endif
-            }
-
-            OnLoaded?.Invoke();
-        }
-
-        public bool TryGetItemType(string path, out FactoryItemType type)
-        {
-            var files = Directory.GetFiles(path);
-            if (files.Length == 1) // one data file for creature
-            {
-                type = FactoryItemType.Creature;
-            }
-            else
-            {
-                type = FactoryItemType.Map;
-            }
-            return true;
-        }
-
-
-        public IEnumerator UpdateItemRoutine(ulong itemId, string title, string description, FactoryItemType tagType, string dataPath, string previewPath, Action<float> onProgress, Action<string> onUploaded, Action<string> onFailed)
+        // Update Item
+        public IEnumerator UpdateItemRoutine(ulong itemId, string title, string description, string dataPath, string previewPath, Action<float> onProgress, Action<string> onUploaded, Action<string> onFailed)
         {
 #if UNITY_STANDALONE
             PublishedFileId_t fileId = new PublishedFileId_t(itemId);
@@ -604,8 +484,6 @@ namespace DanielLochner.Assets.CreatureCreator
             SteamUGC.SetItemDescription(updateHandle, description);
             SteamUGC.SetItemContent(updateHandle, dataPath);
             SteamUGC.SetItemPreview(updateHandle, previewPath);
-            SteamUGC.SetItemTags(updateHandle, new string[] { tagType.ToString() });
-            SteamUGC.SetItemVisibility(updateHandle, ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityPublic);
             SteamUGC.SubmitItemUpdate(updateHandle, null);
 
             EItemUpdateStatus updateStatus = default;
@@ -637,6 +515,7 @@ namespace DanielLochner.Assets.CreatureCreator
 #endif
         }
 
+        // Upload Item
         public void UploadItem(string title, string description, FactoryItemType tagType, string dataPath, string previewPath, Action<float> onProgress = null, Action<string> onUploaded = null, Action<string> onFailed = null)
         {
             StartCoroutine(UploadItemRoutine(title, description, tagType, dataPath, previewPath, onProgress, onUploaded, onFailed));
@@ -707,12 +586,76 @@ namespace DanielLochner.Assets.CreatureCreator
             yield return null;
 #endif
         }
-
         public enum UploadStatus
         {
             Uploading,
             Error,
             Uploaded
+        }
+
+        // Load Items
+        public void LoadItems(params ulong[] itemIds)
+        {
+            SystemUtility.TryCreateDirectory(CCConstants.CreaturesDir);
+            SystemUtility.TryCreateDirectory(CCConstants.GetItemsDir(FactoryItemType.Creature));
+            SystemUtility.TryCreateDirectory(CCConstants.MapsDir);
+            SystemUtility.TryCreateDirectory(CCConstants.BodyPartsDir);
+            SystemUtility.TryCreateDirectory(CCConstants.PatternsDir);
+
+#if UNITY_STANDALONE
+            uint n = SteamUGC.GetNumSubscribedItems();
+            if (n > 0)
+            {
+                PublishedFileId_t[] items = new PublishedFileId_t[n];
+                SteamUGC.GetSubscribedItems(items, n);
+
+                foreach (PublishedFileId_t fileId in items)
+                {
+                    ulong itemId = fileId.m_PublishedFileId;
+                    if (itemIds.Length > 0 && !itemIds.Contains(itemId))
+                    {
+                        continue;
+                    }
+                    if (SteamUGC.GetItemInstallInfo(fileId, out ulong sizeOnDisk, out string itemPath, 1024, out uint timeStamp) && TryGetItemType(itemPath, out FactoryItemType type))
+                    {
+                        string src = itemPath;
+                        string dst = Path.Combine(CCConstants.GetItemsDir(type), itemId.ToString());
+                        SystemUtility.CopyDirectory(src, dst, true);
+                    }
+                }
+            }
+#endif
+
+            LoadedCreatures.Clear();
+            foreach (string itemPath in Directory.GetDirectories(CCConstants.GetItemsDir(FactoryItemType.Creature)))
+            {
+                string creaturePathSrc = Directory.GetFiles(itemPath)[0];
+                string creaturePathDst = Path.Combine(CCConstants.CreaturesDir, Path.GetFileName(creaturePathSrc));
+                SystemUtility.CopyFile(creaturePathSrc, creaturePathDst);
+                string creatureName = Path.GetFileNameWithoutExtension(creaturePathSrc);
+                LoadedCreatures.Add(creatureName);
+            }
+
+            OnLoaded?.Invoke();
+        }
+        public bool TryGetItemType(string path, out FactoryItemType type)
+        {
+            if (!Directory.Exists(path))
+            {
+                type = default;
+                return false;
+            }
+
+            var files = Directory.GetFiles(path);
+            if (files.Length == 1) // one data file for creature
+            {
+                type = FactoryItemType.Creature;
+            }
+            else
+            {
+                type = FactoryItemType.Map;
+            }
+            return true;
         }
     }
 }

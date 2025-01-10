@@ -191,7 +191,7 @@ namespace DanielLochner.Assets.CreatureCreator
                         SetPromptId("startup_failed");
                     };
 
-                    yield return FactoryManager.Instance.UpdateItemRoutine(ulong.Parse(configData.ItemId), configData.Name, configData.Description, FactoryItemType.Map, path, previewPath, onProgress, onUpdated, onFailed);
+                    yield return FactoryManager.Instance.UpdateItemRoutine(itemId, configData.Name, configData.Description, path, previewPath, onProgress, onUpdated, onFailed);
                 }
                 else
                 {
