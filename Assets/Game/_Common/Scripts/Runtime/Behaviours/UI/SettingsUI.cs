@@ -65,6 +65,8 @@ namespace DanielLochner.Assets.CreatureCreator
         [SerializeField] private Toggle mapToggle;
         [SerializeField] private Toggle footstepsToggle;
         [SerializeField] private Button resetProgressButton;
+        [SerializeField] private GameObject selectFilesGO;
+        [SerializeField] private GameObject clearFilesGO;
 
         [Header("Controls")]
         [SerializeField] private Slider sensitivityHorizontalSlider;
@@ -412,21 +414,30 @@ namespace DanielLochner.Assets.CreatureCreator
 
             #region Gameplay
             // Creature Preset(s)
-            int presets = SettingsManager.Data.CreaturePresets.Count;
-            creaturePresetsText.text = presets.ToString();
             creaturePresetsButton.onClick.AddListener(delegate
             {
-                if (SystemUtility.IsDevice(DeviceType.Desktop))
+                if (SettingsManager.Data.CreaturePresets.Count == 0)
                 {
-                    FileBrowser.Instance.OpenFilesAsync(true, "dat");
-                    FileBrowser.Instance.OnOpenFilesComplete += OnOpenFilesComplete;
+                    if (SystemUtility.IsDevice(DeviceType.Desktop))
+                    {
+                        FileBrowser.Instance.OpenFilesAsync(true, "dat");
+                        FileBrowser.Instance.OnOpenFilesComplete += OnOpenFilesComplete;
+                    }
+                    else
+                    if (SystemUtility.IsDevice(DeviceType.Handheld))
+                    {
+                        NativeFilePicker.PickMultipleFiles(SelectFiles, NativeFilePicker.AllFileTypes);
+                    }
                 }
                 else
-                if (SystemUtility.IsDevice(DeviceType.Handheld))
                 {
-                    NativeFilePicker.PickMultipleFiles(SelectFiles, NativeFilePicker.AllFileTypes);
+                    SettingsManager.Data.CreaturePresets.Clear();
+                    SettingsManager.Instance.Save();
+
+                    UpdatePresetSelectionUI();
                 }
             });
+            UpdatePresetSelectionUI();
 
             exportPrecisionSlider.value = SettingsManager.Data.ExportPrecision;
             exportPrecisionSlider.onValueChanged.AddListener(delegate (float precision)
@@ -733,12 +744,16 @@ namespace DanielLochner.Assets.CreatureCreator
             SettingsManager.Data.CreaturePresets.Clear();
             foreach (string path in files)
             {
-                CreatureData creature = SaveUtility.Load<CreatureData>(path);
+                SecretKey key = DatabaseManager.GetDatabaseEntry<SecretKey>("Keys", "Creature");
+                CreatureData creature = SaveUtility.Load<CreatureData>(path, key.Value);
                 if (creature != null)
                 {
                     SettingsManager.Data.CreaturePresets.Add(creature);
                 }
             }
+            SettingsManager.Instance.Save();
+
+            UpdatePresetSelectionUI();
         }
         private void OnOpenFilesComplete(bool selected, string singleFile, string[] files)
         {
@@ -746,6 +761,13 @@ namespace DanielLochner.Assets.CreatureCreator
             {
                 SelectFiles(files);
             }
+        }
+        private void UpdatePresetSelectionUI()
+        {
+            int presets = SettingsManager.Data.CreaturePresets.Count;
+            clearFilesGO.SetActive(presets > 0);
+            selectFilesGO.SetActive(presets <= 0);
+            creaturePresetsText.text = presets.ToString();
         }
         #endregion
         #endregion

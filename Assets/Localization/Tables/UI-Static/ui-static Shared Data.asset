@@ -2827,6 +2827,10 @@ MonoBehaviour:
     m_Key: startup_updated
     m_Metadata:
       m_Items: []
+  - m_Id: 259792817712259072
+    m_Key: settings_gameplay_creature-presets-clear
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
