@@ -65,7 +65,7 @@ namespace DanielLochner.Assets.CreatureCreator
             SetDebugMode(Data.DebugMode);
             SetDepthOfField(Data.DepthOfField);
             SetMotionBlur(Data.MotionBlur);
-            SetOptimizeCreatures(false); //SetOptimizeCreatures(Data.OptimizeCreatures);
+            SetOptimizeCreatures(Data.OptimizeCreatures);
             SetOptimizeLighting(Data.OptimizeLighting);
             SetCreatureRenderDistance(Data.CreatureRenderDistance);
 

@@ -1948,7 +1948,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 8390203516311383418}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.3653846
+  m_Size: 0.9230769
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4506,7 +4506,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 8390203516226985441}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.3534884
+  m_Size: 0.8495575
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -5384,7 +5384,6 @@ MonoBehaviour:
   resetProgressButton: {fileID: 6702633487157787598}
   selectFilesGO: {fileID: 6164179546328940097}
   clearFilesGO: {fileID: 2711010487253188974}
-  creatureEncryptionKey: {fileID: 11400000, guid: d7aa960d9aa6b10499e23d730ed7d054, type: 2}
   sensitivityHorizontalSlider: {fileID: 8390203517122174097}
   sensitivityVerticalSlider: {fileID: 8390203517177816011}
   invertHorizontalToggle: {fileID: 8390203516833344013}
@@ -6587,7 +6586,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 8390203517656153783}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.14531548
+  m_Size: 0.36711282
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -8236,7 +8235,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5282764849396029000, guid: 15acd85df3b9e1b42aa11d6565ed2ae4, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5282764849396029000, guid: 15acd85df3b9e1b42aa11d6565ed2ae4, type: 3}
       propertyPath: m_AnchorMin.x
@@ -8244,11 +8243,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5282764849396029000, guid: 15acd85df3b9e1b42aa11d6565ed2ae4, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5282764849396029000, guid: 15acd85df3b9e1b42aa11d6565ed2ae4, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 1850
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5282764849396029000, guid: 15acd85df3b9e1b42aa11d6565ed2ae4, type: 3}
       propertyPath: m_SizeDelta.y
@@ -8284,11 +8283,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5282764849396029000, guid: 15acd85df3b9e1b42aa11d6565ed2ae4, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 925
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5282764849396029000, guid: 15acd85df3b9e1b42aa11d6565ed2ae4, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -830
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5282764849396029000, guid: 15acd85df3b9e1b42aa11d6565ed2ae4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -8308,7 +8307,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5282764849396029001, guid: 15acd85df3b9e1b42aa11d6565ed2ae4, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5282764849396029001, guid: 15acd85df3b9e1b42aa11d6565ed2ae4, type: 3}
       propertyPath: m_StaticEditorFlags

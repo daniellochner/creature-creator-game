@@ -31,7 +31,7 @@ public class MB_HackTextureAtlasExample : MonoBehaviour
 
         int padding = 2;
         int colorBlockSize = 16;
-        bool isProjectLinear = MBVersion.GetProjectColorSpace() == ColorSpace.Linear;
+        bool isProjectLinear = MBVersion.GetProjectColorSpace() != ColorSpace.Linear;
 
         // Visit each source material and generate a solid color texture matching the color tint.
         Texture2D[] solidColorTextures = new Texture2D[sourceMaterials.Length];
