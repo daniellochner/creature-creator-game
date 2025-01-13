@@ -2836,8 +2836,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 207686935092649984
-    m_Localized: "\xA1Has descargado \"{0}\" con \xE9xito! Esta criatura se a\xF1adir\xE1
-      a tu lista de creaciones, lista para cargarse la pr\xF3xima vez que juegues."
+    m_Localized: "\xA1Has descargado un objeto del taller ({0}) con \xE9xito!"
     m_Metadata:
       m_Items: []
   - m_Id: 219139157938262016
@@ -2847,6 +2846,79 @@ MonoBehaviour:
   - m_Id: 219139171456503808
     m_Localized: "Ya est\xE1s descargando un art\xEDculo de la f\xE1brica. Por favor,
       espera hasta que la descarga se complete."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251873328182431744
+    m_Localized: Cargando...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251879950246055936
+    m_Localized: Personalizado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252501792765874176
+    m_Localized: Mundo modificado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252501818028167168
+    m_Localized: "Este mundo modificado tiene un mapa, partes del cuerpo o patrones
+      que no tienes instalados. \xBFTe gustar\xEDa descargarlos? ({0})"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252626441638088704
+    m_Localized: Necesitas los mods requeridos.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825641902510080
+    m_Localized: Instalado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825692905246720
+    m_Localized: Instalando...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275800620863488
+    m_Localized: "\xA1Subido!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275592780517376
+    m_Localized: Subiendo... {0}%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253168844983865344
+    m_Localized: Tus mods han terminado de descargarse.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253668911192838144
+    m_Localized: Personalizado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825958689902592
+    m_Localized: Mods
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825443499347968
+    m_Localized: No hay mods
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275489340592128
+    m_Localized: 'Fallido: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259792817712259072
+    m_Localized: Borrar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259030364481490944
+    m_Localized: Actualizando... {0}%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259030462720479232
+    m_Localized: Actualizado.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259025185577209856
+    m_Localized: "Se requiere premium para unirse a mundos modificados en l\xEDnea."
     m_Metadata:
       m_Items: []
   references:

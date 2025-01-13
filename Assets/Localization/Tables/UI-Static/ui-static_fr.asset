@@ -2834,9 +2834,8 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 207686935092649984
-    m_Localized: "Vous avez t\xE9l\xE9charg\xE9 \"{0}\" avec succ\xE8s ! Cette cr\xE9ature
-      sera ajout\xE9e \xE0 votre liste de cr\xE9ations, pr\xEAte \xE0 \xEAtre charg\xE9e
-      la prochaine fois que vous jouerez !"
+    m_Localized: "Vous avez t\xE9l\xE9charg\xE9 un objet depuis l'atelier ({0}) avec
+      succ\xE8s !"
     m_Metadata:
       m_Items: []
   - m_Id: 219139157938262016
@@ -2846,6 +2845,81 @@ MonoBehaviour:
   - m_Id: 219139171456503808
     m_Localized: "Vous t\xE9l\xE9chargez d\xE9j\xE0 un \xE9l\xE9ment depuis l\u2019usine.
       Veuillez patienter jusqu'\xE0 ce que le t\xE9l\xE9chargement soit termin\xE9."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251873328182431744
+    m_Localized: Chargement...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251879950246055936
+    m_Localized: "Personnalis\xE9"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252501792765874176
+    m_Localized: "Monde modifi\xE9"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252501818028167168
+    m_Localized: "Ce monde modifi\xE9 contient une carte, des parties de corps ou
+      des motifs que vous n'avez pas install\xE9s. Voulez-vous les t\xE9l\xE9charger
+      ? ({0})"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252626441638088704
+    m_Localized: Vous avez besoin des mods requis.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825641902510080
+    m_Localized: "Install\xE9"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825692905246720
+    m_Localized: Installation...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275800620863488
+    m_Localized: "T\xE9l\xE9charg\xE9 !"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275592780517376
+    m_Localized: "T\xE9l\xE9chargement... {0}%"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253168844983865344
+    m_Localized: "Vos mods ont fini de se t\xE9l\xE9charger."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253668911192838144
+    m_Localized: "Personnalis\xE9"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825443499347968
+    m_Localized: Pas de mods
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825958689902592
+    m_Localized: Mods
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275489340592128
+    m_Localized: "\xC9chec : {0}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259792817712259072
+    m_Localized: Effacer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259030364481490944
+    m_Localized: "Mise \xE0 jour... {0}%"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259030462720479232
+    m_Localized: "Mis \xE0 jour."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259025185577209856
+    m_Localized: "Le mode premium est requis pour rejoindre des mondes modifi\xE9s
+      en ligne."
     m_Metadata:
       m_Items: []
   references:

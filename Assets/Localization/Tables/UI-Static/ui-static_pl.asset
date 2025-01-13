@@ -2850,9 +2850,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 207686935092649984
-    m_Localized: "Pomy\u015Blnie pobrano \"{0}\"! To stworzenie zostanie dodane do
-      twojej listy tw\xF3rczo\u015Bci i b\u0119dzie gotowe do za\u0142adowania przy
-      nast\u0119pnym uruchomieniu gry!"
+    m_Localized: "Pomy\u015Blnie pobrano przedmiot z warsztatu ({0})!"
     m_Metadata:
       m_Items: []
   - m_Id: 219139157938262016
@@ -2862,6 +2860,81 @@ MonoBehaviour:
   - m_Id: 219139171456503808
     m_Localized: "Ju\u017C pobierasz przedmiot z fabryki. Prosz\u0119 czeka\u0107,
       a\u017C pobieranie zostanie zako\u0144czone."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251873328182431744
+    m_Localized: "\u0141adowanie..."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251879950246055936
+    m_Localized: Niestandardowy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252501792765874176
+    m_Localized: "Zmodowany \u015Bwiat"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252501818028167168
+    m_Localized: "Ten zmodowany \u015Bwiat zawiera map\u0119, cz\u0119\u015Bci cia\u0142a
+      lub wzory, kt\xF3rych nie masz zainstalowanych. Czy chcesz je pobra\u0107?
+      ({0})"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252626441638088704
+    m_Localized: "Potrzebujesz wymaganych mod\xF3w."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825641902510080
+    m_Localized: Zainstalowano
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825692905246720
+    m_Localized: Instalowanie...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275800620863488
+    m_Localized: "Przes\u0142ano!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275592780517376
+    m_Localized: "Przesy\u0142anie... {0}%"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253168844983865344
+    m_Localized: "Twoje mody zosta\u0142y pobrane."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253668911192838144
+    m_Localized: Niestandardowy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825443499347968
+    m_Localized: "Brak mod\xF3w"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825958689902592
+    m_Localized: Mody
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275489340592128
+    m_Localized: 'Niepowodzenie: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259792817712259072
+    m_Localized: "Wyczy\u015B\u0107"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259030364481490944
+    m_Localized: Aktualizowanie... {0}%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259030462720479232
+    m_Localized: Zaktualizowano.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259025185577209856
+    m_Localized: "Do\u0142\u0105czanie do zmodyfikowanych \u015Bwiat\xF3w online
+      wymaga posiadania Premium."
     m_Metadata:
       m_Items: []
   references:

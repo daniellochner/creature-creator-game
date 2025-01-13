@@ -2826,9 +2826,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 207686935092649984
-    m_Localized: "Voc\xEA baixou \"{0}\" com sucesso! Esta criatura ser\xE1 adicionada
-      \xE0 sua lista de cria\xE7\xF5es, pronta para carregar na pr\xF3xima vez que
-      jogar!"
+    m_Localized: "Voc\xEA baixou com sucesso um item da oficina ({0})!"
     m_Metadata:
       m_Items: []
   - m_Id: 219139157938262016
@@ -2838,6 +2836,80 @@ MonoBehaviour:
   - m_Id: 219139171456503808
     m_Localized: "Voc\xEA j\xE1 est\xE1 baixando um item da f\xE1brica. Por favor,
       aguarde at\xE9 que o download seja conclu\xEDdo."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251873328182431744
+    m_Localized: Carregando...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251879950246055936
+    m_Localized: Personalizado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252501792765874176
+    m_Localized: Mundo modificado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252501818028167168
+    m_Localized: "Este mundo modificado tem um mapa, partes do corpo ou padr\xF5es
+      que voc\xEA n\xE3o tem instalados. Gostaria de baix\xE1-los? ({0})"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252626441638088704
+    m_Localized: "Voc\xEA precisa dos mods necess\xE1rios."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825641902510080
+    m_Localized: Instalado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825692905246720
+    m_Localized: Instalando...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275800620863488
+    m_Localized: Enviado!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275592780517376
+    m_Localized: Enviando... {0}%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253168844983865344
+    m_Localized: Seus mods terminaram de baixar.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253668911192838144
+    m_Localized: Personalizado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825443499347968
+    m_Localized: Sem mods
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825958689902592
+    m_Localized: Mods
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275489340592128
+    m_Localized: 'Falhou: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259792817712259072
+    m_Localized: Limpar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259030364481490944
+    m_Localized: Atualizando... {0}%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259030462720479232
+    m_Localized: Atualizado.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259025185577209856
+    m_Localized: "\xC9 necess\xE1rio ter o Premium para acessar mundos modificados
+      online."
     m_Metadata:
       m_Items: []
   references:

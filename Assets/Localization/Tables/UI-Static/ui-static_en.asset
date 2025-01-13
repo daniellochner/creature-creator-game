@@ -2810,11 +2810,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 207686935092649984
-    m_Localized: 'You successfully downloaded "{0}"!
-
-
-      This creature will be
-      added to your list of creations, ready to load the next time you play!'
+    m_Localized: You successfully downloaded an item from the workshop ({0})!
     m_Metadata:
       m_Items: []
   - m_Id: 219139157938262016

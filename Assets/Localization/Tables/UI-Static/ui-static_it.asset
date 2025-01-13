@@ -2825,9 +2825,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 207686935092649984
-    m_Localized: "Hai scaricato con successo \"{0}\"! Questa creatura sar\xE0 aggiunta
-      alla tua lista di creazioni, pronta per essere caricata la prossima volta che
-      giochi!"
+    m_Localized: Hai scaricato con successo un oggetto dall'officina ({0})!
     m_Metadata:
       m_Items: []
   - m_Id: 219139157938262016
@@ -2837,6 +2835,79 @@ MonoBehaviour:
   - m_Id: 219139171456503808
     m_Localized: "Stai gi\xE0 scaricando un elemento dalla fabbrica. Attendi il completamento
       del download."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251873328182431744
+    m_Localized: Caricamento...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251879950246055936
+    m_Localized: Personalizzato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252501792765874176
+    m_Localized: Mondo modificato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252501818028167168
+    m_Localized: Questo mondo modificato contiene una mappa, parti del corpo o modelli
+      che non hai installato. Vuoi scaricarli? ({0})
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252626441638088704
+    m_Localized: Hai bisogno delle mod richieste.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825641902510080
+    m_Localized: Installato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825692905246720
+    m_Localized: Installazione in corso...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275800620863488
+    m_Localized: Caricato!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275592780517376
+    m_Localized: Caricamento... {0}%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253168844983865344
+    m_Localized: I tuoi mod sono stati scaricati.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253668911192838144
+    m_Localized: Personalizzato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825443499347968
+    m_Localized: Nessuna mod
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825958689902592
+    m_Localized: Mod
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275489340592128
+    m_Localized: 'Fallito: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259792817712259072
+    m_Localized: Cancellare
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259030364481490944
+    m_Localized: Aggiornamento... {0}%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259030462720479232
+    m_Localized: Aggiornato.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259025185577209856
+    m_Localized: "\xC8 richiesto il Premium per accedere ai mondi modificati online."
     m_Metadata:
       m_Items: []
   references:

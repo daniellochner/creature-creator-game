@@ -2845,8 +2845,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 207686935092649984
-    m_Localized: "\"{0}\" ba\u015Far\u0131yla indirildi! Bu yarat\u0131k, oynad\u0131\u011F\u0131n\u0131zda
-      y\xFCklenmeye haz\u0131r bir \u015Fekilde yarat\u0131mlar listenize eklenecek!"
+    m_Localized: "At\xF6lyeden ({0}) bir \xF6\u011Fe ba\u015Far\u0131yla indirildi!"
     m_Metadata:
       m_Items: []
   - m_Id: 219139157938262016
@@ -2856,6 +2855,80 @@ MonoBehaviour:
   - m_Id: 219139171456503808
     m_Localized: "Zaten fabrikadan bir \xF6\u011Fe indiriyorsunuz. L\xFCtfen o indirme
       tamamlanana kadar bekleyin."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251873328182431744
+    m_Localized: "Y\xFCkleniyor..."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251879950246055936
+    m_Localized: "\xD6zel"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252501792765874176
+    m_Localized: "Modlu D\xFCnya"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252501818028167168
+    m_Localized: "Bu modlu d\xFCnya, y\xFCkl\xFC olmayan bir harita, v\xFCcut par\xE7alar\u0131
+      veya desenler i\xE7eriyor. Bunlar\u0131 indirmek ister misiniz? ({0})"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252626441638088704
+    m_Localized: "Gerekli modlara ihtiyac\u0131n\u0131z var."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825641902510080
+    m_Localized: "Y\xFCklendi"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825692905246720
+    m_Localized: "Y\xFCkleniyor..."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275800620863488
+    m_Localized: "Y\xFCklendi!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275592780517376
+    m_Localized: "Y\xFCkleniyor... {0}%"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253168844983865344
+    m_Localized: "Modlar\u0131n\u0131z indirme i\u015Flemi tamamland\u0131."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253668911192838144
+    m_Localized: "\xD6zel"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825443499347968
+    m_Localized: Mod yok
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252825958689902592
+    m_Localized: Modlar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253275489340592128
+    m_Localized: "Ba\u015Far\u0131s\u0131z: {0}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259792817712259072
+    m_Localized: Temizle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259030364481490944
+    m_Localized: "G\xFCncelleniyor... {0}%"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259030462720479232
+    m_Localized: "G\xFCncellendi."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259025185577209856
+    m_Localized: "\xC7evrimi\xE7i modlu d\xFCnyalara kat\u0131lmak i\xE7in Premium
+      gereklidir."
     m_Metadata:
       m_Items: []
   references:

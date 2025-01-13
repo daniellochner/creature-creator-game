@@ -19,7 +19,7 @@ MonoBehaviour:
     _doNorm: 1
     _doTan: 0
     _doCol: 0
-    _doUV: 0
+    _doUV: 1
     _doUV3: 0
     _doUV4: 0
     _doUV5: 0
