@@ -10,6 +10,7 @@ namespace DanielLochner.Assets.CreatureCreator
         [SerializeField] private bool isAnimated;
         [SerializeField, Button("Optimize")] private bool optimize;
 
+        private Dictionary<BodyPartConstructor, Material[]> cachedMats = new Dictionary<BodyPartConstructor, Material[]>();
         private List<BodyPartConstructor> bodyPartsToAdd = new List<BodyPartConstructor>();
         #endregion
 
@@ -102,8 +103,10 @@ namespace DanielLochner.Assets.CreatureCreator
                 foreach (BodyPartConstructor bodyPart in bodyPartsToAdd)
                 {
                     bodyPart.Renderer.enabled = true;
+                    bodyPart.Renderer.sharedMaterials = cachedMats[bodyPart];
                 }
                 bodyPartsToAdd.Clear();
+                cachedMats.Clear();
 
                 DestroyImmediate(Baker.meshCombiner.resultSceneObject.gameObject);
 
@@ -117,6 +120,8 @@ namespace DanielLochner.Assets.CreatureCreator
             {
                 bpc.SkinnedMeshRenderer.sharedMesh = Instantiate(bpc.SkinnedMeshRenderer.sharedMesh);
             }
+
+            cachedMats[bpc] = bpc.Renderer.sharedMaterials;
 
             Material[] mats = bpc.Renderer.materials;
             for (int i = 0; i < mats.Length; i++)
