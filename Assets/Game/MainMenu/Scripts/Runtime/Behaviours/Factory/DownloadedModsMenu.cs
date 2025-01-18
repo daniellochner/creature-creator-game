@@ -18,7 +18,7 @@ namespace DanielLochner.Assets.CreatureCreator
             {
                 AddMod(data.Value);
             }
-            FactoryManager.Instance.OnDataDownloaded += AddMod;
+            FactoryManager.Instance.OnItemDataDownloaded += AddMod;
         }
 
         protected override void OnDestroy()
@@ -26,7 +26,7 @@ namespace DanielLochner.Assets.CreatureCreator
             base.OnDestroy();
             if (FactoryManager.Instance)
             {
-                FactoryManager.Instance.OnDataDownloaded -= AddMod;
+                FactoryManager.Instance.OnItemDataDownloaded -= AddMod;
             }
         }
 

@@ -28,7 +28,7 @@ namespace DanielLochner.Assets.CreatureCreator
         public bool IsDownloadingUsername { get; private set; }
 
         public Action OnLoaded { get; set; }
-        public Action<FactoryData.DownloadedItemData> OnDataDownloaded { get; set; }
+        public Action<FactoryData.DownloadedItemData> OnItemDataDownloaded { get; set; }
 
 
         protected override void Start()
@@ -532,13 +532,16 @@ namespace DanielLochner.Assets.CreatureCreator
 
             DownloadItemData(item.id, delegate (FactoryData.DownloadedItemData data)
             {
-                if (!Data.DownloadedItems.ContainsKey(item.id))
+                if (Data.DownloadedItems.ContainsKey(item.id))
+                {
+                    Data.DownloadedItems[item.id] = data;
+                }
+                else
                 {
                     Data.DownloadedItems.Add(item.id, data);
-                    Save();
-
-                    OnDataDownloaded?.Invoke(data);
                 }
+                Save();
+                OnItemDataDownloaded?.Invoke(data);
             },
             delegate (string reason)
             {

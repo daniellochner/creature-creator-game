@@ -40,7 +40,7 @@ namespace DanielLochner.Assets.CreatureCreator
         }
 
         [Serializable]
-        public class DownloadedItemData
+        public struct DownloadedItemData
         {
             public ulong Id;
             public string Name;
