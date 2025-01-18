@@ -6,13 +6,13 @@ using static DanielLochner.Assets.CreatureCreator.FactoryManager;
 
 namespace DanielLochner.Assets.CreatureCreator
 {
-    public class ModsMenu : Dialog<ModsMenu>
+    public class DownloadingModsMenu : Dialog<DownloadingModsMenu>
     {
-        public ModUI modPrefab;
+        public DownloadingModUI modPrefab;
         public Transform modsRoot;
         public GameObject modsNone;
 
-        private List<ModUI> mods = new ();
+        private List<DownloadingModUI> mods = new ();
         private Coroutine downloadCoroutine;
 
         public void Setup(Action onDownloaded)

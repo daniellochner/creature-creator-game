@@ -9,6 +9,7 @@ namespace DanielLochner.Assets.CreatureCreator
     {
         public FactoryContentUI[] contents;
         public SimpleScrollSnap.SimpleScrollSnap factorySSS;
+        public SimpleScrollSnap.SimpleScrollSnap modsMenuSSS;
 
         public void ViewPC()
         {
@@ -17,6 +18,11 @@ namespace DanielLochner.Assets.CreatureCreator
         public void ViewContent()
         {
             FactoryContentMenu.Instance.View(contents[factorySSS.SelectedPanel]);
+        }
+        public void ViewDownloaded()
+        {
+            DownloadedModsMenu.Instance.Open();
+            modsMenuSSS.GoToPanel(factorySSS.SelectedPanel);
         }
     }
 }

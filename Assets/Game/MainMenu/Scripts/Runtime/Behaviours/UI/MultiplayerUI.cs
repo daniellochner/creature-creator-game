@@ -351,17 +351,17 @@ namespace DanielLochner.Assets.CreatureCreator
                     {
                         if (reqMap != null)
                         {
-                            ModsMenu.Instance.AddMod(reqMap, FactoryItemType.Map);
+                            DownloadingModsMenu.Instance.AddMod(reqMap, FactoryItemType.Map);
                         }
                         foreach (var bodyPart in reqBodyParts)
                         {
-                            ModsMenu.Instance.AddMod(bodyPart, FactoryItemType.BodyPart);
+                            DownloadingModsMenu.Instance.AddMod(bodyPart, FactoryItemType.BodyPart);
                         }
                         foreach (var pattern in reqPatterns)
                         {
-                            ModsMenu.Instance.AddMod(pattern, FactoryItemType.Pattern);
+                            DownloadingModsMenu.Instance.AddMod(pattern, FactoryItemType.Pattern);
                         }
-                        ModsMenu.Instance.Setup(() => InformationDialog.Inform(LocalizationUtility.Localize("mainmenu_mods_title"), LocalizationUtility.Localize("mainmenu_mods_done")));
+                        DownloadingModsMenu.Instance.Setup(() => InformationDialog.Inform(LocalizationUtility.Localize("mainmenu_mods_title"), LocalizationUtility.Localize("mainmenu_mods_done")));
                     });
                     throw new Exception(LocalizationUtility.Localize("network_status_mods-needed"));
                 }

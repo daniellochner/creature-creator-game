@@ -350,7 +350,7 @@ namespace DanielLochner.Assets.CreatureCreator
                         uint timeCreated = file["time_created"].Value<uint>();
                         uint timeUpdated = file["time_updated"].Value<uint>();
 
-                        FactoryItem item = new()
+                        FactoryItem item = new FactoryItem()
                         {
                             id = id,
                             name = title,
@@ -360,7 +360,8 @@ namespace DanielLochner.Assets.CreatureCreator
                             downVotes = downVotes,
                             previewURL = previewURL,
                             timeCreated = timeCreated,
-                            timeUpdated = timeUpdated
+                            timeUpdated = timeUpdated,
+                            tag = query.TagType
                         };
                         items.Add(item);
                     }
@@ -388,11 +389,12 @@ namespace DanielLochner.Assets.CreatureCreator
             }
         }
 
-        public void DownloadItemVersion(ulong itemId, Action<uint> onDownloaded = null, Action<string> onFailed = null)
+        // Get Item Data
+        public void DownloadItemData(ulong itemId, Action<FactoryData.DownloadedItemData> onDownloaded = null, Action<string> onFailed = null)
         {
-            StartCoroutine(DownloadItemVersionRoutine(itemId, onDownloaded, onFailed));
+            StartCoroutine(DownloadItemDataRoutine(itemId, onDownloaded, onFailed));
         }
-        public IEnumerator DownloadItemVersionRoutine(ulong itemId, Action<uint> onDownloaded, Action<string> onFailed)
+        public IEnumerator DownloadItemDataRoutine(ulong itemId, Action<FactoryData.DownloadedItemData> onDownloaded, Action<string> onFailed)
         {
             string url = $"https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/";
 
@@ -411,8 +413,42 @@ namespace DanielLochner.Assets.CreatureCreator
                 else
                 {
                     JObject data = JToken.Parse(www.downloadHandler.text)["response"]["publishedfiledetails"].First as JObject;
+                    string title = data["title"].Value<string>();
                     uint timeUpdated = data["time_updated"].Value<uint>();
-                    onDownloaded?.Invoke(timeUpdated);
+                    List<string> tags = new List<string>();
+                    JArray jTags = data["tags"].Value<JArray>();
+                    if (jTags.HasValues)
+                    {
+                        foreach (var jTag in jTags)
+                        {
+                            tags.Add(jTag["tag"].Value<string>().ToLower());
+                        }
+                    }
+
+                    FactoryItemType tag = FactoryItemType.Creature;
+                    if (tags.Contains("map"))
+                    {
+                        tag = FactoryItemType.Map;
+                    }
+                    else
+                    if (tags.Contains("bodypart"))
+                    {
+                        tag = FactoryItemType.BodyPart;
+                    }
+                    else
+                    if (tags.Contains("pattern"))
+                    {
+                        tag = FactoryItemType.Pattern;
+                    }
+
+                    FactoryData.DownloadedItemData itemData = new FactoryData.DownloadedItemData()
+                    {
+                        Id = itemId,
+                        Name = title,
+                        Tag = tag,
+                        Version = timeUpdated
+                    };
+                    onDownloaded?.Invoke(itemData);
                 }
             }
         }
@@ -494,19 +530,15 @@ namespace DanielLochner.Assets.CreatureCreator
         {
             LoadItems(item.id);
 
-            DownloadItemVersion(item.id, delegate (uint version)
+            DownloadItemData(item.id, delegate (FactoryData.DownloadedItemData data)
             {
-                var data = new FactoryData.DownloadedItemData()
+                if (!Data.DownloadedItems.ContainsKey(item.id))
                 {
-                    Id = item.id,
-                    Name = item.name,
-                    Tag = item.tag,
-                    Version = version
-                };
+                    Data.DownloadedItems.Add(item.id, data);
+                    Save();
 
-                Data.DownloadedItems.Add(item.id, data);
-                OnDataDownloaded?.Invoke(data);
-                Save();
+                    OnDataDownloaded?.Invoke(data);
+                }
             },
             delegate (string reason)
             {

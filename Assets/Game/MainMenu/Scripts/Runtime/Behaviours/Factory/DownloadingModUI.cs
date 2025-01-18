@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DanielLochner.Assets.CreatureCreator
 {
-    public class ModUI : MonoBehaviour
+    public class DownloadingModUI : MonoBehaviour
     {
         public TextMeshProUGUI nameText;
         public GameObject downloadingIcon;
