@@ -28,6 +28,7 @@ namespace DanielLochner.Assets.CreatureCreator
         public bool IsDownloadingUsername { get; private set; }
 
         public Action OnLoaded { get; set; }
+        public Action<FactoryData.DownloadedItemData> OnDataDownloaded { get; set; }
 
 
         protected override void Start()
@@ -125,6 +126,22 @@ namespace DanielLochner.Assets.CreatureCreator
             if (Data.SubscribedItems.Contains(id))
             {
                 Data.SubscribedItems.Remove(id);
+            }
+        }
+        public void RemoveItem(ulong id, FactoryItemType tag)
+        {
+            if (Data.DownloadedItems.ContainsKey(id))
+            {
+                string itemPath = Path.Combine(CCConstants.GetItemsDir(tag), id.ToString());
+                if (Directory.Exists(itemPath))
+                {
+                    Directory.Delete(itemPath, true);
+                }
+
+                Data.DownloadedItems.Remove(id);
+                Save();
+
+                OnLoaded?.Invoke();
             }
         }
 
@@ -479,13 +496,17 @@ namespace DanielLochner.Assets.CreatureCreator
 
             DownloadItemVersion(item.id, delegate (uint version)
             {
-                Data.DownloadedItems.Add(item.id, new FactoryData.DownloadedItemData()
+                var data = new FactoryData.DownloadedItemData()
                 {
                     Id = item.id,
                     Name = item.name,
                     Tag = item.tag,
                     Version = version
-                });
+                };
+
+                Data.DownloadedItems.Add(item.id, data);
+                OnDataDownloaded?.Invoke(data);
+                Save();
             },
             delegate (string reason)
             {
