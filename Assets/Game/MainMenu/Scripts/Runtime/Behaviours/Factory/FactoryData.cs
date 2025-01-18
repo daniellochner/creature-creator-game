@@ -13,6 +13,7 @@ namespace DanielLochner.Assets.CreatureCreator
 
         public SerializableDictionaryBase<FactoryItemQuery, CachedItemData> CachedItems = new();
         public SerializableDictionaryBase<ulong, string> CachedUsernames = new();
+        public SerializableDictionaryBase<ulong, DownloadedItemData> DownloadedItems = new ();
 
         public override void Revert()
         {
@@ -22,6 +23,7 @@ namespace DanielLochner.Assets.CreatureCreator
 
             CachedItems.Clear();
             CachedUsernames.Clear();
+            DownloadedItems.Clear();
         }
 
         [Serializable]
@@ -35,6 +37,15 @@ namespace DanielLochner.Assets.CreatureCreator
             {
                 Ticks = DateTime.UtcNow.Ticks;
             }
+        }
+
+        [Serializable]
+        public class DownloadedItemData
+        {
+            public ulong Id;
+            public string Name;
+            public FactoryItemType Tag;
+            public uint Version;
         }
     }
 

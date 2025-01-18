@@ -32,7 +32,7 @@ namespace DanielLochner.Assets.CreatureCreator
             }
             else
             {
-                CustomMapLoader.Load(Path.Combine(CCConstants.MapsDir, WorldManager.Instance.World.CustomMapId));
+                CustomMapLoader.Load(Path.Combine(CCConstants.MapsDir, WorldManager.Instance.World.CustomMap.id.ToString()));
             }
         }
 

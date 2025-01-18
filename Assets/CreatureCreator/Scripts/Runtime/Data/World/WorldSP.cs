@@ -7,14 +7,18 @@ namespace DanielLochner.Assets.CreatureCreator
     {
         public bool Unlimited { get; private set; }
 
-        public WorldSP(Map map, Mode mode, bool spawnNPC, bool enablePVE, bool unlimited, string customMapId = "")
+        public WorldSP(Map map, Mode mode, bool spawnNPC, bool enablePVE, bool unlimited, ulong? customMapId = null)
         {
             MapName = map.ToString();
             Mode = mode;
             SpawnNPC = spawnNPC;
             EnablePVE = enablePVE;
             Unlimited = unlimited;
-            CustomMapId = customMapId;
+
+            if (customMapId != null)
+            {
+                CustomMap = new RequiredModData((ulong)customMapId);
+            }
         }
     }
 }

@@ -22,7 +22,7 @@ namespace DanielLochner.Assets.CreatureCreator
         public int hoursToCache = 1;
 
 
-        public List<string> LoadedCreatures { get; } = new();
+        public List<string> LoadedCreatureNames { get; } = new();
 
         public bool IsDownloadingItem { get; private set; }
         public bool IsDownloadingUsername { get; private set; }
@@ -230,6 +230,7 @@ namespace DanielLochner.Assets.CreatureCreator
                             item.description = details.m_rgchDescription;
                             item.upVotes = details.m_unVotesUp;
                             item.timeCreated = details.m_rtimeCreated;
+                            item.timeUpdated = details.m_rtimeUpdated;
                             item.creatorId = details.m_ulSteamIDOwner;
                         }
                         if (SteamUGC.GetQueryUGCPreviewURL(param.m_handle, i, out string url, 256))
@@ -330,6 +331,7 @@ namespace DanielLochner.Assets.CreatureCreator
                         uint downVotes = file["vote_data"]["votes_down"].Value<uint>();
                         string previewURL = file["preview_url"].Value<string>();
                         uint timeCreated = file["time_created"].Value<uint>();
+                        uint timeUpdated = file["time_updated"].Value<uint>();
 
                         FactoryItem item = new()
                         {
@@ -340,7 +342,8 @@ namespace DanielLochner.Assets.CreatureCreator
                             upVotes = upVotes,
                             downVotes = downVotes,
                             previewURL = previewURL,
-                            timeCreated = timeCreated
+                            timeCreated = timeCreated,
+                            timeUpdated = timeUpdated
                         };
                         items.Add(item);
                     }
@@ -368,13 +371,42 @@ namespace DanielLochner.Assets.CreatureCreator
             }
         }
 
+        public void DownloadItemVersion(ulong itemId, Action<uint> onDownloaded = null, Action<string> onFailed = null)
+        {
+            StartCoroutine(DownloadItemVersionRoutine(itemId, onDownloaded, onFailed));
+        }
+        public IEnumerator DownloadItemVersionRoutine(ulong itemId, Action<uint> onDownloaded, Action<string> onFailed)
+        {
+            string url = $"https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/";
+
+            WWWForm form = new WWWForm();
+            form.AddField("itemcount", 1.ToString());
+            form.AddField("publishedfileids[0]", itemId.ToString());
+
+            using (UnityWebRequest www = UnityWebRequest.Post(url, form))
+            {
+                yield return www.SendWebRequest();
+
+                if (www.result != UnityWebRequest.Result.Success)
+                {
+                    onFailed?.Invoke(www.error);
+                }
+                else
+                {
+                    JObject data = JToken.Parse(www.downloadHandler.text)["response"]["publishedfiledetails"].First as JObject;
+                    uint timeUpdated = data["time_updated"].Value<uint>();
+                    onDownloaded?.Invoke(timeUpdated);
+                }
+            }
+        }
+
         // Download Item
-        public void DownloadItem(ulong itemId, FactoryItemType itemType, Action<string> onDownloaded, Action<string> onFailed)
+        public void DownloadItem(FactoryItem item, Action<string> onDownloaded, Action<string> onFailed)
         {
             if (!IsDownloadingItem)
             {
 #if UNITY_STANDALONE
-                PublishedFileId_t fileId = new PublishedFileId_t(itemId);
+                PublishedFileId_t fileId = new PublishedFileId_t(item.id);
                 if (SteamUGC.DownloadItem(fileId, true))
                 {
                     Callback<DownloadItemResult_t> callback = null;
@@ -384,30 +416,33 @@ namespace DanielLochner.Assets.CreatureCreator
                         {
                             return;
                         }
+
+                        string result = param.m_eResult.ToString();
+
                         if (param.m_eResult != EResult.k_EResultOK)
                         {
-                            onFailed?.Invoke(param.m_eResult.ToString());
+                            onFailed?.Invoke(result);
                             return;
                         }
 
-                        onDownloaded?.Invoke(itemId.ToString());
-                        LoadItems(itemId);
+                        onDownloaded?.Invoke(result);
+                        OnItemDownloaded(item);
 
                         callback.Dispose();
                     });
                 }
 #else
-                StartCoroutine(DownloadItemRoutine(itemId, itemType, onDownloaded, onFailed));
+                StartCoroutine(DownloadItemRoutine(item, onDownloaded, onFailed));
 #endif
             }
         }
-        public IEnumerator DownloadItemRoutine(ulong itemId, FactoryItemType itemType, Action<string> onDownloaded, Action<string> onFailed)
+        public IEnumerator DownloadItemRoutine(FactoryItem item, Action<string> onDownloaded, Action<string> onFailed)
         {
             IsDownloadingItem = true;
 
-            string url = $"http://{serverAddress.Value}/api/get_workshop_item?id={itemId}";
+            string url = $"http://{serverAddress.Value}/api/get_workshop_item?id={item.id}";
 
-            string archiveName = $"{itemId}.zip";
+            string archiveName = $"{item.id}.zip";
             string archivePath = Path.Combine(Application.persistentDataPath, archiveName);
 
             using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
@@ -421,7 +456,7 @@ namespace DanielLochner.Assets.CreatureCreator
                 }
                 else
                 {
-                    string extractPath = Path.Combine(CCConstants.GetItemsDir(itemType), Path.GetFileNameWithoutExtension(archiveName));
+                    string extractPath = Path.Combine(CCConstants.GetItemsDir(item.tag), Path.GetFileNameWithoutExtension(archiveName));
 
                     if (Directory.Exists(extractPath))
                     {
@@ -431,12 +466,31 @@ namespace DanielLochner.Assets.CreatureCreator
                     ZipFile.ExtractToDirectory(archivePath, extractPath, true);
                     File.Delete(archivePath);
 
-                    onDownloaded?.Invoke(itemId.ToString());
-                    LoadItems(itemId);
+                    onDownloaded?.Invoke(webRequest.result.ToString());
+                    OnItemDownloaded(item);
                 }
             }
 
             IsDownloadingItem = false;
+        }
+        private void OnItemDownloaded(FactoryItem item)
+        {
+            LoadItems(item.id);
+
+            DownloadItemVersion(item.id, delegate (uint version)
+            {
+                Data.DownloadedItems.Add(item.id, new FactoryData.DownloadedItemData()
+                {
+                    Id = item.id,
+                    Name = item.name,
+                    Tag = item.tag,
+                    Version = version
+                });
+            },
+            delegate (string reason)
+            {
+                Debug.Log(reason);
+            });
         }
 
         // Download Username
@@ -636,14 +690,14 @@ namespace DanielLochner.Assets.CreatureCreator
             }
 #endif
 
-            LoadedCreatures.Clear();
+            LoadedCreatureNames.Clear();
             foreach (string itemPath in Directory.GetDirectories(CCConstants.GetItemsDir(FactoryItemType.Creature)))
             {
                 string creaturePathSrc = Directory.GetFiles(itemPath)[0];
                 string creaturePathDst = Path.Combine(CCConstants.CreaturesDir, Path.GetFileName(creaturePathSrc));
                 SystemUtility.CopyFile(creaturePathSrc, creaturePathDst);
                 string creatureName = Path.GetFileNameWithoutExtension(creaturePathSrc);
-                LoadedCreatures.Add(creatureName);
+                LoadedCreatureNames.Add(creatureName);
             }
 
             OnLoaded?.Invoke();

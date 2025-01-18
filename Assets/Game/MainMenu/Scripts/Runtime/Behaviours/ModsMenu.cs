@@ -33,13 +33,22 @@ namespace DanielLochner.Assets.CreatureCreator
             onDownloaded?.Invoke();
         }
 
-        public bool AddMod(string modId, FactoryItemType type)
+        public bool AddMod(RequiredModData reqItem, FactoryItemType itemType)
         {
-            var modUI = mods.Find(x => x.name == modId);
+            return AddMod(new FactoryItem()
+            {
+                id = reqItem.id,
+                timeUpdated = reqItem.version,
+                tag = itemType
+            });
+        }
+        public bool AddMod(FactoryItem item)
+        {
+            var modUI = mods.Find(x => x.Item.id == item.id);
             if (modUI == null)
             {
                 modUI = Instantiate(modPrefab, modsRoot);
-                modUI.Setup(modId, type);
+                modUI.Setup(item);
                 mods.Add(modUI);
                 modsNone.SetActive(false);
             }

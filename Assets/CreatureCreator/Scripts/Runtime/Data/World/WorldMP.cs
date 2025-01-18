@@ -52,14 +52,37 @@ namespace DanielLochner.Assets.CreatureCreator
             Mode = (Mode)lobby.TryGetValue<int>("mode");
             MapId = lobby.TryGetValue<string>("mapId");
             SpawnPoint = lobby.TryGetValue<int>("spawnPoint");
-            CustomMapId = lobby.TryGetValue<string>("customMapId");
-            CustomBodyPartIds = new List<string>(lobby.TryGetValue("customBodyPartIds", "").Split(","));
-            CustomPatternIds = new List<string>(lobby.TryGetValue("customPatternIds", "").Split(","));
+
+            CustomMap = GetRequiredMod(lobby.TryGetValue<string>("customMap"));
+            CustomBodyParts = new List<RequiredModData>();
+            foreach (var customBodyPart in lobby.TryGetValue("customBodyParts", "").Split(","))
+            {
+                CustomBodyParts.Add(GetRequiredMod(customBodyPart));
+            }
+            CustomPatterns = new List<RequiredModData>();
+            foreach (var customPattern in lobby.TryGetValue("customPatterns", "").Split(","))
+            {
+                CustomPatterns.Add(GetRequiredMod(customPattern));
+            }
 
             HostPlayerId = lobby.TryGetValue<string>("hostPlayerId");
             KickedPlayers = new List<string>(lobby.TryGetValue("kickedPlayers", "").Split(","));
 
             InstitutionId = lobby.TryGetValue<string>("institutionId");
+        }
+
+        private RequiredModData GetRequiredMod(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                string[] data = text.Split("#"); // ID#VERSION
+                return new RequiredModData()
+                {
+                    id = ulong.Parse(data[0]),
+                    version = uint.Parse(data[1])
+                };
+            }
+            return null;
         }
         #endregion
     }

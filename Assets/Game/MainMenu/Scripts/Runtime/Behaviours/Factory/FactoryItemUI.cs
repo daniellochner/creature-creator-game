@@ -118,13 +118,13 @@ namespace DanielLochner.Assets.CreatureCreator
             {
                 SetDownloading(true);
 
-                FactoryManager.Instance.DownloadItem(Item.id, Item.tag, delegate (string name)
+                FactoryManager.Instance.DownloadItem(Item, delegate
                     {
                         SetDownloading(false, false);
 
                         if (notify)
                         {
-                            InformationDialog.Inform(LocalizationUtility.Localize("factory_download_title"), LocalizationUtility.Localize("factory_download_message", name));
+                            InformationDialog.Inform(LocalizationUtility.Localize("factory_download_title"), LocalizationUtility.Localize("factory_download_message", Item.name));
                         }
                     },
                     delegate (string error)

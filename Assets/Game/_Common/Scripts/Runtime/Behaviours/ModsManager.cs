@@ -5,53 +5,54 @@ namespace DanielLochner.Assets.CreatureCreator
 {
     public class ModsManager : MonoBehaviourSingleton<ModsManager>
     {
-        public List<string> CustomMapIds => GetCustomItemIds(CCConstants.MapsDir);
-        public List<string> CustomBodyPartIds => GetCustomItemIds(CCConstants.BodyPartsDir);
-        public List<string> CustomPatternIds => GetCustomItemIds(CCConstants.PatternsDir);
-
-        public List<string> GetCustomItemIds(string path)
+        public List<string> GetCustomItemIds(FactoryItemType type)
         {
             var itemIds = new List<string>();
-            foreach (var dir in Directory.GetDirectories(path))
+            foreach (var dir in Directory.GetDirectories(CCConstants.GetItemsDir(type)))
             {
                 itemIds.Add(Path.GetFileNameWithoutExtension(dir));
             }
             return itemIds;
         }
 
-        public bool HasRequiredMods(WorldMP world, out string reqMapId, out List<string> reqBodyPartIds, out List<string> reqPatternIds)
+        public bool HasRequiredMods(WorldMP world, out RequiredModData reqMap, out List<RequiredModData> reqBodyParts, out List<RequiredModData> reqPatterns)
         {
             // Map
-            reqMapId = "";
-            if (!CustomMapIds.Contains(world.CustomMapId))
+            reqMap = null;
+            if (IsRequiredModDownloaded(world.CustomMap))
             {
-                reqMapId = world.CustomMapId;
+                reqMap = world.CustomMap;
             }
-            bool needMap = reqMapId != "";
+            bool needMap = reqMap != null;
 
             // Body Parts
-            reqBodyPartIds = new List<string>();
-            foreach (var bodyPartId in world.CustomBodyPartIds)
+            reqBodyParts = new List<RequiredModData>();
+            foreach (var bodyPart in world.CustomBodyParts)
             {
-                if (!string.IsNullOrEmpty(bodyPartId) && !CustomBodyPartIds.Contains(bodyPartId))
+                if (IsRequiredModDownloaded(bodyPart))
                 {
-                    reqBodyPartIds.Add(bodyPartId);
+                    reqBodyParts.Add(bodyPart);
                 }
             }
-            bool needBodyPart = reqBodyPartIds.Count > 0;
+            bool needBodyPart = reqBodyParts.Count > 0;
 
             // Patterns
-            reqPatternIds = new List<string>();
-            foreach (var patternId in world.CustomPatternIds)
+            reqPatterns = new List<RequiredModData>();
+            foreach (var pattern in world.CustomPatterns)
             {
-                if (!string.IsNullOrEmpty(patternId) && !CustomPatternIds.Contains(patternId))
+                if (IsRequiredModDownloaded(pattern))
                 {
-                    reqPatternIds.Add(patternId);
+                    reqPatterns.Add(pattern);
                 }
             }
-            bool needPattern = reqPatternIds.Count > 0;
+            bool needPattern = reqPatterns.Count > 0;
 
             return !(needMap || needBodyPart || needPattern);
+        }
+
+        private bool IsRequiredModDownloaded(RequiredModData reqMod)
+        {
+            return (reqMod != null) && (!FactoryManager.Data.DownloadedItems.TryGetValue(reqMod.id, out FactoryData.DownloadedItemData item) || item.Version != reqMod.version);
         }
     }
 }

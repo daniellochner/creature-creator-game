@@ -86,11 +86,13 @@ namespace DanielLochner.Assets.CreatureCreator
         }
         private void SetupMap()
         {
+            List<string> customMapIds = ModsManager.Instance.GetCustomItemIds(FactoryItemType.Map);
+
             var ignoredMaps = new List<Map>()
             {
                 Map.ComingSoon
             };
-            var hasCustom = ModsManager.Instance.CustomMapIds.Count > 0;
+            var hasCustom = customMapIds.Count > 0;
             if (!hasCustom)
             {
                 ignoredMaps.Add(Map.Custom);
@@ -101,7 +103,7 @@ namespace DanielLochner.Assets.CreatureCreator
             customMapGO.SetActive(hasCustom);
             if (hasCustom)
             {
-                foreach (var customMapId in ModsManager.Instance.CustomMapIds)
+                foreach (var customMapId in customMapIds)
                 {
                     MapConfigData config = SaveUtility.Load<MapConfigData>(Path.Combine(CCConstants.MapsDir, customMapId, "config.json"));
                     customMapOS.Options.Add(new CustomMapOption()
@@ -130,11 +132,11 @@ namespace DanielLochner.Assets.CreatureCreator
                 bool spawnNPC = npcToggle.isOn;
                 bool enablePVE = pveToggle.isOn;
                 bool unlimited = unlimitedToggle.isOn && (mode == Mode.Creative);
-                string customMapId = "";
+                ulong? customMapId = null;
                 if (map == Map.Custom)
                 {
                     CustomMapOption customMapOption = (CustomMapOption)customMapOS.Selected;
-                    customMapId = customMapOption.MapId;
+                    customMapId = ulong.Parse(customMapOption.MapId);
                 }
                 WorldManager.Instance.World = new WorldSP(map, mode, spawnNPC, enablePVE, unlimited, customMapId);
 

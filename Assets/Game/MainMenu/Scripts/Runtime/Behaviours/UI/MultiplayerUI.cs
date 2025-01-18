@@ -236,21 +236,24 @@ namespace DanielLochner.Assets.CreatureCreator
         }
         private void SetupMap()
         {
+            List<string> customMapIds = ModsManager.Instance.GetCustomItemIds(FactoryItemType.Map);
+
             var ignoredMaps = new List<Map>()
             {
                 Map.ComingSoon
             };
-            var hasCustom = ModsManager.Instance.CustomMapIds.Count > 0;
+            var hasCustom = customMapIds.Count > 0;
             if (!hasCustom)
             {
                 ignoredMaps.Add(Map.Custom);
             }
             mapOS.SetupUsingEnum<Map>(ignoredMaps.ToArray());
             mapOS.Select(Map.Island, false);
+
             customMapGO.SetActive(hasCustom);
             if (hasCustom)
             {
-                foreach (var customMapId in ModsManager.Instance.CustomMapIds)
+                foreach (var customMapId in customMapIds)
                 {
                     MapConfigData config = SaveUtility.Load<MapConfigData>(Path.Combine(CCConstants.MapsDir, customMapId, "config.json"));
                     customMapOS.Options.Add(new CustomMapOption()
@@ -341,22 +344,22 @@ namespace DanielLochner.Assets.CreatureCreator
                 }
 
                 // Check Mods
-                if (world.IsCustom && !ModsManager.Instance.HasRequiredMods(world, out string reqMapId, out List<string> reqBodyPartIds, out List<string> reqPatternIds))
+                if (world.IsCustom && !ModsManager.Instance.HasRequiredMods(world, out RequiredModData reqMap, out List<RequiredModData> reqBodyParts, out List<RequiredModData> reqPatterns))
                 {
-                    int reqMods = (!string.IsNullOrEmpty(reqMapId) ? 1 : 0) + reqBodyPartIds.Count + reqPatternIds.Count;
+                    int reqMods = ((reqMap != null) ? 1 : 0) + reqBodyParts.Count + reqPatterns.Count;
                     ConfirmationDialog.Confirm(LocalizationUtility.Localize("mainmenu_multiplayer_custom_title"), LocalizationUtility.Localize("mainmenu_multiplayer_custom_message", reqMods), onYes: delegate
                     {
-                        if (!string.IsNullOrEmpty(reqMapId))
+                        if (reqMap != null)
                         {
-                            ModsMenu.Instance.AddMod(reqMapId, FactoryItemType.Map);
+                            ModsMenu.Instance.AddMod(reqMap, FactoryItemType.Map);
                         }
-                        foreach (var bodyPartId in reqBodyPartIds)
+                        foreach (var bodyPart in reqBodyParts)
                         {
-                            ModsMenu.Instance.AddMod(bodyPartId, FactoryItemType.BodyPart);
+                            ModsMenu.Instance.AddMod(bodyPart, FactoryItemType.BodyPart);
                         }
-                        foreach (var patternId in reqPatternIds)
+                        foreach (var pattern in reqPatterns)
                         {
-                            ModsMenu.Instance.AddMod(patternId, FactoryItemType.Pattern);
+                            ModsMenu.Instance.AddMod(pattern, FactoryItemType.Pattern);
                         }
                         ModsMenu.Instance.Setup(() => InformationDialog.Inform(LocalizationUtility.Localize("mainmenu_mods_title"), LocalizationUtility.Localize("mainmenu_mods_done")));
                     });
@@ -447,17 +450,30 @@ namespace DanielLochner.Assets.CreatureCreator
                 string institutionId = EducationManager.Instance.InstitutionId;
 
                 // Custom Map, Body Parts and Patterns
-                string customMapId = "";
-                string customBodyPartIds = "";
-                string customPatternIds = "";
+                string customMap = "";
+                string customBodyParts = "";
+                string customPatterns = "";
                 if (map == Map.Custom)
                 {
-                    customMapId = ((CustomMapOption)customMapOS.Selected).MapId;
-
+                    CustomMapOption customMapOption = (CustomMapOption)customMapOS.Selected;
+                    string customMapId = customMapOption.MapId;
                     MapConfigData config = SaveUtility.Load<MapConfigData>(Path.Combine(CCConstants.MapsDir, customMapId, "config.json"));
 
-                    customBodyPartIds = string.Join(",", config.BodyPartIds);
-                    customPatternIds = string.Join(",", config.PatternIds);
+                    customMap = GetRequiredModWithVersion(customMapId);
+
+                    List<string> requiredBodyParts = new List<string>();
+                    foreach (var bodyPartId in config.BodyPartIds)
+                    {
+                        requiredBodyParts.Add(GetRequiredModWithVersion(bodyPartId));
+                    }
+                    customBodyParts = string.Join(",", requiredBodyParts);
+
+                    List<string> requiredPatterns = new List<string>();
+                    foreach (var patternId in config.PatternIds)
+                    {
+                        requiredPatterns.Add(GetRequiredModWithVersion(patternId));
+                    }
+                    customPatterns = string.Join(",", requiredPatterns);
                 }
 
                 // Check Premium
@@ -555,9 +571,9 @@ namespace DanielLochner.Assets.CreatureCreator
                         { "hostPlayerId", new DataObject(DataObject.VisibilityOptions.Public, hostPlayerId) },
                         { "kickedPlayers", new DataObject(DataObject.VisibilityOptions.Public, kickedPlayers) },
                         { "institutionId", new DataObject(DataObject.VisibilityOptions.Public, institutionId) },
-                        { "customMapId", new DataObject(DataObject.VisibilityOptions.Public, customMapId) },
-                        { "customBodyPartIds", new DataObject(DataObject.VisibilityOptions.Public, customBodyPartIds) },
-                        { "customPatternIds", new DataObject(DataObject.VisibilityOptions.Public, customPatternIds) }
+                        { "customMapId", new DataObject(DataObject.VisibilityOptions.Public, customMap) },
+                        { "customBodyPartIds", new DataObject(DataObject.VisibilityOptions.Public, customBodyParts) },
+                        { "customPatternIds", new DataObject(DataObject.VisibilityOptions.Public, customPatterns) }
                     },
                     Player = new LobbyPlayer(AuthenticationService.Instance.PlayerId, joinCode, null, allocationId)
                 };
@@ -760,6 +776,15 @@ namespace DanielLochner.Assets.CreatureCreator
         private void HideStatus()
         {
             statusText.CrossFadeAlpha(0, 0.25f, true);
+        }
+
+        private string GetRequiredModWithVersion(string id)
+        {
+            if (ulong.TryParse(id, out ulong modId) && FactoryManager.Data.DownloadedItems.TryGetValue(modId, out FactoryData.DownloadedItemData item))
+            {
+                return $"{modId}#{item.Version}";
+            }
+            return null;
         }
         #endregion
 

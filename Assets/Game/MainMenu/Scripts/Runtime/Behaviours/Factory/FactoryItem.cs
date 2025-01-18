@@ -14,6 +14,7 @@ namespace DanielLochner.Assets.CreatureCreator
         public string previewURL;
         public FactoryItemType tag;
         public uint timeCreated;
+        public uint timeUpdated;
 
         public bool Equals(FactoryItem other)
         {

@@ -13,9 +13,9 @@ namespace DanielLochner.Assets.CreatureCreator
         public string MapName { get; protected set; }
         public string MapId { get; protected set; }
         public int SpawnPoint { get; protected set; }
-        public string CustomMapId { get; protected set; }
-        public List<string> CustomBodyPartIds { get; protected set; }
-        public List<string> CustomPatternIds { get; protected set; }
+        public RequiredModData CustomMap { get; protected set; }
+        public List<RequiredModData> CustomBodyParts { get; protected set; }
+        public List<RequiredModData> CustomPatterns { get; protected set; }
 
         public bool IsCustom => MapName.Equals("Custom");
     }
