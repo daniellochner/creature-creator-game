@@ -10,10 +10,6 @@ public static class CustomMapLoader
     public static bool IsCustomMapLoadedFromSDK => !string.IsNullOrEmpty(CustomMapPath);
     public static string CustomMapPath { get; set; }
 
-    // we can't load the same asset bundle twice, or it gives an error.
-    // so we store the ones already loaded so that we can unload them
-    // again if needed (i.e. loading a map twice). I unload instead of reusing
-    // so that if a map is updated while we are playing we will still have the new version.
     private static Dictionary<string, AssetBundle> loadedAssetBundles = new Dictionary<string, AssetBundle>();
 
 	public static event Action<Scene> OnCustomMapLoaded;
