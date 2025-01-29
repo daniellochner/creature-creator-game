@@ -73,7 +73,7 @@ namespace DanielLochner.Assets.CreatureCreator
 
         private RequiredModData GetRequiredMod(string text)
         {
-            if (string.IsNullOrEmpty(text))
+            if (!string.IsNullOrEmpty(text))
             {
                 string[] data = text.Split("#"); // ID#VERSION
                 return new RequiredModData()

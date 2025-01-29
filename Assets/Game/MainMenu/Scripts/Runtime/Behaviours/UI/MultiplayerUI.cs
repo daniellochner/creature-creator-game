@@ -571,9 +571,9 @@ namespace DanielLochner.Assets.CreatureCreator
                         { "hostPlayerId", new DataObject(DataObject.VisibilityOptions.Public, hostPlayerId) },
                         { "kickedPlayers", new DataObject(DataObject.VisibilityOptions.Public, kickedPlayers) },
                         { "institutionId", new DataObject(DataObject.VisibilityOptions.Public, institutionId) },
-                        { "customMapId", new DataObject(DataObject.VisibilityOptions.Public, customMap) },
-                        { "customBodyPartIds", new DataObject(DataObject.VisibilityOptions.Public, customBodyParts) },
-                        { "customPatternIds", new DataObject(DataObject.VisibilityOptions.Public, customPatterns) }
+                        { "customMap", new DataObject(DataObject.VisibilityOptions.Public, customMap) },
+                        { "customBodyParts", new DataObject(DataObject.VisibilityOptions.Public, customBodyParts) },
+                        { "customPatterns", new DataObject(DataObject.VisibilityOptions.Public, customPatterns) }
                     },
                     Player = new LobbyPlayer(AuthenticationService.Instance.PlayerId, joinCode, null, allocationId)
                 };
