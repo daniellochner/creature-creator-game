@@ -174,21 +174,21 @@ MonoBehaviour:
     DislikedItems: 
     CachedItems:
       reorderableList:
-        canAdd: 0
-        canRemove: 0
-        draggable: 0
-        expandable: 0
-        multipleSelection: 0
+        canAdd: 1
+        canRemove: 1
+        draggable: 1
+        expandable: 1
+        multipleSelection: 1
         isExpanded: 0
         label:
-          m_Text: 
+          m_Text: Keys
           m_Image: {fileID: 0}
           m_Tooltip: 
-        headerHeight: 0
-        footerHeight: 0
-        slideEasing: 0
-        verticalSpacing: 0
-        showDefaultBackground: 0
+        headerHeight: 18
+        footerHeight: 13
+        slideEasing: 0.15
+        verticalSpacing: 2
+        showDefaultBackground: 1
         elementDisplayType: 0
         elementNameProperty: 
         elementNameOverride: 
@@ -200,21 +200,47 @@ MonoBehaviour:
       _values: []
     CachedUsernames:
       reorderableList:
-        canAdd: 0
-        canRemove: 0
-        draggable: 0
-        expandable: 0
-        multipleSelection: 0
+        canAdd: 1
+        canRemove: 1
+        draggable: 1
+        expandable: 1
+        multipleSelection: 1
         isExpanded: 0
         label:
-          m_Text: 
+          m_Text: Keys
           m_Image: {fileID: 0}
           m_Tooltip: 
-        headerHeight: 0
-        footerHeight: 0
-        slideEasing: 0
-        verticalSpacing: 0
-        showDefaultBackground: 0
+        headerHeight: 18
+        footerHeight: 13
+        slideEasing: 0.15
+        verticalSpacing: 2
+        showDefaultBackground: 1
+        elementDisplayType: 0
+        elementNameProperty: 
+        elementNameOverride: 
+        elementIcon: {fileID: 0}
+      reqReferences: {fileID: 0}
+      isExpanded: 0
+      _keyValues: 
+      _keys: 
+      _values: []
+    DownloadedItems:
+      reorderableList:
+        canAdd: 1
+        canRemove: 1
+        draggable: 1
+        expandable: 1
+        multipleSelection: 1
+        isExpanded: 0
+        label:
+          m_Text: Keys
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        headerHeight: 18
+        footerHeight: 13
+        slideEasing: 0.15
+        verticalSpacing: 2
+        showDefaultBackground: 1
         elementDisplayType: 0
         elementNameProperty: 
         elementNameOverride: 
@@ -1312,6 +1338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd1d6a9850a3c5546b093f720355d5db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serverAddress: {fileID: 11400000, guid: c9bd70030b1c4e44d8d0de03865334ec, type: 2}
 --- !u!1001 &721469000
 PrefabInstance:
   m_ObjectHideFlags: 0

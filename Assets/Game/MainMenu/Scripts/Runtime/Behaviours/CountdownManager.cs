@@ -31,7 +31,7 @@ namespace DanielLochner.Assets.CreatureCreator
                 yield return new WaitUntil(() => WorldTimeManager.Instance.IsInitialized);
 
                 DateTime date = new DateTime(countdownData.date);
-                if ((date - (DateTime)WorldTimeManager.Instance.UtcNow).TotalSeconds > 0)
+                if ((date - WorldTimeManager.Instance.UtcNow).TotalSeconds > 0)
                 {
                     countdownUI.Setup(countdownData.title, date, onComplete.Invoke);
                 }

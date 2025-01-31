@@ -23,7 +23,7 @@ namespace DanielLochner.Assets.CreatureCreator
             yield return new WaitUntil(() => WorldTimeManager.Instance.IsInitialized);
 
             // Check Daily Reward
-            string today = WorldTimeManager.Instance.UtcNow.Value.ToShortDateString();
+            string today = WorldTimeManager.Instance.UtcNow.ToShortDateString();
             if (DailyReward != today)
             {
                 DailyReward = today;

@@ -29,7 +29,7 @@ namespace DanielLochner.Assets
             TimeSpan difference = TimeSpan.Zero;
             do
             {
-                difference = target - (DateTime)WorldTimeManager.Instance.UtcNow;
+                difference = target - WorldTimeManager.Instance.UtcNow;
 
                 daysText.text = $"{difference.Days:00}";
                 hoursText.text = $"{difference.Hours:00}";

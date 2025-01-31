@@ -155,7 +155,7 @@ namespace DanielLochner.Assets.CreatureCreator
 
             if (WorldTimeManager.Instance.IsInitialized)
             {
-                var now = WorldTimeManager.Instance.UtcNow.Value;
+                var now = WorldTimeManager.Instance.UtcNow;
                 if (Data.CachedItems.TryGetValue(itemQuery, out FactoryData.CachedItemData data))
                 {
                     var time = new DateTime(data.Ticks);
