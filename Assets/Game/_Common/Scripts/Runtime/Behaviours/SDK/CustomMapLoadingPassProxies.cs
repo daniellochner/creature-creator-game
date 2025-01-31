@@ -17,6 +17,7 @@ public class CustomMapLoadingPassProxies : CustomMapLoadingPass
             foreach (var proxy in info.platformProxies)
             {
                 var platform = Instantiate(platformPrefab, proxy.transform.position, proxy.transform.rotation, worldRoot);
+                platform.transform.up = Vector3.up;
                 platforms.Add(platform);
                 Destroy(proxy.gameObject);
             }
