@@ -126,14 +126,14 @@ namespace DanielLochner.Assets.CreatureCreator
                         {
                             InformationDialog.Inform(LocalizationUtility.Localize("factory_download_title"), LocalizationUtility.Localize("factory_download_message", Item.name));
                         }
+
+                        PremiumManager.Data.DownloadsToday++;
+                        PremiumManager.Instance.Save();
                     },
                     delegate (string error)
                     {
                         SetDownloading(false);
                     });
-
-                PremiumManager.Data.DownloadsToday++;
-                PremiumManager.Instance.Save();
             }
             else
             {

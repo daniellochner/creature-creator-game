@@ -28,9 +28,13 @@ namespace DanielLochner.Assets.CreatureCreator
             DownloadStatus status = DownloadStatus.Downloading;
             downloadingIcon.SetActive(true);
 
+            FactoryManager.Instance.SubscribeItem(Item.id);
             FactoryManager.Instance.DownloadItem(Item, delegate
             {
                 status = DownloadStatus.Downloaded;
+
+                PremiumManager.Data.DownloadsToday++;
+                PremiumManager.Instance.Save();
             },
             delegate (string reason)
             {

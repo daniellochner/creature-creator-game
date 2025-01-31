@@ -361,7 +361,11 @@ namespace DanielLochner.Assets.CreatureCreator
                         {
                             DownloadingModsMenu.Instance.AddMod(pattern, FactoryItemType.Pattern);
                         }
-                        DownloadingModsMenu.Instance.Setup(() => InformationDialog.Inform(LocalizationUtility.Localize("mainmenu_mods_title"), LocalizationUtility.Localize("mainmenu_mods_done")));
+                        DownloadingModsMenu.Instance.Setup(delegate 
+                        {
+                            InformationDialog.Inform(LocalizationUtility.Localize("mainmenu_mods_title"), LocalizationUtility.Localize("mainmenu_mods_done"));
+                            //Join(id);
+                        });
                     });
                     throw new Exception(LocalizationUtility.Localize("network_status_mods-needed"));
                 }
