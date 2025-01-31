@@ -7,7 +7,7 @@ namespace DanielLochner.Assets
     public class MinimapManager : MonoBehaviourSingleton<MinimapManager>
     {
         #region Fields
-        [SerializeField] private Rect mapBounds;
+        public Rect mapBounds;
         [Space]
         [SerializeField] private Menu minimap;
         [SerializeField] private CanvasGroup minimapCG;
