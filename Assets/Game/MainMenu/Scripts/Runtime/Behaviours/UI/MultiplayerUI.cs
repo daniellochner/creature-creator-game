@@ -210,6 +210,10 @@ namespace DanielLochner.Assets.CreatureCreator
                     spawnPointCG.SetEnabled(false);
                 }
             });
+            customMapOS.OnSelected.AddListener(delegate (int option)
+            {
+                UpdateMap();
+            });
             multiplayerMenu.OnOpen += UpdateMap;
             FactoryManager.Instance.OnLoaded += SetupMap;
 

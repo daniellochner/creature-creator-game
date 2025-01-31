@@ -67,6 +67,10 @@ namespace DanielLochner.Assets.CreatureCreator
                 bool isCustom = (Map)option == Map.Custom;
                 customMapCG.SetEnabled(isCustom);
             });
+            customMapOS.OnSelected.AddListener(delegate (int option)
+            {
+                UpdateMap();
+            });
             singleplayerMenu.OnOpen += UpdateMap;
             FactoryManager.Instance.OnLoaded += SetupMap;
 
