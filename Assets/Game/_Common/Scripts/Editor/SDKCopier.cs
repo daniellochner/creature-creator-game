@@ -9,8 +9,8 @@ public static class SDKCopier
 	[MenuItem("Tools/Creature Creator/Copy SDK Files")]
 	public static void CopyFiles()
 	{
-		string sourcePath = Path.Combine(Application.dataPath, "Creature Creator SDK");
-		string destinationPath = "D:\\Development\\Unity\\Workspace\\creature-creator-sdk\\Assets\\Creature Creator SDK"; //EditorUtility.OpenFolderPanel("Find Creature Creator SDK", Application.dataPath, "Creature Creator SDK");
+		string sourcePath = Path.Combine(Application.dataPath, "CreatureCreatorSDK");
+		string destinationPath = "D:\\Development\\Unity\\Workspace\\creature-creator-sdk\\Assets\\CreatureCreatorSDK"; //EditorUtility.OpenFolderPanel("Find Creature Creator SDK", Application.dataPath, "CreatureCreatorSDK");
 
         if (string.IsNullOrEmpty(destinationPath))
         {
