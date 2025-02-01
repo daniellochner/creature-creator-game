@@ -7,13 +7,21 @@ public class CustomMapLoadingPassMinimap : CustomMapLoadingPass
 {
     [SerializeField] private RawImage minimapRawImg;
     [SerializeField] private MinimapManager minimapManager;
+    [SerializeField] private Menu minimapMenu;
 
-	public override void Load(Scene scene)
-	{
+    public override void Load(Scene scene)
+    {
         if (scene.TryGetComponent(out MapInfo info))
         {
-            minimapRawImg.texture = info.minimapImage;
-            minimapManager.mapBounds = new Rect(info.transform.position.x, info.transform.position.z, info.minimapSize, info.minimapSize);
+            if (info.IsValidMinimap)
+            {
+                minimapRawImg.texture = info.minimapImage;
+                minimapManager.mapBounds = new Rect(info.transform.position.x, info.transform.position.z, info.minimapSize, info.minimapSize);
+            }
+            else
+            {
+                minimapMenu.gameObject.SetActive(false);
+            }
         }
     }
 }

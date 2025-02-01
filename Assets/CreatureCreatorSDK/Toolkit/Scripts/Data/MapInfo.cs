@@ -13,10 +13,12 @@ public class MapInfo : MonoBehaviour
     public UnlockableBodyPartProxy[] unlockableBodyPartProxies;
     public UnlockablePatternProxy[] unlockablePatternProxies;
 
+    public bool IsValidMinimap => minimapImage != null && minimapSize > 0;
+
 #if UNITY_EDITOR
     private void Update()
     {
-        transform.GetChild(0).gameObject.SetActive(UnityEditor.Selection.activeGameObject == gameObject && minimapImage != null && minimapSize > 0);
+        transform.GetChild(0).gameObject.SetActive(UnityEditor.Selection.activeGameObject == gameObject && IsValidMinimap);
     }
 
     public void OnValidate()
