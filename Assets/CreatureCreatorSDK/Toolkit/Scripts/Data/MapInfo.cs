@@ -18,7 +18,7 @@ public class MapInfo : MonoBehaviour
 #if UNITY_EDITOR
     private void Start()
     {
-        SetupProxies();
+        Setup();
     }
     private void Update()
     {
@@ -27,12 +27,12 @@ public class MapInfo : MonoBehaviour
             transform.GetChild(0).gameObject.SetActive(UnityEditor.Selection.activeGameObject == gameObject && IsValidMinimap);
         }
     }
-    private void OnValidate()
+#endif
+
+    public void Setup()
     {
         SetupProxies();
     }
-#endif
-
     public void SetupProxies()
     {
         platformProxies = FindObjectsOfType<PlatformProxy>();
