@@ -11,13 +11,16 @@ namespace DanielLochner.Assets
         {
             get
             {
-#if UNITY_EDITOR
+#if UNITY_IOS || UNITY_ANDROID
+                return DeviceType.Handheld;
+#elif UNITY_EDITOR
                 if (UnityEditor.EditorApplication.isRemoteConnected)
                 {
                     return DeviceType.Handheld;
                 }
-#endif
+#else
                 return SystemInfo.deviceType;
+#endif
             }
         }
         public static bool IsDevice(DeviceType type)
