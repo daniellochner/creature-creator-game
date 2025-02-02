@@ -21,6 +21,7 @@ public class CustomMapLoadingPassMinimap : CustomMapLoadingPass
             else
             {
                 minimapMenu.gameObject.SetActive(false);
+                Debug.LogWarning($"The minimap has been disabled due to an incorrect configuration. ({info.minimapImage}, {info.minimapSize})");
             }
         }
     }

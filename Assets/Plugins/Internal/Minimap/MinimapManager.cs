@@ -21,6 +21,8 @@ namespace DanielLochner.Assets
 
         #region Properties
         public Menu Minimap => minimap;
+
+        private bool IsEnabled => minimap.gameObject.activeSelf;
         #endregion
 
         #region Methods
@@ -49,6 +51,8 @@ namespace DanielLochner.Assets
         }
         public void Track(MinimapIcon icon, MinimapIconUI iconUI, bool lockPos = false, bool lockRot = false)
         {
+            if (!IsEnabled) return;
+
             Vector2 wPos = mapBounds.center + new Vector2(icon.transform.position.x, icon.transform.position.z) - new Vector2(mapBounds.x, mapBounds.y);
             Vector2 nPos = Rect.PointToNormalized(mapBounds, wPos);
 
