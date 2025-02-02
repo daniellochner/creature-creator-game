@@ -320,6 +320,10 @@ namespace DanielLochner.Assets.CreatureCreator
                 }
 
                 string url = $"https://api.steampowered.com/IPublishedFileService/QueryFiles/v1/?key={steamKey.Value}&appid={CCConstants.AppId}&query_type={sortBy}&{tags}&search_text={itemQuery.SearchText}&days={days}&numperpage={itemQuery.NumPerPage}&page={itemQuery.Page + 1}&return_vote_data=true&return_previews=true";
+
+                url.Replace("[", "%5B");
+                url.Replace("]", "%5D");
+
                 StartCoroutine(GetItemsRoutine(url, itemQuery, onLoaded, onFailed));
             }
         }
