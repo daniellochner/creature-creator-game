@@ -186,7 +186,19 @@ namespace DanielLochner.Assets.CreatureCreator
                 else
                 if (hit.Value.collider.TryGetComponent(out MeshRenderer renderer))
                 {
-                    effects = DatabaseManager.GetDatabaseEntry<FootstepEffects>("Footsteps", renderer.material.mainTexture?.name);
+                    Texture texture = renderer.material.mainTexture;
+                    string id = "";
+                    if (texture != null)
+                    {
+                        id = texture.name;
+                    }
+                    else
+                    {
+                        int n = " (Instance)".Length;
+                        string name = renderer.material.name;
+                        id = name.Substring(0, name.Length - n);
+                    }
+                    effects = DatabaseManager.GetDatabaseEntry<FootstepEffects>("Footsteps", id);
                 }
 
                 if (effects)
