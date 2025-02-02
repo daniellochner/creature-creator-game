@@ -30,7 +30,7 @@ public static class CustomMapLoader
 
             path = Path.Combine(path, "Map");
 
-			string assetBundleFolderName = "Bundles";
+			string assetBundleFolderName = $"Bundles_{Application.platform}";
 
 			// Get the asset bundles in the folder
 			DirectoryInfo directory = new DirectoryInfo(Path.Combine(path, assetBundleFolderName));

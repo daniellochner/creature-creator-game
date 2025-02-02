@@ -18,6 +18,10 @@ namespace DanielLochner.Assets
                 {
                     return DeviceType.Handheld;
                 }
+                else
+                {
+                    return SystemInfo.deviceType;
+                }
 #else
                 return SystemInfo.deviceType;
 #endif
